@@ -84,8 +84,8 @@
                             placeholder=""
                         />
                     </div>
-                    <div class="mb-3">
-                        <button type="button" class="btn btn-primary">
+                    <div class="d-grid gap-1">
+                        <button class="btn btn-primary" type="button">
                             Submit Time
                         </button>
                     </div>
