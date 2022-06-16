@@ -85,7 +85,7 @@
                         />
                     </div>
                     <div class="d-grid gap-1">
-                        <button class="btn btn-primary" type="button">
+                        <button type="submit" class="btn btn-primary">
                             Submit Time
                         </button>
                     </div>
