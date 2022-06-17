@@ -12,7 +12,7 @@
                             aria-label="Default select example"
                             v-model="formData.userId"
                         >
-                            <option value="" disabled selected hidden>
+                            <option value="" disabled selected>
                                 Select Player
                             </option>
 
@@ -32,9 +32,10 @@
                             aria-label="Default select example"
                             v-model="formData.trackSlug"
                         >
-                            <option value="" disabled selected hidden>
+                            <option value="" disabled selected>
                                 Select Track
                             </option>
+
                             <optgroup
                                 v-for="(cup, key) in data.cups"
                                 :label="cup.name"
@@ -59,8 +60,14 @@
                             <option value="" disabled selected>
                                 Record Type
                             </option>
-                            <option value="flap">Fast Lap</option>
-                            <option value="3lap">3 Lap</option>
+
+                            <option
+                                v-for="(type, key) in data.recordtypes"
+                                :value="type.slug"
+                                :key="key"
+                            >
+                                {{ type.name }}
+                            </option>
                         </select>
                     </div>
                     <div class="mb-5">

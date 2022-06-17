@@ -34,13 +34,16 @@
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Record Type:</div>
-                        <div class="col-8 right-col">{{ formData.type }}</div>
+                        <div class="col-8 right-col">
+                            {{ data.getRecordType(formData.type) }}
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Time:</div>
                         <div class="col-8 right-col">
-                            {{ formData.time.min }} ' {{ formData.time.sec }} "
-                            {{ formData.time.ms }}"
+                            {{ formData.time.min }}'{{ formData.time.sec }}"{{
+                                formData.time.ms
+                            }}"
                         </div>
                     </div>
                     <div class="row">

@@ -2,7 +2,17 @@ declare module 'ApiTypes' {
     interface FirebaseData {
         gamedata: GameData;
         users: Users;
-        times: string[];
+        times: Times;
+        recordtypes: RecordTypes;
+    }
+
+    interface RecordTypes {
+        [key: string]: RecordType;
+    }
+
+    interface RecordType {
+        slug: string;
+        name: string;
     }
 
     interface GameData {
@@ -10,6 +20,8 @@ declare module 'ApiTypes' {
             [key: string]: Cup;
         };
     }
+
+    interface Times {}
 
     interface Cup {
         name: string;

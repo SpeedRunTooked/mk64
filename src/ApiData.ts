@@ -1,14 +1,15 @@
 import { FirebaseData, Track } from 'ApiTypes';
 
 export class ApiData {
-    public data;
+    public api;
     public tracks: Track[] = [];
 
     constructor(data: FirebaseData) {
-        this.data = {
+        this.api = {
             gamedata: data?.gamedata || {},
             users: data?.users || {},
             times: data?.times || {},
+            recordtypes: data?.recordtypes || {},
         };
         if (data) {
             this.buildTrackList(data);
@@ -23,21 +24,33 @@ export class ApiData {
         return this.tracks.find((track) => track.slug === trackSlug)?.name;
     }
 
+    public getRecordType(recordSlug: string) {
+        for (const key in this.recordtypes) {
+            const type = this.recordtypes[key];
+            if (type.slug === recordSlug) return type.name;
+        }
+        return '';
+    }
+
     private buildTrackList(data: FirebaseData) {
         const result = [];
         const cups = data.gamedata.cups;
-        for (const cup in cups) {
-            const tracks = cups[cup].tracks;
-            for (const track in tracks) {
-                result.push(tracks[track]);
+        for (const cupKey in cups) {
+            const tracks = cups[cupKey].tracks;
+            for (const trackKey in tracks) {
+                result.push(tracks[trackKey]);
             }
         }
         this.tracks = result;
     }
+
     get cups() {
-        return this.data.gamedata.cups;
+        return this.api.gamedata.cups;
     }
     get users() {
-        return this.data.users;
+        return this.api.users;
+    }
+    get recordtypes() {
+        return this.api.recordtypes;
     }
 }
