@@ -112,14 +112,14 @@
                     </div>
                     <div class="mb-3">
                         <label for="link" class="form-label"
-                            >Photo / Video Link</label
+                            >Photo / Video Proof</label
                         >
                         <input
                             type="text"
                             class="form-control"
                             id="link"
                             v-model="formData.link"
-                            placeholder="http://..."
+                            placeholder="Post a link or write 'witnessed'"
                         />
                     </div>
                     <div class="mb-5">
@@ -133,6 +133,7 @@
                     </div>
                     <div class="d-grid gap-1">
                         <button
+                            :disabled="!ready"
                             type="button"
                             class="btn btn-primary"
                             data-bs-toggle="modal"
@@ -161,6 +162,16 @@ export default defineComponent({
     // setup() {},
     computed: {
         ...mapState(['data']),
+        ready() {
+            return (
+                this.formData.userId &&
+                this.formData.trackSlug &&
+                this.formData.time.sec &&
+                this.formData.time.ms &&
+                this.formData.link &&
+                this.formData.type
+            );
+        },
     },
     data() {
         return {

@@ -58,15 +58,31 @@
                 </div>
                 <div class="modal-footer">
                     <button
+                        v-if="!success"
                         type="button"
                         class="btn btn-danger"
                         data-bs-dismiss="modal"
                     >
                         Cancel
                     </button>
-                    <button type="button" class="btn btn-primary">
+
+                    <button
+                        v-if="!success"
+                        type="button"
+                        class="btn btn-primary"
+                        @click="submitForm"
+                    >
                         Submit Time
                     </button>
+
+                    <div
+                        v-if="success"
+                        type="button"
+                        class="alert alert-success"
+                        role="alert"
+                    >
+                        Your time has been submitted!
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,8 +91,16 @@
 
 <script>
 import { mapState } from 'vuex';
+import axios from 'axios';
+import qs from 'qs';
+import { TimeUtils } from '@/utils/TimeUtils';
 
 export default {
+    data() {
+        return {
+            success: false,
+        };
+    },
     props: {
         formData: {
             type: Object,
@@ -85,6 +109,38 @@ export default {
     },
     computed: {
         ...mapState(['data']),
+    },
+    methods: {
+        async submitForm() {
+            const data = qs.stringify({
+                userId: this.formData.userId,
+                trackSlug: this.formData.trackSlug,
+                timeMs: TimeUtils.elapsedTimeToMs(
+                    `${this.formData.time.min || 0}'${
+                        this.formData.time.sec || 0
+                    }"${this.formData.time.ms || 0}'`,
+                ),
+                link: this.formData.link,
+                notes: this.formData.notes,
+                type: this.formData.type,
+            });
+
+            const config = {
+                method: 'post',
+                url: 'http://localhost:5001/mk64-ad77f/us-central1/addTime',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                data: data,
+            };
+            await axios(config);
+            console.log('Time submitted successfully!');
+            this.success = true;
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        },
     },
 };
 </script>
