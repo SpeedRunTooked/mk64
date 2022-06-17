@@ -48,6 +48,13 @@ export class PlayerStats {
         this.trackStats = trackStatsArr;
     }
 
+    public getRecord(trackSlug: string, recordType: string): TimeEntry | null {
+        const filtered = this.times.filter((x) => {
+            return x.trackSlug === trackSlug && x.recordType === recordType;
+        });
+        return _.minBy(filtered, 'timeMs') || null;
+    }
+
     public getFavoriteTrack(): string {
         const track = _.maxBy(this.trackStats, 'totalTimes');
         return track?.trackSlug || 'none';

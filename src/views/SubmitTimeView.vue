@@ -70,6 +70,24 @@
                             </option>
                         </select>
                     </div>
+
+                    <div v-if="trackAndTypeSelected" class="mb-4">
+                        <div class="row">
+                            <div class="col">
+                                Record Time:<br />
+                                {{ currentRecord?.timeElapsed }} <br />
+                                <span class="small">{{
+                                    currentRecord?.userDisplayName
+                                }}</span>
+                            </div>
+                            <div
+                                v-if="trackAndTypeAndPlayerSelected"
+                                class="col"
+                            >
+                                Your Best Time: {{ playerRecord }}
+                            </div>
+                        </div>
+                    </div>
                     <div class="mb-5">
                         <div class="row">
                             <div class="col">
@@ -171,12 +189,10 @@ export default defineComponent({
         ...mapState(['data']),
         ready() {
             return (
-                this.formData.userId &&
-                this.formData.trackSlug &&
+                this.trackAndTypeAndPlayerSelected &&
                 this.formData.time.sec &&
                 String(this.formData.time.ms).length === 2 &&
-                this.formData.link &&
-                this.formData.type
+                this.formData.link
             );
         },
         msError() {
@@ -184,6 +200,35 @@ export default defineComponent({
                 this.formData.time.ms &&
                 String(this.formData.time.ms).length !== 2
             );
+        },
+        currentRecord() {
+            if (this.trackAndTypeSelected) {
+                return this.data.getRecord(
+                    this.formData.trackSlug,
+                    this.formData.type,
+                );
+            }
+            return null;
+        },
+        playerRecord() {
+            if (this.trackAndTypeAndPlayerSelected) {
+                const stats = this.data.getPlayerStats(this.formData.userId);
+                if (stats) {
+                    return (
+                        stats.getRecord(
+                            this.formData.trackSlug,
+                            this.formData.type,
+                        )?.timeElapsed || 'None yet!'
+                    );
+                }
+            }
+            return 'None yet!';
+        },
+        trackAndTypeSelected() {
+            return this.formData.trackSlug && this.formData.type;
+        },
+        trackAndTypeAndPlayerSelected() {
+            return this.trackAndTypeSelected && this.formData.userId;
         },
     },
     data() {
@@ -214,5 +259,8 @@ export default defineComponent({
 }
 .alert-danger {
     margin-top: 15px;
+}
+.small {
+    font-size: 12px;
 }
 </style>

@@ -40,11 +40,6 @@ import { mapState } from 'vuex';
 import _ from 'lodash';
 
 export default {
-    data() {
-        return {
-            entries: 5,
-        };
-    },
     computed: {
         ...mapState(['data']),
         players() {
@@ -61,7 +56,6 @@ export default {
             return second;
         },
     },
-    methods: {},
 };
 </script>
 

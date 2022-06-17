@@ -61,6 +61,10 @@ export class ApiData {
         return sorted.slice(0, num);
     }
 
+    public getPlayerStats(userId: string): PlayerStats | null {
+        return this.playerStats.filter((x) => x.playerId === userId)[0] || null;
+    }
+
     public isRecord(time: TimeEntry) {
         const times = this.times.filter((x) => {
             return (
