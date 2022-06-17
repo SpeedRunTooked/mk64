@@ -22,10 +22,12 @@
                             ''
                         }}
                         <br />
-                        {{
-                            data.getRecord(track.slug, 'flap')
-                                ?.userDisplayName || ''
-                        }}
+                        <span class="displayName"
+                            >{{
+                                data.getRecord(track.slug, 'flap')
+                                    ?.userDisplayName || ''
+                            }}
+                        </span>
                     </div>
 
                     <div class="col-4">
@@ -34,11 +36,12 @@
                             ''
                         }}
                         <br />
-
-                        {{
-                            data.getRecord(track.slug, '3lap')
-                                ?.userDisplayName || ''
-                        }}
+                        <span class="displayName">
+                            {{
+                                data.getRecord(track.slug, '3lap')
+                                    ?.userDisplayName || ''
+                            }}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -70,5 +73,9 @@ export default {
 }
 .cup-header {
     font-weight: bold;
+}
+
+.displayName {
+    font-size: 14px;
 }
 </style>

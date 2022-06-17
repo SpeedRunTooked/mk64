@@ -27,8 +27,15 @@
             <div class="col-2">
                 {{ data.getRecordType(time.recordType) }}
             </div>
-            <div class="col-2">
-                {{ time.timeElapsed }}
+            <div class="col-2" :title="getNote(time)">
+                <div v-if="linkPresent(time.link)">
+                    <a :href="time.link" target="_blank">{{
+                        time.timeElapsed
+                    }}</a>
+                </div>
+                <div v-else>
+                    {{ time.timeElapsed }}
+                </div>
             </div>
             <div class="col-2">
                 {{ time.userDisplayName }}
@@ -50,6 +57,14 @@ export default {
         ...mapState(['data']),
         recentTimes() {
             return this.data.getRecentRecords(this.entries);
+        },
+    },
+    methods: {
+        linkPresent(link) {
+            return link.substr(0, 4) === 'http';
+        },
+        getNote(time) {
+            return time.note || 'Empty note';
         },
     },
 };
