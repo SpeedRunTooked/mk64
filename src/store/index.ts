@@ -8,11 +8,11 @@ export default createStore({
     state: {
         data: new ApiData({
             gamedata: {
-                cups: {},
+                cups: [],
             },
             users: {},
             times: {},
-            recordtypes: {},
+            recordtypes: [],
         }),
     },
     getters: {},

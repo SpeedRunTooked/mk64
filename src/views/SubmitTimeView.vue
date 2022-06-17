@@ -183,7 +183,7 @@ export default defineComponent({
 
 <style scoped>
 .container {
-    width: 500px;
+    width: 300px;
 }
 .header {
     margin-bottom: 20px;

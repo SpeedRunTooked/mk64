@@ -25,8 +25,7 @@ export class ApiData {
     }
 
     public getRecordType(recordSlug: string) {
-        for (const key in this.recordtypes) {
-            const type = this.recordtypes[key];
+        for (const type of this.recordtypes) {
             if (type.slug === recordSlug) return type.name;
         }
         return '';
@@ -35,10 +34,9 @@ export class ApiData {
     private buildTrackList(data: FirebaseData) {
         const result = [];
         const cups = data.gamedata.cups;
-        for (const cupKey in cups) {
-            const tracks = cups[cupKey].tracks;
-            for (const trackKey in tracks) {
-                result.push(tracks[trackKey]);
+        for (const cup of cups) {
+            for (const track of cup.tracks) {
+                result.push(track);
             }
         }
         this.tracks = result;

@@ -3,11 +3,7 @@ declare module 'ApiTypes' {
         gamedata: GameData;
         users: Users;
         times: Times;
-        recordtypes: RecordTypes;
-    }
-
-    interface RecordTypes {
-        [key: string]: RecordType;
+        recordtypes: RecordType[];
     }
 
     interface RecordType {
@@ -16,9 +12,7 @@ declare module 'ApiTypes' {
     }
 
     interface GameData {
-        cups: {
-            [key: string]: Cup;
-        };
+        cups: Cup[];
     }
 
     interface Times {}
@@ -26,9 +20,7 @@ declare module 'ApiTypes' {
     interface Cup {
         name: string;
         slug: string;
-        tracks: {
-            [key: string]: Track;
-        };
+        tracks: Track[];
     }
 
     interface Track {

@@ -41,11 +41,12 @@
                     <div class="row">
                         <div class="col-4 left-col">Time:</div>
                         <div class="col-8 right-col">
-                            {{ formData.time.min }}'{{ formData.time.sec }}"{{
-                                formData.time.ms
-                            }}"
+                            {{ formData.time.min || '0' }}'{{
+                                formData.time.sec || '0'
+                            }}"{{ formData.time.ms || '00' }}
                         </div>
                     </div>
+                    <div class="spacer"></div>
                     <div class="row">
                         <div class="col-4 left-col">Link:</div>
                         <div class="col-8 right-col">{{ formData.link }}</div>
@@ -94,5 +95,8 @@ export default {
 }
 .right-col {
     text-align: left;
+}
+.spacer {
+    margin-top: 10px;
 }
 </style>
