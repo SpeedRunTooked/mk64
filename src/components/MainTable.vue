@@ -72,10 +72,8 @@
                     v-model="filters.entryStatus"
                 >
                     <option value="" selected>All Entries</option>
-                    <option value="improvements">
-                        Only Record Improvements
-                    </option>
-                    <option value="current">Only Current Records</option>
+                    <option value="improvements">Record Improvements</option>
+                    <option value="current">Current Records</option>
                 </select>
             </div>
         </div>
