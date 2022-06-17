@@ -24,7 +24,6 @@ export default createStore({
     actions: {
         async getApiData({ commit }) {
             const result = await axios.get(ROOT_URL + '.json');
-            console.log(result);
             commit('SAVE_APIDATA', result.data);
         },
     },

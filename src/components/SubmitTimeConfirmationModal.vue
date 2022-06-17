@@ -42,7 +42,7 @@
                         <div class="col-4 left-col">Time:</div>
                         <div class="col-8 right-col">
                             {{ formData.time.min || '0' }}'{{
-                                formData.time.sec || '0'
+                                TimeUtils.zeroPad(formData.time.sec, 2) || '00'
                             }}"{{ formData.time.ms || '00' }}
                         </div>
                     </div>
@@ -99,6 +99,7 @@ export default {
     data() {
         return {
             success: false,
+            TimeUtils,
         };
     },
     props: {

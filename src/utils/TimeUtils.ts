@@ -4,7 +4,7 @@ export class TimeUtils {
     }
     public static msToElapsedTime(ms: number): string {
         const min = Math.floor(ms / 60000);
-        const sec = Math.floor((ms - min * 60000) / 1000);
+        const sec = TimeUtils.zeroPad(Math.floor((ms - min * 60000) / 1000), 2);
         const dec = TimeUtils.zeroPad(Math.floor((ms / 10) % 100), 2);
         return `${min}'${sec}"${dec}`;
     }

@@ -72,7 +72,7 @@
                     </div>
 
                     <div v-if="trackAndTypeSelected" class="mb-4">
-                        <div class="row">
+                        <div class="row reference-row">
                             <div class="col">
                                 Record Time:<br />
                                 {{ currentRecord?.timeElapsed }} <br />
@@ -116,7 +116,7 @@
                             </div>
                             <div class="col">
                                 <label for="ms" class="form-label"
-                                    >Decimals</label
+                                    >Centiseconds</label
                                 >
                                 <input
                                     type="text"
@@ -164,7 +164,7 @@
                             class="alert alert-danger"
                             role="alert"
                         >
-                            Decimals must be two digits!
+                            Centiseconds must be two digits!
                         </div>
                     </div>
                 </form>
@@ -262,5 +262,17 @@ export default defineComponent({
 }
 .small {
     font-size: 12px;
+}
+.reference-row {
+    background-color: rgb(243, 243, 243);
+    padding: 10px 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    -moz-box-shadow: inset 0 0 3px #bbbbbb;
+    -webkit-box-shadow: inset 0 0 3px #bbbbbb;
+    box-shadow: inset 0px 0px 3px #bbbbbb;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
 }
 </style>

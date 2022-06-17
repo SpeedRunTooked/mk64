@@ -146,7 +146,6 @@ export class ApiData {
     private buildRecordImprovements() {
         const sorted = _.orderBy(this.times, ['created'], ['asc']);
         const recordMap: { [key: string]: number } = {};
-        console.log(sorted);
         for (const time of sorted) {
             const key = time.recordType + time.trackSlug;
             if (!recordMap[key]) {
@@ -159,7 +158,6 @@ export class ApiData {
                 }
             }
         }
-        console.log(recordMap);
     }
 
     get cups() {
