@@ -13,7 +13,11 @@
                 </div>
             </div>
         </div>
-        <div class="row" v-for="time in recentTimes" :key="time.created">
+        <div
+            class="row time-row"
+            v-for="time in recentTimes"
+            :key="time.created"
+        >
             <div class="col-2">
                 {{ time.created.toLocaleDateString() }}
             </div>
@@ -60,5 +64,8 @@ select {
     width: 70px;
     float: right;
     height: 50px;
+}
+.time-row {
+    padding: 2px;
 }
 </style>

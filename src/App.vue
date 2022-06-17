@@ -25,11 +25,12 @@ export default defineComponent({
 
 <style lang="scss">
 #app {
-    font-family: Calibri;
+    font-family: 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+    font-size: 15px;
 }
 
 nav {
@@ -60,13 +61,13 @@ nav {
         text-decoration: none;
     }
 
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .section-header {
     font-weight: bold;
     text-align: left;
-    font-size: 20px;
+    font-size: 16px;
     margin-bottom: 10px;
 }
 
@@ -78,5 +79,11 @@ nav {
     padding: 20px;
     width: 800px;
     min-width: 600px;
+}
+
+.form-select,
+.form-control {
+    font-size: 14px;
+    height: 35px;
 }
 </style>
