@@ -127,7 +127,7 @@ export default {
 
             const config = {
                 method: 'post',
-                url: 'http://localhost:5001/mk64-ad77f/us-central1/addTime',
+                url: 'https://us-central1-mk64-ad77f.cloudfunctions.net/addTime',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
