@@ -14,6 +14,7 @@ export interface TimeEntry {
     recordType: string;
     timeId: string;
     isCurrentRecord: boolean;
+    isRecordImprovement: boolean;
 }
 
 export class ApiData {
@@ -32,6 +33,7 @@ export class ApiData {
             this.buildTrackList(data);
             this.buildTimes(data);
             this.buildCurrentRecords();
+            this.buildRecordImprovements();
         }
     }
 
@@ -105,6 +107,7 @@ export class ApiData {
                 recordType: time.type,
                 timeId: timeKey,
                 isCurrentRecord: false,
+                isRecordImprovement: false,
             });
         }
         this.times = result.reverse();
@@ -120,6 +123,25 @@ export class ApiData {
                 recordArr.push(key);
             }
         }
+    }
+
+    private buildRecordImprovements() {
+        const sorted = _.orderBy(this.times, ['created'], ['asc']);
+        const recordMap: { [key: string]: number } = {};
+        console.log(sorted);
+        for (const time of sorted) {
+            const key = time.recordType + time.trackSlug;
+            if (!recordMap[key]) {
+                time.isRecordImprovement = true;
+                recordMap[key] = time.timeMs;
+            } else {
+                if (recordMap[key] > time.timeMs) {
+                    time.isRecordImprovement = true;
+                    recordMap[key] = time.timeMs;
+                }
+            }
+        }
+        console.log(recordMap);
     }
 
     get cups() {

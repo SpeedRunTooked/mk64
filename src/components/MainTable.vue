@@ -65,13 +65,29 @@
                     <!-- </li> -->
                 </select>
             </div>
-            <div class="col-2"></div>
+            <div class="col-3">
+                <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    v-model="filters.entryStatus"
+                >
+                    <option value="" selected>All Entries</option>
+                    <option value="improvements">
+                        Only Record Improvements
+                    </option>
+                    <option value="current">Only Current Records</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col subheader">
+                Current records in <span class="bold">bold</span>
+            </div>
         </div>
         <div
             class="row time-row"
             v-for="time in filteredData"
             :key="time.created"
-            :class="{ bold: time.isCurrentRecord }"
         >
             <div class="col-2">
                 {{
@@ -82,23 +98,27 @@
                     })
                 }}
             </div>
-            <div class="col-3">
+            <div class="col-3" :class="{ bold: time.isCurrentRecord }">
                 {{ data.getTrackName(time.trackSlug) }}
             </div>
-            <div class="col-2">
+            <div class="col-2" :class="{ bold: time.isCurrentRecord }">
                 {{ data.getRecordType(time.recordType) }}
             </div>
-            <div class="col-1" :title="getNote(time)">
+            <div
+                class="col-1"
+                :title="getNote(time)"
+                :class="{ bold: time.isCurrentRecord }"
+            >
                 <div v-if="linkPresent(time.link)">
                     <a :href="time.link" target="_blank">{{
                         time.timeElapsed
                     }}</a>
                 </div>
-                <div v-else>
+                <div v-else :class="{ bold: time.isCurrentRecord }">
                     {{ time.timeElapsed }}
                 </div>
             </div>
-            <div class="col-2">
+            <div class="col-2" :class="{ bold: time.isCurrentRecord }">
                 {{ time.userDisplayName }}
             </div>
             <div class="col-2">
@@ -120,6 +140,7 @@ export default {
                 trackSlug: '',
                 recordType: '',
                 userId: '',
+                entryStatus: '',
             },
         };
     },
@@ -144,6 +165,19 @@ export default {
                 times = _.filter(times, (x) => {
                     return x.userId === this.filters.userId;
                 });
+            }
+
+            if (this.filters.entryStatus) {
+                if (this.filters.entryStatus === 'improvements') {
+                    times = _.filter(times, (x) => {
+                        return x.isRecordImprovement === true;
+                    });
+                }
+                if (this.filters.entryStatus === 'current') {
+                    times = _.filter(times, (x) => {
+                        return x.isCurrentRecord === true;
+                    });
+                }
             }
 
             return _.orderBy(times, ['created'], ['desc']);
@@ -190,6 +224,11 @@ select {
 }
 
 .bold {
+    /* color: rgb(158, 0, 0); */
     font-weight: bold;
+}
+
+.subheader {
+    padding: 5px;
 }
 </style>
