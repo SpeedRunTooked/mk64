@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <div class="row"><div class="col page-title">MK64</div></div>
         <nav>
             <router-link to="/">Summary</router-link> |
             <router-link to="/submit">Submit Time</router-link>
@@ -67,8 +68,8 @@ nav {
 .section-header {
     font-weight: bold;
     text-align: left;
-    font-size: 16px;
-    margin-bottom: 10px;
+    font-size: 18px;
+    margin-bottom: 0px;
 }
 
 .section-container {
@@ -85,5 +86,14 @@ nav {
 .form-control {
     font-size: 14px;
     height: 35px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 500;
+}
+
+.spacer {
+    margin-top: 40px;
 }
 </style>

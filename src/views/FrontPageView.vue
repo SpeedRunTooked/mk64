@@ -19,9 +19,3 @@ export default defineComponent({
     components: { RecentTimes, RecentRecords, RecordSummary },
 });
 </script>
-
-<style scoped>
-.spacer {
-    margin-top: 30px;
-}
-</style>

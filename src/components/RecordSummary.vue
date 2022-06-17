@@ -71,8 +71,4 @@ export default {
 .cup-header {
     font-weight: bold;
 }
-
-.section-header {
-    /* margin-bottom: 30px; */
-}
 </style>
