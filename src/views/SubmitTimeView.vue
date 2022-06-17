@@ -12,33 +12,45 @@
                             aria-label="Default select example"
                             v-model="formData.userId"
                         >
-                            <option value="" disabled selected>
+                            <option value="" disabled selected hidden>
                                 Select Player
                             </option>
-                            <option value="a">A</option>
-                            <option value="b">B</option>
-                            <option value="c">C</option>
+
+                            <option
+                                v-for="(value, key) in data.users"
+                                :key="key"
+                                :value="key"
+                            >
+                                {{ value.displayName }}
+                            </option>
+                            <!-- </li> -->
                         </select>
                     </div>
                     <div class="mb-4">
-                        <!-- <label for="track" class="form-label">Track</label> -->
-
                         <select
                             class="form-select"
                             aria-label="Default select example"
                             v-model="formData.trackSlug"
                         >
-                            <option value="" disabled selected>
+                            <option value="" disabled selected hidden>
                                 Select Track
                             </option>
-                            <option value="1">One</option>
-                            <option value="moomoofarm">Moo Moo Farm</option>
-                            <option value="3">Three</option>
+                            <optgroup
+                                v-for="(cup, key) in data.cups"
+                                :label="cup.name"
+                                :key="key"
+                            >
+                                <option
+                                    v-for="(track, key) in cup.tracks"
+                                    :key="key"
+                                    :value="track.slug"
+                                >
+                                    {{ track.name }}
+                                </option>
+                            </optgroup>
                         </select>
                     </div>
                     <div class="mb-4">
-                        <!-- <label for="track" class="form-label">Track</label> -->
-
                         <select
                             class="form-select"
                             aria-label="Default select example"
@@ -129,15 +141,20 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
 import SubmitTimeConfirmationModal from '@/components/SubmitTimeConfirmationModal.vue';
 
 export default defineComponent({
     name: 'SubmitTimeView',
+
     components: {
         SubmitTimeConfirmationModal,
     },
     // setup() {},
+    computed: {
+        ...mapState(['data']),
+    },
     data() {
         return {
             formData: {

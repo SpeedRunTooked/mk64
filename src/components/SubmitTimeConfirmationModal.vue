@@ -10,7 +10,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">
-                        Confirm your submission
+                        Confirm Submission
                     </h5>
                     <button
                         type="button"
@@ -22,12 +22,14 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-4 left-col">Player:</div>
-                        <div class="col-8 right-col">{{ formData.userId }}</div>
+                        <div class="col-8 right-col">
+                            {{ data.getUserDisplayName(formData.userId) }}
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Track:</div>
                         <div class="col-8 right-col">
-                            {{ formData.trackSlug }}
+                            {{ data.getTrackName(formData.trackSlug) }}
                         </div>
                     </div>
                     <div class="row">
@@ -37,9 +39,8 @@
                     <div class="row">
                         <div class="col-4 left-col">Time:</div>
                         <div class="col-8 right-col">
-                            {{ formData.time.min }}'{{ formData.time.sec }}"{{
-                                formData.time.ms
-                            }}"
+                            {{ formData.time.min }} ' {{ formData.time.sec }} "
+                            {{ formData.time.ms }}"
                         </div>
                     </div>
                     <div class="row">
@@ -69,12 +70,17 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
     props: {
         formData: {
             type: Object,
             required: true,
         },
+    },
+    computed: {
+        ...mapState(['data']),
     },
 };
 </script>

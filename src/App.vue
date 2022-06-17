@@ -6,6 +6,21 @@
     <router-view />
 </template>
 
+<script>
+import { defineComponent } from '@vue/composition-api';
+import { useStore } from 'vuex';
+import { onMounted } from 'vue';
+
+export default defineComponent({
+    setup() {
+        onMounted(async () => {
+            const store = useStore();
+            await store.dispatch('getApiData');
+        });
+    },
+});
+</script>
+
 <style lang="scss">
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
