@@ -15,7 +15,19 @@ declare module 'ApiTypes' {
         cups: Cup[];
     }
 
-    interface Times {}
+    interface Times {
+        [key: string]: Time;
+    }
+
+    interface Time {
+        created: string;
+        link: string;
+        note: string;
+        timeMs: string;
+        trackSlug: string;
+        type: string;
+        userId: string;
+    }
 
     interface Cup {
         name: string;

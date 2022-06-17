@@ -137,6 +137,10 @@ export default {
             console.log('Time submitted successfully!');
             this.success = true;
 
+            this.$cookies.set('userId', this.formData.userId);
+            this.$cookies.set('trackSlug', this.formData.trackSlug);
+            this.$cookies.set('type', this.formData.type);
+
             setTimeout(() => {
                 window.location.reload();
             }, 2000);
@@ -152,6 +156,7 @@ export default {
 }
 .right-col {
     text-align: left;
+    word-break: break-all;
 }
 .spacer {
     margin-top: 10px;

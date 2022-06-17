@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
+import FrontPageView from '../views/FrontPageView.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
-        name: 'home',
-        component: HomeView,
+        name: 'frontpage',
+        component: FrontPageView,
     },
     {
         path: '/submittime',

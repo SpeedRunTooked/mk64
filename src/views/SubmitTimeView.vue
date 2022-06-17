@@ -98,7 +98,7 @@
                             </div>
                             <div class="col">
                                 <label for="ms" class="form-label"
-                                    >Milliseconds</label
+                                    >Decimals</label
                                 >
                                 <input
                                     type="text"
@@ -141,6 +141,13 @@
                         >
                             Submit Time
                         </button>
+                        <div
+                            v-if="msError"
+                            class="alert alert-danger"
+                            role="alert"
+                        >
+                            Decimals must be two digits!
+                        </div>
                     </div>
                 </form>
             </div>
@@ -167,17 +174,23 @@ export default defineComponent({
                 this.formData.userId &&
                 this.formData.trackSlug &&
                 this.formData.time.sec &&
-                this.formData.time.ms &&
+                String(this.formData.time.ms).length === 2 &&
                 this.formData.link &&
                 this.formData.type
+            );
+        },
+        msError() {
+            return (
+                this.formData.time.ms &&
+                String(this.formData.time.ms).length !== 2
             );
         },
     },
     data() {
         return {
             formData: {
-                userId: '',
-                trackSlug: '',
+                userId: this.$cookies.get('userId') || '',
+                trackSlug: this.$cookies.get('trackSlug') || '',
                 time: {
                     min: '',
                     sec: '',
@@ -185,7 +198,7 @@ export default defineComponent({
                 },
                 link: '',
                 notes: '',
-                type: '',
+                type: this.$cookies.get('type') || '',
             },
         };
     },
@@ -198,5 +211,8 @@ export default defineComponent({
 }
 .header {
     margin-bottom: 20px;
+}
+.alert-danger {
+    margin-top: 15px;
 }
 </style>

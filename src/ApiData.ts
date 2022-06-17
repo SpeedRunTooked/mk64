@@ -1,8 +1,22 @@
 import { FirebaseData, Track } from 'ApiTypes';
+import { TimeUtils } from './utils/TimeUtils';
+import _ from 'lodash';
+
+export interface TimeEntry {
+    userId: string;
+    userDisplayName: string;
+    created: Date;
+    link: string;
+    trackSlug: string;
+    timeMs: number;
+    timeElapsed: string;
+    note: string;
+}
 
 export class ApiData {
     public api;
     public tracks: Track[] = [];
+    public times: TimeEntry[] = [];
 
     constructor(data: FirebaseData) {
         this.api = {
@@ -13,6 +27,7 @@ export class ApiData {
         };
         if (data) {
             this.buildTrackList(data);
+            this.buildTimes(data);
         }
     }
 
@@ -31,6 +46,11 @@ export class ApiData {
         return '';
     }
 
+    public getRecentTimes(num: number) {
+        const sorted = _.orderBy(this.times, ['created'], ['desc']);
+        return sorted.slice(0, num);
+    }
+
     private buildTrackList(data: FirebaseData) {
         const result = [];
         const cups = data.gamedata.cups;
@@ -40,6 +60,26 @@ export class ApiData {
             }
         }
         this.tracks = result;
+    }
+
+    private buildTimes(data: FirebaseData) {
+        const result = [];
+        const times = data.times;
+        for (const timeKey in times) {
+            const time = times[timeKey];
+            result.push({
+                userId: time.userId,
+                userDisplayName: this.getUserDisplayName(time.userId),
+                created: new Date(time.created),
+                link: time.link,
+                trackSlug: time.trackSlug,
+                timeMs: Number(time.timeMs),
+                timeElapsed: TimeUtils.msToElapsedTime(Number(time.timeMs)),
+                note: time.note,
+                type: time.type,
+            });
+        }
+        this.times = result.reverse();
     }
 
     get cups() {

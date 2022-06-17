@@ -42,4 +42,15 @@ nav {
         }
     }
 }
+
+.section-header {
+    font-weight: bold;
+    text-align: left;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.section-container {
+    padding: 20px;
+}
 </style>
