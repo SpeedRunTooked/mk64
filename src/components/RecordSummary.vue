@@ -73,6 +73,8 @@ export default {
 }
 .cup-header {
     font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 1px solid lightgrey;
 }
 
 .displayName {

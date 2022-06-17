@@ -3,6 +3,7 @@
         <div class="row"><div class="col page-title">MK64</div></div>
         <nav>
             <router-link to="/">Summary</router-link> |
+            <router-link to="/leaderboard">Leaderboard</router-link> |
             <router-link to="/data">All Entries</router-link> |
             <router-link to="/submit">Submit Time</router-link>
         </nav>

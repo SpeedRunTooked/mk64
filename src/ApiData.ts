@@ -1,6 +1,7 @@
 import { FirebaseData, Track } from 'ApiTypes';
 import { TimeUtils } from './utils/TimeUtils';
 import _ from 'lodash';
+import { PlayerStats } from './PlayerStats';
 
 export interface TimeEntry {
     userId: string;
@@ -21,6 +22,7 @@ export class ApiData {
     public api;
     public tracks: Track[] = [];
     public times: TimeEntry[] = [];
+    public playerStats: PlayerStats[] = [];
 
     constructor(data: FirebaseData) {
         this.api = {
@@ -34,6 +36,7 @@ export class ApiData {
             this.buildTimes(data);
             this.buildCurrentRecords();
             this.buildRecordImprovements();
+            this.buildPlayerStats();
         }
     }
 
@@ -42,6 +45,7 @@ export class ApiData {
     }
 
     public getTrackName(trackSlug: string) {
+        if (trackSlug === 'none') return 'None yet!';
         return this.tracks.find((track) => track.slug === trackSlug)?.name;
     }
 
@@ -88,6 +92,16 @@ export class ApiData {
             }
         }
         this.tracks = result;
+    }
+
+    private buildPlayerStats() {
+        for (const user in this.api.users) {
+            const player = new PlayerStats(
+                user,
+                this.times.filter((x) => x.userId === user),
+            );
+            this.playerStats.push(player);
+        }
     }
 
     private buildTimes(data: FirebaseData) {
