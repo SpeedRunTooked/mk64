@@ -148,6 +148,7 @@ export default {
 <style scoped>
 .left-col {
     text-align: right;
+    font-weight: bold;
 }
 .right-col {
     text-align: left;
