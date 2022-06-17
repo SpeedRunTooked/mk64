@@ -130,7 +130,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="link" class="form-label"
-                            >Photo / Video Proof</label
+                            >Photo or Video Link</label
                         >
                         <input
                             type="text"
