@@ -12,6 +12,7 @@ export interface TimeEntry {
     timeElapsed: string;
     note: string;
     recordType: string;
+    timeId: string;
 }
 
 export class ApiData {
@@ -52,6 +53,32 @@ export class ApiData {
         return sorted.slice(0, num);
     }
 
+    public getRecentRecords(num: number) {
+        const sorted = _.orderBy(this.times, ['created'], ['desc']);
+        const results = [];
+        for (const time of sorted) {
+            if (this.isRecord(time)) {
+                results.push(time);
+            }
+        }
+
+        return results.slice(0, num);
+    }
+
+    public isRecord(time: TimeEntry) {
+        const times = this.times.filter((x) => {
+            return (
+                x.trackSlug === time.trackSlug &&
+                x.recordType === time.recordType
+            );
+        });
+
+        if (times.length === 0) return true;
+
+        const record = _.minBy(times, 'timeMs') as TimeEntry;
+        return time.timeId === record.timeId;
+    }
+
     public getRecord(trackSlug: string, recordType: string): TimeEntry {
         const times = _.filter(
             this.times,
@@ -86,6 +113,7 @@ export class ApiData {
                 timeElapsed: TimeUtils.msToElapsedTime(Number(time.timeMs)),
                 note: time.note,
                 recordType: time.type,
+                timeId: timeKey,
             });
         }
         this.times = result.reverse();

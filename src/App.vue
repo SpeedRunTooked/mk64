@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <nav>
-            <router-link to="/">Home</router-link> |
+            <router-link to="/">Summary</router-link> |
             <router-link to="/submit">Submit Time</router-link>
         </nav>
         <router-view />

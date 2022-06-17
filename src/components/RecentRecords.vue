@@ -1,7 +1,7 @@
 <template>
     <div class="section-container mx-auto">
         <div class="row">
-            <div class="col section-header">Recent Times</div>
+            <div class="col section-header">Recent Records</div>
             <div class="col align-end">
                 <div class="select-wrapper">
                     <select class="form-select" v-model="entries">
@@ -45,7 +45,7 @@ export default {
     computed: {
         ...mapState(['data']),
         recentTimes() {
-            return this.data.getRecentTimes(this.entries);
+            return this.data.getRecentRecords(this.entries);
         },
     },
 };
