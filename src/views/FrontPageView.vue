@@ -1,15 +1,24 @@
 <template>
-    <div class="home">
+    <div class="front-page">
         <recent-times></recent-times>
+        <div class="spacer"></div>
+        <record-summary></record-summary>
     </div>
 </template>
 
 <script lang="ts">
 import RecentTimes from '@/components/RecentTimes.vue';
+import RecordSummary from '@/components/RecordSummary.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'FrontPageView',
-    components: { RecentTimes },
+    components: { RecentTimes, RecordSummary },
 });
 </script>
+
+<style scoped>
+.spacer {
+    margin-top: 30px;
+}
+</style>

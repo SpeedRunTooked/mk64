@@ -1,9 +1,11 @@
 <template>
-    <nav>
-        <router-link to="/">Home</router-link> |
-        <router-link to="/submittime">Submit Time</router-link>
-    </nav>
-    <router-view />
+    <div class="container">
+        <nav>
+            <router-link to="/">Home</router-link> |
+            <router-link to="/submittime">Submit Time</router-link>
+        </nav>
+        <router-view />
+    </div>
 </template>
 
 <script>
@@ -41,6 +43,24 @@ nav {
             color: #42b983;
         }
     }
+
+    a:link {
+        text-decoration: none;
+    }
+
+    a:visited {
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    a:active {
+        text-decoration: none;
+    }
+
+    font-size: 20px;
 }
 
 .section-header {
@@ -51,6 +71,12 @@ nav {
 }
 
 .section-container {
+    width: 600px;
+}
+
+.container {
     padding: 20px;
+    width: 800px;
+    min-width: 600px;
 }
 </style>

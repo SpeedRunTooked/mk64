@@ -11,6 +11,7 @@ export interface TimeEntry {
     timeMs: number;
     timeElapsed: string;
     note: string;
+    recordType: string;
 }
 
 export class ApiData {
@@ -51,6 +52,14 @@ export class ApiData {
         return sorted.slice(0, num);
     }
 
+    public getRecord(trackSlug: string, recordType: string): TimeEntry {
+        const times = _.filter(
+            this.times,
+            (x) => x.trackSlug === trackSlug && x.recordType === recordType,
+        );
+        return _.orderBy(times, ['timeMs'], ['asc'])[0];
+    }
+
     private buildTrackList(data: FirebaseData) {
         const result = [];
         const cups = data.gamedata.cups;
@@ -76,7 +85,7 @@ export class ApiData {
                 timeMs: Number(time.timeMs),
                 timeElapsed: TimeUtils.msToElapsedTime(Number(time.timeMs)),
                 note: time.note,
-                type: time.type,
+                recordType: time.type,
             });
         }
         this.times = result.reverse();

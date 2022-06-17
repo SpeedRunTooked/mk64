@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="section-container mx-auto">
         <SubmitTimeConfirmationModal
             :formData="formData"
         ></SubmitTimeConfirmationModal>
@@ -206,7 +206,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.container {
+.section-container {
     width: 300px;
 }
 .header {
