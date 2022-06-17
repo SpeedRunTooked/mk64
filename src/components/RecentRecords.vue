@@ -46,6 +46,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import _ from 'lodash';
 
 export default {
     data() {
@@ -56,7 +57,13 @@ export default {
     computed: {
         ...mapState(['data']),
         recentTimes() {
-            return this.data.getRecentRecords(this.entries);
+            const times = this.data.times.filter(
+                (x) => x.isCurrentRecord === true,
+            );
+            return _.orderBy(times, ['created'], ['desc']).splice(
+                0,
+                this.entries,
+            );
         },
     },
     methods: {
