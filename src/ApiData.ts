@@ -13,6 +13,7 @@ export interface TimeEntry {
     note: string;
     recordType: string;
     timeId: string;
+    isCurrentRecord: boolean;
 }
 
 export class ApiData {
@@ -30,6 +31,7 @@ export class ApiData {
         if (data) {
             this.buildTrackList(data);
             this.buildTimes(data);
+            this.buildCurrentRecords();
         }
     }
 
@@ -51,18 +53,6 @@ export class ApiData {
     public getRecentTimes(num: number) {
         const sorted = _.orderBy(this.times, ['created'], ['desc']);
         return sorted.slice(0, num);
-    }
-
-    public getRecentRecords(num: number) {
-        const sorted = _.orderBy(this.times, ['created'], ['desc']);
-        const results = [];
-        for (const time of sorted) {
-            if (this.isRecord(time)) {
-                results.push(time);
-            }
-        }
-
-        return results.slice(0, num);
     }
 
     public isRecord(time: TimeEntry) {
@@ -114,9 +104,22 @@ export class ApiData {
                 note: time.note,
                 recordType: time.type,
                 timeId: timeKey,
+                isCurrentRecord: false,
             });
         }
         this.times = result.reverse();
+    }
+
+    private buildCurrentRecords() {
+        const sorted = _.orderBy(this.times, ['timeMs'], ['asc']);
+        const recordArr: string[] = [];
+        for (const time of sorted) {
+            const key = time.recordType + time.trackSlug;
+            if (recordArr.indexOf(key) === -1) {
+                time.isCurrentRecord = true;
+                recordArr.push(key);
+            }
+        }
     }
 
     get cups() {
