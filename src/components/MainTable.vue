@@ -95,6 +95,8 @@
                         day: '2-digit',
                     })
                 }}
+
+                {{ time.created.toLocaleTimeString() }}
             </div>
             <div class="col-3" :class="{ bold: time.isCurrentRecord }">
                 {{ data.getTrackName(time.trackSlug) }}
