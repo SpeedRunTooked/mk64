@@ -98,4 +98,11 @@ nav {
 .spacer {
     margin-top: 40px;
 }
+.bold {
+    /* color: rgb(158, 0, 0); */
+    font-weight: bold;
+}
+.highlight {
+    color: #42b983;
+}
 </style>

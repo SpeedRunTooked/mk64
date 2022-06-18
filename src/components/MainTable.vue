@@ -32,7 +32,7 @@
                     v-model="filters.recordType"
                 >
                     <!-- <option value="" disabled selected>Record Type</option> -->
-                    <option value="">All Types</option>
+                    <option value="">All Categories</option>
 
                     <option
                         v-for="(type, key) in data.recordtypes"
@@ -71,21 +71,30 @@
                     aria-label="Default select example"
                     v-model="filters.entryStatus"
                 >
-                    <option value="" selected>All Entries</option>
-                    <option value="improvements">Record Improvements</option>
+                    <option value="" selected>All Times</option>
                     <option value="current">Current Records</option>
+                    <option value="improvements">Record Improvements</option>
                 </select>
             </div>
         </div>
-        <div class="row">
+        <div class="row header-row bold">
+            <div class="col-2">Date Recorded</div>
+            <div class="col-3">Track</div>
+            <div class="col-2">Category</div>
+            <div class="col-1">Time</div>
+            <div class="col-2">Player</div>
+            <div class="col-2">Notes</div>
+        </div>
+        <!-- <div class="row">
             <div class="col subheader">
                 Current records in <span class="bold">bold</span>
             </div>
-        </div>
+        </div> -->
         <div
             class="row time-row"
             v-for="time in filteredData"
             :key="time.created"
+            :class="{ highlight: time.isCurrentRecord }"
         >
             <div class="col-2">
                 {{
@@ -98,27 +107,23 @@
 
                 {{ time.created.toLocaleTimeString() }}
             </div>
-            <div class="col-3" :class="{ bold: time.isCurrentRecord }">
+            <div class="col-3">
                 {{ data.getTrackName(time.trackSlug) }}
             </div>
-            <div class="col-2" :class="{ bold: time.isCurrentRecord }">
+            <div class="col-2">
                 {{ data.getRecordType(time.recordType) }}
             </div>
-            <div
-                class="col-1"
-                :title="getNote(time)"
-                :class="{ bold: time.isCurrentRecord }"
-            >
+            <div class="col-1" :title="getNote(time)">
                 <div v-if="linkPresent(time.link)">
                     <a :href="time.link" target="_blank">{{
                         time.timeElapsed
                     }}</a>
                 </div>
-                <div v-else :class="{ bold: time.isCurrentRecord }">
+                <div v-else>
                     {{ time.timeElapsed }}
                 </div>
             </div>
-            <div class="col-2" :class="{ bold: time.isCurrentRecord }">
+            <div class="col-2">
                 {{ time.userDisplayName }}
             </div>
             <div class="col-2">
@@ -223,12 +228,11 @@ select {
     padding: 10px;
 }
 
-.bold {
-    /* color: rgb(158, 0, 0); */
-    font-weight: bold;
-}
-
 .subheader {
     padding: 5px;
+}
+.header-row {
+    margin-top: 25px;
+    margin-bottom: 5px;
 }
 </style>
