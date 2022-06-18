@@ -105,4 +105,10 @@ nav {
 .highlight {
     color: #42b983;
 }
+.clickable {
+    cursor: pointer;
+}
+.red {
+    color: rgb(172, 70, 70);
+}
 </style>

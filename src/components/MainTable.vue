@@ -25,7 +25,7 @@
                     </optgroup>
                 </select>
             </div>
-            <div class="col-3">
+            <div class="col">
                 <select
                     class="form-select"
                     aria-label="Default select example"
@@ -44,7 +44,7 @@
                 </select>
             </div>
 
-            <div class="col-3">
+            <div class="col">
                 <select
                     class="form-select"
                     aria-label="Default select example"
@@ -65,7 +65,7 @@
                     <!-- </li> -->
                 </select>
             </div>
-            <div class="col-3">
+            <div class="col">
                 <select
                     class="form-select"
                     aria-label="Default select example"
@@ -76,6 +76,14 @@
                     <option value="improvements">Record Improvements</option>
                 </select>
             </div>
+            <div class="col-1 red" v-if="filterOn">
+                <span
+                    @click="resetFilters()"
+                    class="material-symbols-outlined clickable"
+                >
+                    filter_list_off
+                </span>
+            </div>
         </div>
         <div class="row header-row bold">
             <div class="col-2">Date Recorded</div>
@@ -85,11 +93,6 @@
             <div class="col-2">Player</div>
             <div class="col-2">Notes</div>
         </div>
-        <!-- <div class="row">
-            <div class="col subheader">
-                Current records in <span class="bold">bold</span>
-            </div>
-        </div> -->
         <div
             class="row time-row"
             v-for="time in filteredData"
@@ -107,10 +110,16 @@
 
                 {{ time.created.toLocaleTimeString() }}
             </div>
-            <div class="col-3">
+            <div
+                class="col-3 clickable"
+                @click="setFilter('trackSlug', time.trackSlug)"
+            >
                 {{ data.getTrackName(time.trackSlug) }}
             </div>
-            <div class="col-2">
+            <div
+                class="col-2 clickable"
+                @click="setFilter('recordType', time.recordType)"
+            >
                 {{ data.getRecordType(time.recordType) }}
             </div>
             <div class="col-1" :title="getNote(time)">
@@ -123,7 +132,10 @@
                     {{ time.timeElapsed }}
                 </div>
             </div>
-            <div class="col-2">
+            <div
+                class="col-2 clickable"
+                @click="setFilter('userId', time.userId)"
+            >
                 {{ time.userDisplayName }}
             </div>
             <div class="col-2">
@@ -151,6 +163,14 @@ export default {
     },
     computed: {
         ...mapState(['data']),
+        filterOn() {
+            return (
+                this.filters.trackSlug ||
+                this.filters.recordType ||
+                this.filters.userId ||
+                this.filters.entryStatus
+            );
+        },
         filteredData() {
             let times = this.data.times;
 
@@ -195,6 +215,14 @@ export default {
         getNote(time) {
             return time.note || 'Empty note';
         },
+        resetFilters() {
+            for (const filter in this.filters) {
+                this.filters[filter] = '';
+            }
+        },
+        setFilter(filterId, filterValue) {
+            this.filters[filterId] = filterValue;
+        },
     },
 };
 </script>
@@ -234,5 +262,9 @@ select {
 .header-row {
     margin-top: 25px;
     margin-bottom: 5px;
+}
+
+.material-symbols-outlined {
+    margin-top: 3px;
 }
 </style>
