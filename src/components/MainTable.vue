@@ -264,7 +264,7 @@ select {
 }
 .header-row {
     margin-top: 25px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .material-symbols-outlined {
