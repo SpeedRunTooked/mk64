@@ -13,7 +13,7 @@
                     </div>
                 </div>
                 <div class="row badge-row text-start">
-                    <div class="col-5">
+                    <div class="col-5 highlight">
                         Current Records: {{ player.currentRecordTotal }}
                     </div>
                     <div class="col-7">

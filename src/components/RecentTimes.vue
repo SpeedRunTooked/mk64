@@ -35,10 +35,10 @@
             :key="time.created"
             :class="{ highlight: time.isCurrentRecord }"
         >
-            <div class="col-2">
-                {{ time.created.toLocaleDateString() }}
+            <div class="col-3">
+                {{ moment(time.created).fromNow() }}
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 {{ data.getTrackName(time.trackSlug) }}
             </div>
             <div class="col-2">
@@ -64,6 +64,7 @@
 <script>
 import { mapState } from 'vuex';
 import _ from 'lodash';
+import moment from 'moment';
 
 export default {
     data() {
@@ -72,6 +73,7 @@ export default {
                 entryStatus: '',
                 entries: 5,
             },
+            moment,
         };
     },
     computed: {
@@ -118,6 +120,6 @@ select {
 </style>
 <style scoped>
 .time-row {
-    padding: 2px;
+    padding: 2px 0;
 }
 </style>

@@ -107,8 +107,9 @@
                         day: '2-digit',
                     })
                 }}
+                <br />
 
-                {{ time.created.toLocaleTimeString() }}
+                {{ moment(time.created).fromNow() }}
             </div>
             <div
                 class="col-3 clickable"
@@ -148,6 +149,7 @@
 <script>
 import { mapState } from 'vuex';
 import _ from 'lodash';
+import moment from 'moment';
 
 export default {
     data() {
@@ -159,6 +161,7 @@ export default {
                 userId: '',
                 entryStatus: '',
             },
+            moment,
         };
     },
     computed: {
