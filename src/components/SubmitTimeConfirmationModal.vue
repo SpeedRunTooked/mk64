@@ -58,7 +58,7 @@
                 </div>
                 <div class="modal-footer">
                     <button
-                        v-if="!success"
+                        v-if="!uploading && !success"
                         type="button"
                         class="btn btn-danger"
                         data-bs-dismiss="modal"
@@ -67,7 +67,7 @@
                     </button>
 
                     <button
-                        v-if="!success"
+                        v-if="!uploading && !success"
                         type="button"
                         class="btn btn-primary"
                         @click="submitForm"
@@ -82,6 +82,14 @@
                         role="alert"
                     >
                         Your time has been submitted!
+                    </div>
+                    <div
+                        v-if="uploading"
+                        type="button"
+                        class="alert alert-warning"
+                        role="alert"
+                    >
+                        Uploading time, please wait...
                     </div>
                 </div>
             </div>
@@ -99,6 +107,7 @@ export default {
     data() {
         return {
             success: false,
+            uploading: false,
             TimeUtils,
         };
     },
@@ -113,6 +122,7 @@ export default {
     },
     methods: {
         async submitForm() {
+            this.uploading = true;
             const data = qs.stringify({
                 userId: this.formData.userId,
                 trackSlug: this.formData.trackSlug,
@@ -129,14 +139,21 @@ export default {
             const config = {
                 method: 'post',
                 url: 'https://us-central1-mk64-ad77f.cloudfunctions.net/addTime',
+                // url: 'http://localhost:5000/mk64-ad77f/us-central1/addTime',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 data: data,
             };
-            await axios(config);
-            console.log('Time submitted successfully!');
-            this.success = true;
+            try {
+                await axios(config);
+                console.log('Time submitted successfully!');
+                this.uploading = false;
+                this.success = true;
+            } catch (error) {
+                this.uploading = false;
+                console.log(error);
+            }
 
             this.$cookies.set('userId', this.formData.userId);
             this.$cookies.set('trackSlug', this.formData.trackSlug);
@@ -144,7 +161,7 @@ export default {
 
             setTimeout(() => {
                 window.location.reload();
-            }, 2000);
+            }, 1000);
         },
     },
 };
