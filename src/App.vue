@@ -112,6 +112,6 @@ nav {
     color: rgb(172, 70, 70);
 }
 .break-all {
-    word-break: break-all;
+    word-break: break-word;
 }
 </style>
