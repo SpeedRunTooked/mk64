@@ -139,7 +139,7 @@
             >
                 {{ time.userDisplayName }}
             </div>
-            <div class="col-2">
+            <div class="col-2 break-all">
                 {{ time.note }}
             </div>
         </div>
