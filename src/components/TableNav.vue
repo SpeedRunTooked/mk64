@@ -1,6 +1,6 @@
 <template>
     <div class="row text-center row-even pagination-buttons">
-        <div v-if="$parent" class="col-4 col-md-4">
+        <div class="col-4 col-md-4">
             Rows {{ $parent.firstRow }}-{{ $parent.lastRow }} of
             {{ $parent.totalRows }}
         </div>
@@ -46,6 +46,8 @@
         </div>
     </div>
 </template>
+
+<script></script>
 
 <style scoped>
 .pagination-buttons {
