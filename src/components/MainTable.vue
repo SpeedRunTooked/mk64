@@ -95,7 +95,7 @@
         </div>
         <div
             class="row time-row"
-            v-for="time in filteredData"
+            v-for="time in activeRows"
             :key="time.created"
             :class="{ highlight: time.isCurrentRecord }"
         >
@@ -143,6 +143,9 @@
                 {{ time.note }}
             </div>
         </div>
+        <div class="row">
+            <div class="col"><table-nav></table-nav></div>
+        </div>
     </div>
 </template>
 
@@ -150,8 +153,12 @@
 import { mapState } from 'vuex';
 import _ from 'lodash';
 import moment from 'moment';
+import TableNav from '@/components/TableNav.vue';
+import AbstractTable from '@/components/AbstractTable.vue';
 
 export default {
+    extends: AbstractTable,
+    components: { TableNav },
     data() {
         return {
             entries: 5,
@@ -174,7 +181,7 @@ export default {
                 this.filters.entryStatus
             );
         },
-        filteredData() {
+        rows() {
             let times = this.data.times;
 
             if (this.filters.trackSlug) {
@@ -222,9 +229,11 @@ export default {
             for (const filter in this.filters) {
                 this.filters[filter] = '';
             }
+            this.currentRow = 0;
         },
         setFilter(filterId, filterValue) {
             this.filters[filterId] = filterValue;
+            this.currentRow = 0;
         },
     },
 };
