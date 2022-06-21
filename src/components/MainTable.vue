@@ -247,7 +247,7 @@ select {
 }
 
 .section-container {
-    width: 800px;
+    width: 700px;
 }
 
 .filter-row {
