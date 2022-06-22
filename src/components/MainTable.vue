@@ -5,10 +5,9 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="filters.trackSlug"
+                    v-model="filters.subcategorySlug"
                 >
-                    <!-- <option value="" disabled selected>Select Track</option> -->
-                    <option value="">All Tracks</option>
+                    <option value="">All Subcategory</option>
 
                     <optgroup
                         v-for="(cup, key) in data.cups"
@@ -29,13 +28,13 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="filters.recordType"
+                    v-model="filters.categorySlug"
                 >
                     <!-- <option value="" disabled selected>Record Type</option> -->
                     <option value="">All Categories</option>
 
                     <option
-                        v-for="(type, key) in data.recordtypes"
+                        v-for="(type, key) in data.categories"
                         :value="type.slug"
                         :key="key"
                     >
@@ -87,7 +86,7 @@
         </div>
         <div class="row header-row bold">
             <div class="col-2">Date Recorded</div>
-            <div class="col-3">Track</div>
+            <div class="col-3">Subcategory</div>
             <div class="col-2">Category</div>
             <div class="col-1">Time</div>
             <div class="col-2">Player</div>
@@ -113,15 +112,15 @@
             </div>
             <div
                 class="col-3 clickable"
-                @click="setFilter('trackSlug', time.trackSlug)"
+                @click="setFilter('subcategorySlug', time.subcategorySlug)"
             >
-                {{ data.getTrackName(time.trackSlug) }}
+                {{ data.getSubcategoryName(time.subcategorySlug) }}
             </div>
             <div
                 class="col-2 clickable"
-                @click="setFilter('recordType', time.recordType)"
+                @click="setFilter('categorySlug', time.categorySlug)"
             >
-                {{ data.getRecordType(time.recordType) }}
+                {{ data.getcategorySlug(time.categorySlug) }}
             </div>
             <div class="col-1" :title="getNote(time)">
                 <div v-if="linkPresent(time.link)">
@@ -163,8 +162,8 @@ export default {
         return {
             entries: 5,
             filters: {
-                trackSlug: '',
-                recordType: '',
+                subcategorySlug: '',
+                categorySlug: '',
                 userId: '',
                 entryStatus: '',
             },
@@ -175,8 +174,8 @@ export default {
         ...mapState(['data']),
         filterOn() {
             return (
-                this.filters.trackSlug ||
-                this.filters.recordType ||
+                this.filters.subcategorySlug ||
+                this.filters.categorySlug ||
                 this.filters.userId ||
                 this.filters.entryStatus
             );
@@ -184,15 +183,15 @@ export default {
         rows() {
             let times = this.data.times;
 
-            if (this.filters.trackSlug) {
+            if (this.filters.subcategorySlug) {
                 times = _.filter(times, (x) => {
-                    return x.trackSlug === this.filters.trackSlug;
+                    return x.subcategorySlug === this.filters.subcategorySlug;
                 });
             }
 
-            if (this.filters.recordType) {
+            if (this.filters.categorySlug) {
                 times = _.filter(times, (x) => {
-                    return x.recordType === this.filters.recordType;
+                    return x.categorySlug === this.filters.categorySlug;
                 });
             }
 
