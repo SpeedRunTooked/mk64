@@ -39,10 +39,10 @@
                 {{ moment(time.created).fromNow() }}
             </div>
             <div class="col-3">
-                {{ data.getTrackName(time.trackSlug) }}
+                {{ data.getSubcategoryName(time.subcategorySlug) }}
             </div>
             <div class="col-2">
-                {{ data.getRecordType(time.recordType) }}
+                {{ data.getcategorySlug(time.categorySlug) }}
             </div>
             <div class="col-2" :title="getNote(time)">
                 <div v-if="linkPresent(time.link)">

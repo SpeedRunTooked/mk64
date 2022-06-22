@@ -3,16 +3,25 @@ declare module 'ApiTypes' {
         gamedata: GameData;
         users: Users;
         times: Times;
-        recordtypes: RecordType[];
+        categories: Category[];
     }
 
-    interface RecordType {
+    interface Category {
         slug: string;
         name: string;
+        subcategoryName: string;
+        subcategories: Subcategory[];
+    }
+
+    interface Subcategory {
+        group: string;
+        name: string;
+        slug: string;
     }
 
     interface GameData {
         cups: Cup[];
+        subcategoryGroups: SubcategoryGroup[];
     }
 
     interface Times {
@@ -24,18 +33,18 @@ declare module 'ApiTypes' {
         link: string;
         note: string;
         timeMs: string;
-        trackSlug: string;
-        type: string;
+        subcategorySlug: string;
+        categorySlug: string;
         userId: string;
     }
 
     interface Cup {
         name: string;
         slug: string;
-        tracks: Track[];
+        tracks: Subcategory[];
     }
 
-    interface Track {
+    interface SubcategoryGroup {
         name: string;
         slug: string;
     }

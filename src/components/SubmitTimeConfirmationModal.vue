@@ -27,15 +27,19 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4 left-col">Track:</div>
+                        <div class="col-4 left-col">Subcategory:</div>
                         <div class="col-8 right-col">
-                            {{ data.getTrackName(formData.trackSlug) }}
+                            {{
+                                data.getSubcategoryName(
+                                    formData.subcategorySlug,
+                                )
+                            }}
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-4 left-col">Record Type:</div>
+                        <div class="col-4 left-col">Category:</div>
                         <div class="col-8 right-col">
-                            {{ data.getRecordType(formData.type) }}
+                            {{ data.getcategorySlug(formData.categorySlug) }}
                         </div>
                     </div>
                     <div class="row">
@@ -125,7 +129,7 @@ export default {
             this.uploading = true;
             const data = qs.stringify({
                 userId: this.formData.userId,
-                trackSlug: this.formData.trackSlug,
+                subcategorySlug: this.formData.subcategorySlug,
                 timeMs: TimeUtils.elapsedTimeToMs(
                     `${this.formData.time.min || 0}'${
                         this.formData.time.sec || 0
@@ -133,13 +137,13 @@ export default {
                 ),
                 link: this.formData.link,
                 notes: this.formData.notes,
-                type: this.formData.type,
+                categorySlug: this.formData.categorySlug,
             });
 
             const config = {
                 method: 'post',
-                url: 'https://us-central1-mk64-ad77f.cloudfunctions.net/addTime',
-                // url: 'http://localhost:5000/mk64-ad77f/us-central1/addTime',
+                // url: 'https://us-central1-mk64-ad77f.cloudfunctions.net/addTime',
+                url: 'http://localhost:5001/mk64-ad77f/us-central1/addTime',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
@@ -150,18 +154,20 @@ export default {
                 console.log('Time submitted successfully!');
                 this.uploading = false;
                 this.success = true;
+                this.$cookies.set('userId', this.formData.userId);
+                this.$cookies.set(
+                    'subcategorySlug',
+                    this.formData.subcategorySlug,
+                );
+                this.$cookies.set('categorySlug', this.formData.categorySlug);
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             } catch (error) {
                 this.uploading = false;
                 console.log(error);
             }
-
-            this.$cookies.set('userId', this.formData.userId);
-            this.$cookies.set('trackSlug', this.formData.trackSlug);
-            this.$cookies.set('type', this.formData.type);
-
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
         },
     },
 };

@@ -2,17 +2,18 @@ import { createStore } from 'vuex';
 import axios from 'axios';
 import { ApiData } from '@/ApiData';
 
-const ROOT_URL = 'https://mk64-ad77f-default-rtdb.firebaseio.com/';
+const ROOT_URL = 'https://mk64-ad77f-default-rtdb.firebaseio.com/db/';
 
 export default createStore({
     state: {
         data: new ApiData({
             gamedata: {
                 cups: [],
+                subcategoryGroups: [],
             },
             users: {},
             times: {},
-            recordtypes: [],
+            categories: [],
         }),
     },
     getters: {},

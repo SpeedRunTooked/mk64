@@ -26,8 +26,12 @@
                         Total Submissions: {{ player.times.length }}
                     </div>
                     <div class="col-7">
-                        Favorite Track:
-                        {{ data.getTrackName(player.getFavoriteTrack()) }}
+                        Favorite Subcategory:
+                        {{
+                            data.getSubcategoryName(
+                                player.getFavoriteSubcategory(),
+                            )
+                        }}
                     </div>
                 </div>
             </div>

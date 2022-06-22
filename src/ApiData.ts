@@ -1,4 +1,4 @@
-import { FirebaseData, Track } from 'ApiTypes';
+import { FirebaseData, Subcategory, Time } from 'ApiTypes';
 import { TimeUtils } from './utils/TimeUtils';
 import _ from 'lodash';
 import { PlayerStats } from './PlayerStats';
@@ -8,11 +8,11 @@ export interface TimeEntry {
     userDisplayName: string;
     created: Date;
     link: string;
-    trackSlug: string;
+    subcategorySlug: string;
     timeMs: number;
     timeElapsed: string;
     note: string;
-    recordType: string;
+    categorySlug: string;
     timeId: string;
     isCurrentRecord: boolean;
     isRecordImprovement: boolean;
@@ -20,7 +20,7 @@ export interface TimeEntry {
 
 export class ApiData {
     public api;
-    public tracks: Track[] = [];
+    public subcategories: Subcategory[] = [];
     public times: TimeEntry[] = [];
     public playerStats: PlayerStats[] = [];
 
@@ -29,10 +29,10 @@ export class ApiData {
             gamedata: data?.gamedata || {},
             users: data?.users || {},
             times: data?.times || {},
-            recordtypes: data?.recordtypes || {},
+            categories: data?.categories || {},
         };
         if (data) {
-            this.buildTrackList(data);
+            this.buildSubcategory(data);
             this.buildTimes(data);
             this.buildCurrentRecords();
             this.buildRecordImprovements();
@@ -44,13 +44,15 @@ export class ApiData {
         return this.users[userId]?.displayName;
     }
 
-    public getTrackName(trackSlug: string) {
-        if (trackSlug === 'none') return 'None yet!';
-        return this.tracks.find((track) => track.slug === trackSlug)?.name;
+    public getSubcategoryName(subcategorySlug: string) {
+        if (subcategorySlug === 'none') return 'None yet!';
+        return this.subcategories.find(
+            (subcategory) => subcategory.slug === subcategorySlug,
+        )?.name;
     }
 
-    public getRecordType(recordSlug: string) {
-        for (const type of this.recordtypes) {
+    public getcategorySlug(recordSlug: string) {
+        for (const type of this.categories) {
             if (type.slug === recordSlug) return type.name;
         }
         return '';
@@ -68,8 +70,8 @@ export class ApiData {
     public isRecord(time: TimeEntry) {
         const times = this.times.filter((x) => {
             return (
-                x.trackSlug === time.trackSlug &&
-                x.recordType === time.recordType
+                x.subcategorySlug === time.subcategorySlug &&
+                x.categorySlug === time.categorySlug
             );
         });
 
@@ -79,15 +81,17 @@ export class ApiData {
         return time.timeId === record.timeId;
     }
 
-    public getRecord(trackSlug: string, recordType: string): TimeEntry {
+    public getRecord(subcategorySlug: string, categorySlug: string): TimeEntry {
         const times = _.filter(
             this.times,
-            (x) => x.trackSlug === trackSlug && x.recordType === recordType,
+            (x) =>
+                x.subcategorySlug === subcategorySlug &&
+                x.categorySlug === categorySlug,
         );
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
     }
 
-    private buildTrackList(data: FirebaseData) {
+    private buildSubcategory(data: FirebaseData) {
         const result = [];
         const cups = data.gamedata.cups;
         for (const cup of cups) {
@@ -95,7 +99,7 @@ export class ApiData {
                 result.push(track);
             }
         }
-        this.tracks = result;
+        this.subcategories = result;
     }
 
     private buildPlayerStats() {
@@ -112,17 +116,17 @@ export class ApiData {
         const result = [];
         const times = data.times;
         for (const timeKey in times) {
-            const time = times[timeKey];
+            const time: Time = times[timeKey];
             result.push({
                 userId: time.userId,
                 userDisplayName: this.getUserDisplayName(time.userId),
                 created: new Date(time.created),
                 link: time.link,
-                trackSlug: time.trackSlug,
+                subcategorySlug: time.subcategorySlug,
                 timeMs: Number(time.timeMs),
                 timeElapsed: TimeUtils.msToElapsedTime(Number(time.timeMs)),
                 note: time.note,
-                recordType: time.type,
+                categorySlug: time.categorySlug,
                 timeId: timeKey,
                 isCurrentRecord: false,
                 isRecordImprovement: false,
@@ -135,7 +139,7 @@ export class ApiData {
         const sorted = _.orderBy(this.times, ['timeMs'], ['asc']);
         const recordArr: string[] = [];
         for (const time of sorted) {
-            const key = time.recordType + time.trackSlug;
+            const key = time.categorySlug + time.subcategorySlug;
             if (recordArr.indexOf(key) === -1) {
                 time.isCurrentRecord = true;
                 recordArr.push(key);
@@ -147,7 +151,7 @@ export class ApiData {
         const sorted = _.orderBy(this.times, ['created'], ['asc']);
         const recordMap: { [key: string]: number } = {};
         for (const time of sorted) {
-            const key = time.recordType + time.trackSlug;
+            const key = time.categorySlug + time.subcategorySlug;
             if (!recordMap[key]) {
                 time.isRecordImprovement = true;
                 recordMap[key] = time.timeMs;
@@ -166,7 +170,7 @@ export class ApiData {
     get users() {
         return this.api.users;
     }
-    get recordtypes() {
-        return this.api.recordtypes;
+    get categories() {
+        return this.api.categories;
     }
 }

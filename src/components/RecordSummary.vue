@@ -10,9 +10,9 @@
             </div>
 
             <div v-for="track in cup.tracks" :key="track.slug">
-                <div class="row track-row">
+                <div class="row subcategory-row">
                     <div class="col-1"></div>
-                    <div class="col-3 track-name text-start">
+                    <div class="col-3 subcateogory-name text-start">
                         {{ track.name }}
                     </div>
 
@@ -60,11 +60,7 @@ export default {
 </script>
 
 <style scoped>
-.track-name {
-    /* padding-left: 30px; */
-}
-
-.track-row {
+.subcategory-row {
     margin-top: 20px;
 }
 

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { TimeEntry } from './ApiData';
 
-export interface TrackStat {
-    trackSlug: string;
+export interface SubcategoryStat {
+    subcategorySlug: string;
     totalTimes: number;
 }
 
@@ -11,12 +11,12 @@ export class PlayerStats {
     public currentRecordTotal = 0;
     public recordImprovements: TimeEntry[] = [];
     public recordImprovementTotal = 0;
-    public trackMap: { [key: string]: number } = {};
-    public trackStats: TrackStat[] = [];
+    public subcategoryMap: { [key: string]: number } = {};
+    public subcategoryStats: SubcategoryStat[] = [];
 
     constructor(public playerId: string, public times: TimeEntry[]) {
         this.buildRecords();
-        this.buildTrackMap();
+        this.buildSubcategoryMap();
     }
 
     private buildRecords(): void {
@@ -29,34 +29,40 @@ export class PlayerStats {
         this.recordImprovementTotal = this.recordImprovements.length;
     }
 
-    private buildTrackMap(): void {
+    private buildSubcategoryMap(): void {
         for (const time of this.times) {
-            if (this.trackMap[time.trackSlug]) {
-                this.trackMap[time.trackSlug] =
-                    this.trackMap[time.trackSlug] + 1;
+            if (this.subcategoryMap[time.subcategorySlug]) {
+                this.subcategoryMap[time.subcategorySlug] =
+                    this.subcategoryMap[time.subcategorySlug] + 1;
             } else {
-                this.trackMap[time.trackSlug] = 1;
+                this.subcategoryMap[time.subcategorySlug] = 1;
             }
         }
-        const trackStatsArr = [];
-        for (const track in this.trackMap) {
-            trackStatsArr.push({
-                trackSlug: track,
-                totalTimes: this.trackMap[track],
+        const subcategoryStatsArr = [];
+        for (const subcategory in this.subcategoryMap) {
+            subcategoryStatsArr.push({
+                subcategorySlug: subcategory,
+                totalTimes: this.subcategoryMap[subcategory],
             });
         }
-        this.trackStats = trackStatsArr;
+        this.subcategoryStats = subcategoryStatsArr;
     }
 
-    public getRecord(trackSlug: string, recordType: string): TimeEntry | null {
+    public getRecord(
+        subcategorySlug: string,
+        categorySlug: string,
+    ): TimeEntry | null {
         const filtered = this.times.filter((x) => {
-            return x.trackSlug === trackSlug && x.recordType === recordType;
+            return (
+                x.subcategorySlug === subcategorySlug &&
+                x.categorySlug === categorySlug
+            );
         });
         return _.minBy(filtered, 'timeMs') || null;
     }
 
-    public getFavoriteTrack(): string {
-        const track = _.maxBy(this.trackStats, 'totalTimes');
-        return track?.trackSlug || 'none';
+    public getFavoriteSubcategory(): string {
+        const subcategory = _.maxBy(this.subcategoryStats, 'totalTimes');
+        return subcategory?.subcategorySlug || 'none';
     }
 }

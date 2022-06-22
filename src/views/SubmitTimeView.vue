@@ -30,10 +30,10 @@
                         <select
                             class="form-select"
                             aria-label="Default select example"
-                            v-model="formData.trackSlug"
+                            v-model="formData.subcategorySlug"
                         >
                             <option value="" disabled selected>
-                                Select Track
+                                Select Subcategory
                             </option>
 
                             <optgroup
@@ -55,23 +55,21 @@
                         <select
                             class="form-select"
                             aria-label="Default select example"
-                            v-model="formData.type"
+                            v-model="formData.categorySlug"
                         >
-                            <option value="" disabled selected>
-                                Record Type
-                            </option>
+                            <option value="" disabled selected>Category</option>
 
                             <option
-                                v-for="(type, key) in data.recordtypes"
-                                :value="type.slug"
+                                v-for="(cateogry, key) in data.categories"
+                                :value="cateogry.slug"
                                 :key="key"
                             >
-                                {{ type.name }}
+                                {{ cateogry.name }}
                             </option>
                         </select>
                     </div>
 
-                    <div v-if="trackAndTypeSelected" class="mb-4">
+                    <div v-if="categoryAndSubcategorySelected" class="mb-4">
                         <div class="row reference-row">
                             <div class="col">
                                 Record Time:<br />
@@ -81,7 +79,7 @@
                                 }}</span>
                             </div>
                             <div
-                                v-if="trackAndTypeAndPlayerSelected"
+                                v-if="categoryAndSubcategoryAndPlayerSelected"
                                 class="col"
                             >
                                 Your Best Time: {{ playerRecord }}
@@ -189,7 +187,7 @@ export default defineComponent({
         ...mapState(['data']),
         ready() {
             return (
-                this.trackAndTypeAndPlayerSelected &&
+                this.categoryAndSubcategoryAndPlayerSelected &&
                 this.formData.time.sec &&
                 String(this.formData.time.ms).length === 2 &&
                 this.formData.link
@@ -202,40 +200,40 @@ export default defineComponent({
             );
         },
         currentRecord() {
-            if (this.trackAndTypeSelected) {
+            if (this.categoryAndSubcategorySelected) {
                 return this.data.getRecord(
-                    this.formData.trackSlug,
-                    this.formData.type,
+                    this.formData.subcategorySlug,
+                    this.formData.categorySlug,
                 );
             }
             return null;
         },
         playerRecord() {
-            if (this.trackAndTypeAndPlayerSelected) {
+            if (this.categoryAndSubcategoryAndPlayerSelected) {
                 const stats = this.data.getPlayerStats(this.formData.userId);
                 if (stats) {
                     return (
                         stats.getRecord(
-                            this.formData.trackSlug,
-                            this.formData.type,
+                            this.formData.subcategorySlug,
+                            this.formData.categorySlug,
                         )?.timeElapsed || 'None yet!'
                     );
                 }
             }
             return 'None yet!';
         },
-        trackAndTypeSelected() {
-            return this.formData.trackSlug && this.formData.type;
+        categoryAndSubcategorySelected() {
+            return this.formData.subcategorySlug && this.formData.categorySlug;
         },
-        trackAndTypeAndPlayerSelected() {
-            return this.trackAndTypeSelected && this.formData.userId;
+        categoryAndSubcategoryAndPlayerSelected() {
+            return this.categoryAndSubcategorySelected && this.formData.userId;
         },
     },
     data() {
         return {
             formData: {
                 userId: this.$cookies.get('userId') || '',
-                trackSlug: this.$cookies.get('trackSlug') || '',
+                subcategorySlug: this.$cookies.get('subcategorySlug') || '',
                 time: {
                     min: '',
                     sec: '',
@@ -243,7 +241,7 @@ export default defineComponent({
                 },
                 link: '',
                 notes: '',
-                type: this.$cookies.get('type') || '',
+                categorySlug: this.$cookies.get('categorySlug') || '',
             },
         };
     },
