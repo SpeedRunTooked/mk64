@@ -6,6 +6,7 @@
                     class="form-select"
                     aria-label="Default select example"
                     v-model="filters.subcategorySlug"
+                    @change="resetRows()"
                 >
                     <option value="">All Subcategory</option>
 
@@ -29,6 +30,7 @@
                     class="form-select"
                     aria-label="Default select example"
                     v-model="filters.categorySlug"
+                    @change="resetRows()"
                 >
                     <!-- <option value="" disabled selected>Record Type</option> -->
                     <option value="">All Categories</option>
@@ -48,6 +50,7 @@
                     class="form-select"
                     aria-label="Default select example"
                     v-model="filters.userId"
+                    @change="resetRows()"
                 >
                     <!-- <option value="" disabled selected>
                                 Select Player
@@ -69,6 +72,7 @@
                     class="form-select"
                     aria-label="Default select example"
                     v-model="filters.entryStatus"
+                    @change="resetRows()"
                 >
                     <option value="" selected>All Times</option>
                     <option value="current">Current Records</option>
@@ -228,10 +232,13 @@ export default {
             for (const filter in this.filters) {
                 this.filters[filter] = '';
             }
-            this.currentRow = 0;
+            this.resetRows();
         },
         setFilter(filterId, filterValue) {
             this.filters[filterId] = filterValue;
+            this.resetRows();
+        },
+        resetRows() {
             this.currentRow = 0;
         },
     },
