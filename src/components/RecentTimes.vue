@@ -1,7 +1,7 @@
 <template>
     <div class="section-container mx-auto">
-        <div class="row">
-            <div class="col-5 section-header">Recent Times</div>
+        <div class="row section-header">
+            <div class="col-5">Recent Times</div>
             <div class="col-5 align-end">
                 <div class="select-wrapper status">
                     <select
@@ -113,7 +113,6 @@ export default {
 
 <style scoped>
 select {
-    /* width: 150px; */
     float: right;
 }
 

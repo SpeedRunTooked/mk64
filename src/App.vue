@@ -72,7 +72,7 @@ nav {
     text-align: left;
     font-size: 18px;
     margin-bottom: 0px;
-    padding: 50px 0 30px 0;
+    padding: 50px 0 20px 0;
 }
 
 .section-container {
