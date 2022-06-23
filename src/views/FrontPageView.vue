@@ -1,7 +1,6 @@
 <template>
     <div class="front-page">
         <recent-times></recent-times>
-        <div class="spacer"></div>
         <record-summary></record-summary>
     </div>
 </template>

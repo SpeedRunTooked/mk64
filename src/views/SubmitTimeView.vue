@@ -60,11 +60,11 @@
                             <option value="" disabled selected>Category</option>
 
                             <option
-                                v-for="(cateogry, key) in data.categories"
-                                :value="cateogry.slug"
+                                v-for="(category, key) in data.categories"
+                                :value="category.slug"
                                 :key="key"
                             >
-                                {{ cateogry.name }}
+                                {{ category.name }}
                             </option>
                         </select>
                     </div>
@@ -171,10 +171,11 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapState } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
 import SubmitTimeConfirmationModal from '@/components/SubmitTimeConfirmationModal.vue';
+import { TimeEntry } from '@/ApiData';
 
 export default defineComponent({
     name: 'SubmitTimeView',
@@ -185,21 +186,21 @@ export default defineComponent({
     // setup() {},
     computed: {
         ...mapState(['data']),
-        ready() {
+        ready(): boolean {
             return (
                 this.categoryAndSubcategoryAndPlayerSelected &&
-                this.formData.time.sec &&
+                this.formData.time.sec !== '' &&
                 String(this.formData.time.ms).length === 2 &&
-                this.formData.link
+                this.formData.link !== ''
             );
         },
-        msError() {
+        msError(): boolean {
             return (
-                this.formData.time.ms &&
+                this.formData.time.ms !== '' &&
                 String(this.formData.time.ms).length !== 2
             );
         },
-        currentRecord() {
+        currentRecord(): TimeEntry | null {
             if (this.categoryAndSubcategorySelected) {
                 return this.data.getRecord(
                     this.formData.subcategorySlug,
@@ -208,7 +209,7 @@ export default defineComponent({
             }
             return null;
         },
-        playerRecord() {
+        playerRecord(): string {
             if (this.categoryAndSubcategoryAndPlayerSelected) {
                 const stats = this.data.getPlayerStats(this.formData.userId);
                 if (stats) {
@@ -222,10 +223,10 @@ export default defineComponent({
             }
             return 'None yet!';
         },
-        categoryAndSubcategorySelected() {
+        categoryAndSubcategorySelected(): boolean {
             return this.formData.subcategorySlug && this.formData.categorySlug;
         },
-        categoryAndSubcategoryAndPlayerSelected() {
+        categoryAndSubcategoryAndPlayerSelected(): boolean {
             return this.categoryAndSubcategorySelected && this.formData.userId;
         },
     },

@@ -1,4 +1,4 @@
-import { FirebaseData, Subcategory, Time } from 'ApiTypes';
+import { Category, FirebaseData, Time, Users } from 'ApiTypes';
 import { TimeUtils } from './utils/TimeUtils';
 import _ from 'lodash';
 import { PlayerStats } from './PlayerStats';
@@ -20,7 +20,6 @@ export interface TimeEntry {
 
 export class ApiData {
     public api;
-    public subcategories: Subcategory[] = [];
     public times: TimeEntry[] = [];
     public playerStats: PlayerStats[] = [];
 
@@ -32,7 +31,6 @@ export class ApiData {
             categories: data?.categories || {},
         };
         if (data) {
-            this.buildSubcategory(data);
             this.buildTimes(data);
             this.buildCurrentRecords();
             this.buildRecordImprovements();
@@ -40,25 +38,32 @@ export class ApiData {
         }
     }
 
-    public getUserDisplayName(userId: string) {
+    public getUserDisplayName(userId: string): string {
         return this.users[userId]?.displayName;
     }
 
-    public getSubcategoryName(subcategorySlug: string) {
-        if (subcategorySlug === 'none') return 'None yet!';
-        return this.subcategories.find(
-            (subcategory) => subcategory.slug === subcategorySlug,
-        )?.name;
+    public getSubcategoryName(
+        categorySlug: string,
+        subcategorySlug: string,
+    ): string {
+        const subcategories = this.categories.find(
+            (category) => category.slug === categorySlug,
+        )?.subcategories;
+        return (
+            subcategories?.find(
+                (subcategory) => subcategory.slug === subcategorySlug,
+            )?.name || ''
+        );
     }
 
-    public getcategorySlug(recordSlug: string) {
+    public getcategorySlug(recordSlug: string): string {
         for (const type of this.categories) {
             if (type.slug === recordSlug) return type.name;
         }
         return '';
     }
 
-    public getRecentTimes(num: number) {
+    public getRecentTimes(num: number): TimeEntry[] {
         const sorted = _.orderBy(this.times, ['created'], ['desc']);
         return sorted.slice(0, num);
     }
@@ -67,7 +72,7 @@ export class ApiData {
         return this.playerStats.filter((x) => x.playerId === userId)[0] || null;
     }
 
-    public isRecord(time: TimeEntry) {
+    public isRecord(time: TimeEntry): boolean {
         const times = this.times.filter((x) => {
             return (
                 x.subcategorySlug === time.subcategorySlug &&
@@ -91,18 +96,7 @@ export class ApiData {
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
     }
 
-    private buildSubcategory(data: FirebaseData) {
-        const result = [];
-        const cups = data.gamedata.cups;
-        for (const cup of cups) {
-            for (const track of cup.tracks) {
-                result.push(track);
-            }
-        }
-        this.subcategories = result;
-    }
-
-    private buildPlayerStats() {
+    private buildPlayerStats(): void {
         for (const user in this.api.users) {
             const player = new PlayerStats(
                 user,
@@ -112,7 +106,7 @@ export class ApiData {
         }
     }
 
-    private buildTimes(data: FirebaseData) {
+    private buildTimes(data: FirebaseData): void {
         const result = [];
         const times = data.times;
         for (const timeKey in times) {
@@ -135,7 +129,7 @@ export class ApiData {
         this.times = result.reverse();
     }
 
-    private buildCurrentRecords() {
+    private buildCurrentRecords(): void {
         const sorted = _.orderBy(this.times, ['timeMs'], ['asc']);
         const recordArr: string[] = [];
         for (const time of sorted) {
@@ -147,7 +141,7 @@ export class ApiData {
         }
     }
 
-    private buildRecordImprovements() {
+    private buildRecordImprovements(): void {
         const sorted = _.orderBy(this.times, ['created'], ['asc']);
         const recordMap: { [key: string]: number } = {};
         for (const time of sorted) {
@@ -164,13 +158,10 @@ export class ApiData {
         }
     }
 
-    get cups() {
-        return this.api.gamedata.cups;
-    }
-    get users() {
+    get users(): Users {
         return this.api.users;
     }
-    get categories() {
-        return this.api.categories;
+    get categories(): Category[] {
+        return _.sortBy(this.api.categories, ['displayOrder']);
     }
 }

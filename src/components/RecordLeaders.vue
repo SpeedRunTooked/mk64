@@ -27,11 +27,7 @@
                     </div>
                     <div class="col-7">
                         Favorite Subcategory:
-                        {{
-                            data.getSubcategoryName(
-                                player.getFavoriteSubcategory(),
-                            )
-                        }}
+                        {{ displayFavoriteSubcategory('flap', player) }}
                     </div>
                 </div>
             </div>
@@ -58,6 +54,15 @@ export default {
                 ['desc'],
             );
             return second;
+        },
+    },
+    methods: {
+        displayFavoriteSubcategory(category, player) {
+            const fav = this.data.getSubcategoryName(
+                category,
+                player.getFavoriteSubcategory(),
+            );
+            return fav === '' ? 'None yet!' : fav;
         },
     },
 };

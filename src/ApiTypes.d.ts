@@ -11,6 +11,7 @@ declare module 'ApiTypes' {
         name: string;
         subcategoryName: string;
         subcategories: Subcategory[];
+        displayOrder: number;
     }
 
     interface Subcategory {
@@ -20,7 +21,6 @@ declare module 'ApiTypes' {
     }
 
     interface GameData {
-        cups: Cup[];
         subcategoryGroups: SubcategoryGroup[];
     }
 
@@ -38,15 +38,10 @@ declare module 'ApiTypes' {
         userId: string;
     }
 
-    interface Cup {
-        name: string;
-        slug: string;
-        tracks: Subcategory[];
-    }
-
     interface SubcategoryGroup {
         name: string;
         slug: string;
+        displayOrder: number;
     }
 
     interface Users {

@@ -1,5 +1,5 @@
 export class TimeUtils {
-    public static zeroPad(num: number, places: number) {
+    public static zeroPad(num: number, places: number): string {
         return String(num).padStart(places, '0');
     }
     public static msToElapsedTime(ms: number): string {

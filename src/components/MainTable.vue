@@ -118,7 +118,12 @@
                 class="col-3 clickable"
                 @click="setFilter('subcategorySlug', time.subcategorySlug)"
             >
-                {{ data.getSubcategoryName(time.subcategorySlug) }}
+                {{
+                    data.getSubcategoryName(
+                        time.categorySlug,
+                        time.subcategorySlug,
+                    )
+                }}
             </div>
             <div
                 class="col-2 clickable"

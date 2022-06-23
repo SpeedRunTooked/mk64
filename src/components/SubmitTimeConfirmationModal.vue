@@ -31,6 +31,7 @@
                         <div class="col-8 right-col">
                             {{
                                 data.getSubcategoryName(
+                                    formData.categorySlug,
                                     formData.subcategorySlug,
                                 )
                             }}

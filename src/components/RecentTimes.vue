@@ -39,7 +39,12 @@
                 {{ moment(time.created).fromNow() }}
             </div>
             <div class="col-3">
-                {{ data.getSubcategoryName(time.subcategorySlug) }}
+                {{
+                    data.getSubcategoryName(
+                        time.categorySlug,
+                        time.subcategorySlug,
+                    )
+                }}
             </div>
             <div class="col-2">
                 {{ data.getcategorySlug(time.categorySlug) }}
