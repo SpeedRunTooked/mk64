@@ -1,34 +1,34 @@
 declare module 'ApiTypes' {
-    interface FirebaseData {
-        gamedata: GameData;
-        users: Users;
-        times: Times;
-        categories: Category[];
+    interface DataJSON {
+        gamedata: GameDataJSON;
+        users: UsersJSON;
+        times: TimesJSON;
+        categories: CategoryJSON[];
     }
 
-    interface Category {
+    interface CategoryJSON {
         slug: string;
         name: string;
         subcategoryName: string;
-        subcategories: Subcategory[];
+        subcategories: SubcategoryJSON[];
         displayOrder: number;
     }
 
-    interface Subcategory {
+    interface SubcategoryJSON {
         group: string;
         name: string;
         slug: string;
     }
 
-    interface GameData {
-        subcategoryGroups: SubcategoryGroup[];
+    interface GameDataJSON {
+        subcategoryGroups: SubcategoryGroupJSON[];
     }
 
-    interface Times {
-        [key: string]: Time;
+    interface TimesJSON {
+        [key: string]: TimeJSON;
     }
 
-    interface Time {
+    interface TimeJSON {
         created: string;
         link: string;
         note: string;
@@ -38,17 +38,17 @@ declare module 'ApiTypes' {
         userId: string;
     }
 
-    interface SubcategoryGroup {
+    interface SubcategoryGroupJSON {
         name: string;
         slug: string;
         displayOrder: number;
     }
 
-    interface Users {
-        [key: string]: User;
+    interface UsersJSON {
+        [key: string]: UserJSON;
     }
 
-    interface User {
+    interface UserJSON {
         created: string;
         displayName: string;
     }

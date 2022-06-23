@@ -175,7 +175,7 @@
 import { mapState } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
 import SubmitTimeConfirmationModal from '@/components/SubmitTimeConfirmationModal.vue';
-import { TimeEntry } from '@/ApiData';
+import { Time } from '@/game/Time';
 
 export default defineComponent({
     name: 'SubmitTimeView',
@@ -200,7 +200,7 @@ export default defineComponent({
                 String(this.formData.time.ms).length !== 2
             );
         },
-        currentRecord(): TimeEntry | null {
+        currentRecord(): Time | null {
             if (this.categoryAndSubcategorySelected) {
                 return this.data.getRecord(
                     this.formData.subcategorySlug,

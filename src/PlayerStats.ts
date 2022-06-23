@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { TimeEntry } from './ApiData';
+import { Time } from './game/Time';
 
 export interface SubcategoryStat {
     subcategorySlug: string;
@@ -7,14 +7,14 @@ export interface SubcategoryStat {
 }
 
 export class PlayerStats {
-    public currentRecords: TimeEntry[] = [];
+    public currentRecords: Time[] = [];
     public currentRecordTotal = 0;
-    public recordImprovements: TimeEntry[] = [];
+    public recordImprovements: Time[] = [];
     public recordImprovementTotal = 0;
     public subcategoryMap: { [key: string]: number } = {};
     public subcategoryStats: SubcategoryStat[] = [];
 
-    constructor(public playerId: string, public times: TimeEntry[]) {
+    constructor(public playerId: string, public times: Time[]) {
         this.buildRecords();
         this.buildSubcategoryMap();
     }
@@ -51,7 +51,7 @@ export class PlayerStats {
     public getRecord(
         subcategorySlug: string,
         categorySlug: string,
-    ): TimeEntry | null {
+    ): Time | null {
         const filtered = this.times.filter((x) => {
             return (
                 x.subcategorySlug === subcategorySlug &&

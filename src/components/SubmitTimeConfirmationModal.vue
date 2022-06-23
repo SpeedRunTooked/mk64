@@ -47,7 +47,7 @@
                         <div class="col-4 left-col">Time:</div>
                         <div class="col-8 right-col">
                             {{ formData.time.min || '0' }}'{{
-                                TimeUtils.zeroPad(formData.time.sec, 2) || '00'
+                                Time.zeroPad(formData.time.sec, 2) || '00'
                             }}"{{ formData.time.ms || '00' }}
                         </div>
                     </div>
@@ -106,14 +106,13 @@
 import { mapState } from 'vuex';
 import axios from 'axios';
 import qs from 'qs';
-import { TimeUtils } from '@/utils/TimeUtils';
-
+import { Time } from '@/game/Time';
 export default {
     data() {
         return {
             success: false,
             uploading: false,
-            TimeUtils,
+            Time,
         };
     },
     props: {
@@ -131,7 +130,7 @@ export default {
             const data = qs.stringify({
                 userId: this.formData.userId,
                 subcategorySlug: this.formData.subcategorySlug,
-                timeMs: TimeUtils.elapsedTimeToMs(
+                timeMs: this.Time.elapsedTimeToMs(
                     `${this.formData.time.min || 0}'${
                         this.formData.time.sec || 0
                     }"${this.formData.time.ms || 0}'`,

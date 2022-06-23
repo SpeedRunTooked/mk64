@@ -35,16 +35,10 @@
         >
             <div class="col">{{ subcategory.name }}</div>
             <div class="col">
-                {{
-                    data.getRecord(subcategory.slug, selectedCategory.slug)
-                        ?.timeElapsed
-                }}
+                {{ getElapsedTime(subcategory) }}
             </div>
             <div class="col">
-                {{
-                    data.getRecord(subcategory.slug, selectedCategory.slug)
-                        ?.userDisplayName
-                }}
+                {{ getPlayerDisplayName(subcategory) }}
             </div>
         </div>
     </div>
@@ -72,6 +66,22 @@ export default {
                     (x) => x.slug === this.categorySlug,
                 ) || ''
             );
+        },
+    },
+    methods: {
+        getElapsedTime(subcategory) {
+            const time = this.data.getRecord(
+                subcategory.slug,
+                this.selectedCategory.slug,
+            )?.timeElapsed;
+            return time || 'None yet!';
+        },
+        getPlayerDisplayName(subcategory) {
+            const name = this.data.getRecord(
+                subcategory.slug,
+                this.selectedCategory.slug,
+            )?.userDisplayName;
+            return name || 'None yet!';
         },
     },
 };

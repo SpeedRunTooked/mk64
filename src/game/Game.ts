@@ -1,29 +1,14 @@
-import { Category, FirebaseData, Time, Users } from 'ApiTypes';
-import { TimeUtils } from './utils/TimeUtils';
 import _ from 'lodash';
-import { PlayerStats } from './PlayerStats';
+import { PlayerStats } from '../PlayerStats';
+import { CategoryJSON, DataJSON, TimeJSON, UsersJSON } from 'ApiTypes';
+import { Time } from './Time';
 
-export interface TimeEntry {
-    userId: string;
-    userDisplayName: string;
-    created: Date;
-    link: string;
-    subcategorySlug: string;
-    timeMs: number;
-    timeElapsed: string;
-    note: string;
-    categorySlug: string;
-    timeId: string;
-    isCurrentRecord: boolean;
-    isRecordImprovement: boolean;
-}
-
-export class ApiData {
+export class Game {
     public api;
-    public times: TimeEntry[] = [];
+    public times: Time[] = [];
     public playerStats: PlayerStats[] = [];
 
-    constructor(data: FirebaseData) {
+    constructor(data: DataJSON) {
         this.api = {
             gamedata: data?.gamedata || {},
             users: data?.users || {},
@@ -63,7 +48,7 @@ export class ApiData {
         return '';
     }
 
-    public getRecentTimes(num: number): TimeEntry[] {
+    public getRecentTimes(num: number): Time[] {
         const sorted = _.orderBy(this.times, ['created'], ['desc']);
         return sorted.slice(0, num);
     }
@@ -72,7 +57,7 @@ export class ApiData {
         return this.playerStats.filter((x) => x.playerId === userId)[0] || null;
     }
 
-    public isRecord(time: TimeEntry): boolean {
+    public isRecord(time: Time): boolean {
         const times = this.times.filter((x) => {
             return (
                 x.subcategorySlug === time.subcategorySlug &&
@@ -82,11 +67,11 @@ export class ApiData {
 
         if (times.length === 0) return true;
 
-        const record = _.minBy(times, 'timeMs') as TimeEntry;
-        return time.timeId === record.timeId;
+        const record = _.minBy(times, 'timeMs') as Time;
+        return time.id === record.id;
     }
 
-    public getRecord(subcategorySlug: string, categorySlug: string): TimeEntry {
+    public getRecord(subcategorySlug: string, categorySlug: string): Time {
         const times = _.filter(
             this.times,
             (x) =>
@@ -106,27 +91,14 @@ export class ApiData {
         }
     }
 
-    private buildTimes(data: FirebaseData): void {
+    private buildTimes(data: DataJSON): void {
         const result = [];
         const times = data.times;
-        for (const timeKey in times) {
-            const time: Time = times[timeKey];
-            result.push({
-                userId: time.userId,
-                userDisplayName: this.getUserDisplayName(time.userId),
-                created: new Date(time.created),
-                link: time.link,
-                subcategorySlug: time.subcategorySlug,
-                timeMs: Number(time.timeMs),
-                timeElapsed: TimeUtils.msToElapsedTime(Number(time.timeMs)),
-                note: time.note,
-                categorySlug: time.categorySlug,
-                timeId: timeKey,
-                isCurrentRecord: false,
-                isRecordImprovement: false,
-            });
+        for (const timeId in times) {
+            const data: TimeJSON = times[timeId];
+            result.push(new Time(timeId, data, this));
         }
-        this.times = result.reverse();
+        this.times = result;
     }
 
     private buildCurrentRecords(): void {
@@ -158,10 +130,10 @@ export class ApiData {
         }
     }
 
-    get users(): Users {
+    get users(): UsersJSON {
         return this.api.users;
     }
-    get categories(): Category[] {
+    get categories(): CategoryJSON[] {
         return _.sortBy(this.api.categories, ['displayOrder']);
     }
 }
