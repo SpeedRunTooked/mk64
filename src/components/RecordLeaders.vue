@@ -13,21 +13,19 @@
                     </div>
                 </div>
                 <div class="row badge-row text-start">
-                    <div class="col-5 highlight">
-                        Current Records: {{ player.currentRecordTotal }}
-                    </div>
                     <div class="col-7">
+                        <span class="highlight"
+                            >Current Records:
+                            {{ player.currentRecordTotal }} </span
+                        ><br />
                         Total Record Improvements:
-                        {{ player.recordImprovementTotal }}
-                    </div>
-                </div>
-                <div class="row badge-row text-start">
-                    <div class="col-5">
+                        {{ player.recordImprovementTotal }} <br />
                         Total Submissions: {{ player.times.length }}
                     </div>
-                    <div class="col-7">
-                        Favorite Subcategory:
-                        {{ displayFavoriteSubcategory('flap', player) }}
+                    <div class="col-5">
+                        Favorite Category: <br />
+                        {{ displayFavoriteCategory(player) }} <br />
+                        {{ displayFavoriteSubcategory(player) }}
                     </div>
                 </div>
             </div>
@@ -57,12 +55,18 @@ export default {
         },
     },
     methods: {
-        displayFavoriteSubcategory(category, player) {
-            const fav = this.data.getSubcategoryName(
-                category,
-                player.getFavoriteSubcategory(),
+        displayFavoriteCategory(player) {
+            const fav = this.data.getCategoryName(
+                player.getFavoriteSubcategory().split(':')[0],
             );
             return fav === '' ? 'None yet!' : fav;
+        },
+        displayFavoriteSubcategory(player) {
+            const fav = this.data.getSubcategoryName(
+                player.getFavoriteSubcategory().split(':')[0],
+                player.getFavoriteSubcategory().split(':')[1],
+            );
+            return fav || '';
         },
     },
 };

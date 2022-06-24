@@ -31,18 +31,18 @@ export class PlayerStats {
 
     private buildSubcategoryMap(): void {
         for (const time of this.times) {
-            if (this.subcategoryMap[time.subcategorySlug]) {
-                this.subcategoryMap[time.subcategorySlug] =
-                    this.subcategoryMap[time.subcategorySlug] + 1;
+            const key = `${time.categorySlug}:${time.subcategorySlug}`;
+            if (this.subcategoryMap[key]) {
+                this.subcategoryMap[key] = this.subcategoryMap[key] + 1;
             } else {
-                this.subcategoryMap[time.subcategorySlug] = 1;
+                this.subcategoryMap[key] = 1;
             }
         }
         const subcategoryStatsArr = [];
-        for (const subcategory in this.subcategoryMap) {
+        for (const key in this.subcategoryMap) {
             subcategoryStatsArr.push({
-                subcategorySlug: subcategory,
-                totalTimes: this.subcategoryMap[subcategory],
+                subcategorySlug: key,
+                totalTimes: this.subcategoryMap[key],
             });
         }
         this.subcategoryStats = subcategoryStatsArr;

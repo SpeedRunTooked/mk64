@@ -32,43 +32,27 @@ export class Game {
         subcategorySlug: string,
     ): string {
         const subcategories = this.categories.find(
-            (category) => category.slug === categorySlug,
+            (x) => x.slug === categorySlug,
         )?.subcategories;
         return (
-            subcategories?.find(
-                (subcategory) => subcategory.slug === subcategorySlug,
-            )?.name || ''
+            subcategories?.find((x) => x.slug === subcategorySlug)?.name || ''
         );
     }
 
-    public getcategorySlug(recordSlug: string): string {
+    public getCategoryName(recordSlug: string): string {
         for (const type of this.categories) {
             if (type.slug === recordSlug) return type.name;
         }
         return '';
     }
 
-    public getRecentTimes(num: number): Time[] {
+    public getRecentEntries(num: number): Time[] {
         const sorted = _.orderBy(this.times, ['created'], ['desc']);
         return sorted.slice(0, num);
     }
 
     public getPlayerStats(userId: string): PlayerStats | null {
         return this.playerStats.filter((x) => x.playerId === userId)[0] || null;
-    }
-
-    public isRecord(time: Time): boolean {
-        const times = this.times.filter((x) => {
-            return (
-                x.subcategorySlug === time.subcategorySlug &&
-                x.categorySlug === time.categorySlug
-            );
-        });
-
-        if (times.length === 0) return true;
-
-        const record = _.minBy(times, 'timeMs') as Time;
-        return time.id === record.id;
     }
 
     public getRecord(subcategorySlug: string, categorySlug: string): Time {

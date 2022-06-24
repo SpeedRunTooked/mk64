@@ -84,7 +84,7 @@ export default {
     computed: {
         ...mapState(['data']),
         recentTimes() {
-            let times = this.data.getRecentTimes();
+            let times = this.data.getRecentEntries();
             if (this.filters.entryStatus) {
                 if (this.filters.entryStatus === 'improvements') {
                     times = _.filter(times, (x) => {
