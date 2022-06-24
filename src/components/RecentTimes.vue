@@ -47,7 +47,7 @@
                 }}
             </div>
             <div class="col-2">
-                {{ data.getcategorySlug(time.categorySlug) }}
+                {{ data.getCategoryName(time.categorySlug) }}
             </div>
             <div class="col-2" :title="getNote(time)">
                 <div v-if="linkPresent(time.link)">

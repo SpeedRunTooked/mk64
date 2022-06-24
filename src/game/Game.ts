@@ -1,6 +1,12 @@
 import _ from 'lodash';
 import { PlayerStats } from '../PlayerStats';
-import { CategoryJSON, DataJSON, TimeJSON, UsersJSON } from 'ApiTypes';
+import {
+    CategoryJSON,
+    DataJSON,
+    SubcategoryJSON,
+    TimeJSON,
+    UsersJSON,
+} from 'ApiTypes';
 import { Time } from './Time';
 
 export class Game {
@@ -13,7 +19,7 @@ export class Game {
             gamedata: data?.gamedata || {},
             users: data?.users || {},
             times: data?.times || {},
-            categories: data?.categories || {},
+            categories: data.categories || [],
         };
         if (data) {
             this.buildTimes(data);
@@ -37,6 +43,10 @@ export class Game {
         return (
             subcategories?.find((x) => x.slug === subcategorySlug)?.name || ''
         );
+    }
+
+    public getCategory(categorySlug: string): CategoryJSON {
+        return this.categories.filter((x) => x.slug === categorySlug)[0];
     }
 
     public getCategoryName(recordSlug: string): string {
@@ -63,6 +73,23 @@ export class Game {
                 x.categorySlug === categorySlug,
         );
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
+    }
+
+    public getSubcategories(categorySlug: string): SubcategoryJSON[] {
+        return _.sortBy(this.getCategory(categorySlug).subcategories, [
+            'displayOrder',
+        ]);
+    }
+
+    public subcategoryExistsInCategory(
+        subcategorySlug: string,
+        categorySlug: string,
+    ) {
+        const subcategoryList = this.getSubcategories(categorySlug);
+        return (
+            subcategoryList?.filter((x) => x.slug === subcategorySlug).length >
+            0
+        );
     }
 
     private buildPlayerStats(): void {

@@ -1,5 +1,5 @@
 <template>
-    <div class="section-container mx-auto">
+    <div v-if="data.categories.length > 0" class="section-container mx-auto">
         <div class="row section-header">
             <div class="col">Record Summary</div>
             <div class="col">
@@ -7,12 +7,12 @@
                     <select
                         class="form-select"
                         aria-label="Default select example"
-                        v-model="categorySlug"
+                        v-model="selectedCategoryIndex"
                     >
                         <option
-                            v-for="category in data.categories"
+                            v-for="(category, index) in data.categories"
                             :key="category.slug"
-                            :value="category.slug"
+                            :value="index"
                         >
                             {{ category.name }}
                         </option>
@@ -20,7 +20,6 @@
                 </div>
             </div>
         </div>
-        <div v-if="selectedCategory"></div>
         <div class="row">
             <div class="col category-header">
                 {{ selectedCategory.subcategoryName }}
@@ -50,22 +49,14 @@ import { mapState } from 'vuex';
 export default {
     data() {
         return {
-            categorySlug: '',
+            selectedCategoryIndex: 0,
         };
     },
-    watch: {
-        data(newValue) {
-            this.categorySlug = newValue.categories[0].slug;
-        },
-    },
+
     computed: {
         ...mapState(['data']),
         selectedCategory() {
-            return (
-                this.data.categories.find(
-                    (x) => x.slug === this.categorySlug,
-                ) || ''
-            );
+            return this.data.categories[this.selectedCategoryIndex];
         },
     },
     methods: {

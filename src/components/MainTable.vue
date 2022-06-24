@@ -1,30 +1,6 @@
 <template>
     <div class="section-container mx-auto">
         <div class="row filter-row">
-            <div class="col-3">
-                <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    v-model="filters.subcategorySlug"
-                    @change="resetRows()"
-                >
-                    <option value="">All Subcategory</option>
-
-                    <optgroup
-                        v-for="(cup, key) in data.cups"
-                        :label="cup.name"
-                        :key="key"
-                    >
-                        <option
-                            v-for="(track, key) in cup.tracks"
-                            :key="key"
-                            :value="track.slug"
-                        >
-                            {{ track.name }}
-                        </option>
-                    </optgroup>
-                </select>
-            </div>
             <div class="col">
                 <select
                     class="form-select"
@@ -45,6 +21,30 @@
                 </select>
             </div>
 
+            <div v-if="this.filters.categorySlug" class="col-3">
+                <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    v-model="filters.subcategorySlug"
+                    @change="resetRows()"
+                >
+                    <option value="">All Subcategories</option>
+
+                    <option
+                        v-for="subcategory in filterSets.subcategorySet"
+                        :key="subcategory.slug"
+                        :value="subcategory.slug"
+                    >
+                        {{
+                            data.getSubcategoryName(
+                                this.filters.categorySlug,
+                                subcategory.slug,
+                            )
+                        }}
+                    </option>
+                </select>
+            </div>
+
             <div class="col">
                 <select
                     class="form-select"
@@ -52,9 +52,6 @@
                     v-model="filters.userId"
                     @change="resetRows()"
                 >
-                    <!-- <option value="" disabled selected>
-                                Select Player
-                            </option> -->
                     <option value="">All Players</option>
 
                     <option
@@ -64,7 +61,6 @@
                     >
                         {{ value.displayName }}
                     </option>
-                    <!-- </li> -->
                 </select>
             </div>
             <div class="col">
@@ -90,8 +86,8 @@
         </div>
         <div class="row header-row bold">
             <div class="col-2">Date Recorded</div>
-            <div class="col-3">Subcategory</div>
             <div class="col-2">Category</div>
+            <div class="col-3">Subcategory</div>
             <div class="col-1">Time</div>
             <div class="col-2">Player</div>
             <div class="col-2">Notes</div>
@@ -115,6 +111,12 @@
                 {{ moment(time.created).fromNow() }}
             </div>
             <div
+                class="col-2 clickable"
+                @click="setFilter('categorySlug', time.categorySlug)"
+            >
+                {{ data.getCategoryName(time.categorySlug) }}
+            </div>
+            <div
                 class="col-3 clickable"
                 @click="setFilter('subcategorySlug', time.subcategorySlug)"
             >
@@ -124,12 +126,6 @@
                         time.subcategorySlug,
                     )
                 }}
-            </div>
-            <div
-                class="col-2 clickable"
-                @click="setFilter('categorySlug', time.categorySlug)"
-            >
-                {{ data.getcategorySlug(time.categorySlug) }}
             </div>
             <div class="col-1" :title="getNote(time)">
                 <div v-if="linkPresent(time.link)">
@@ -176,6 +172,7 @@ export default {
                 userId: '',
                 entryStatus: '',
             },
+
             moment,
         };
     },
@@ -188,6 +185,14 @@ export default {
                 this.filters.userId ||
                 this.filters.entryStatus
             );
+        },
+        filterSets() {
+            const subcategorySet = this.data.categories.find(
+                (x) => x.slug === this.filters.categorySlug,
+            ).subcategories;
+            return {
+                subcategorySet,
+            };
         },
         rows() {
             let times = this.data.times;

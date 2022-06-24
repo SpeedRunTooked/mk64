@@ -27,6 +27,12 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-4 left-col">Category:</div>
+                        <div class="col-8 right-col">
+                            {{ data.getCategoryName(formData.categorySlug) }}
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-4 left-col">Subcategory:</div>
                         <div class="col-8 right-col">
                             {{
@@ -35,12 +41,6 @@
                                     formData.subcategorySlug,
                                 )
                             }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4 left-col">Category:</div>
-                        <div class="col-8 right-col">
-                            {{ data.getcategorySlug(formData.categorySlug) }}
                         </div>
                     </div>
                     <div class="row">

@@ -26,36 +26,13 @@
                             <!-- </li> -->
                         </select>
                     </div>
-                    <div class="mb-4">
-                        <select
-                            class="form-select"
-                            aria-label="Default select example"
-                            v-model="formData.subcategorySlug"
-                        >
-                            <option value="" disabled selected>
-                                Select Subcategory
-                            </option>
 
-                            <optgroup
-                                v-for="(cup, key) in data.cups"
-                                :label="cup.name"
-                                :key="key"
-                            >
-                                <option
-                                    v-for="(track, key) in cup.tracks"
-                                    :key="key"
-                                    :value="track.slug"
-                                >
-                                    {{ track.name }}
-                                </option>
-                            </optgroup>
-                        </select>
-                    </div>
                     <div class="mb-4">
                         <select
                             class="form-select"
                             aria-label="Default select example"
                             v-model="formData.categorySlug"
+                            @change="resetSubcategory()"
                         >
                             <option value="" disabled selected>Category</option>
 
@@ -69,7 +46,29 @@
                         </select>
                     </div>
 
-                    <div v-if="categoryAndSubcategorySelected" class="mb-4">
+                    <div class="mb-4" v-if="showSubcategories">
+                        <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            v-model="formData.subcategorySlug"
+                        >
+                            <option value="" disabled selected>
+                                Select Subcategory
+                            </option>
+
+                            <option
+                                v-for="subcategory in data.getSubcategories(
+                                    formData.categorySlug,
+                                )"
+                                :key="subcategory.slug"
+                                :value="subcategory.slug"
+                            >
+                                {{ subcategory.name }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div v-if="showRecordTimes" class="mb-4">
                         <div class="row reference-row">
                             <div class="col">
                                 Record Time:<br />
@@ -145,6 +144,7 @@
                             class="form-control"
                             id="notes"
                             v-model="formData.notes"
+                            placeholder="Write something memorable"
                         />
                     </div>
                     <div class="d-grid gap-1">
@@ -179,11 +179,26 @@ import { Time } from '@/game/Time';
 
 export default defineComponent({
     name: 'SubmitTimeView',
-
+    data() {
+        return {
+            formData: {
+                userId: this.$cookies.get('userId') || '',
+                subcategorySlug: this.$cookies.get('subcategorySlug') || '',
+                time: {
+                    min: '',
+                    sec: '',
+                    ms: '',
+                },
+                link: '',
+                notes: '',
+                categorySlug: this.$cookies.get('categorySlug') || '',
+            },
+            showSubcategories: false,
+        };
+    },
     components: {
         SubmitTimeConfirmationModal,
     },
-    // setup() {},
     computed: {
         ...mapState(['data']),
         ready(): boolean {
@@ -229,22 +244,25 @@ export default defineComponent({
         categoryAndSubcategoryAndPlayerSelected(): boolean {
             return this.categoryAndSubcategorySelected && this.formData.userId;
         },
+        showRecordTimes() {
+            return (
+                this.categoryAndSubcategorySelected && this.showSubcategories
+            );
+        },
     },
-    data() {
-        return {
-            formData: {
-                userId: this.$cookies.get('userId') || '',
-                subcategorySlug: this.$cookies.get('subcategorySlug') || '',
-                time: {
-                    min: '',
-                    sec: '',
-                    ms: '',
-                },
-                link: '',
-                notes: '',
-                categorySlug: this.$cookies.get('categorySlug') || '',
-            },
-        };
+    methods: {
+        resetSubcategory() {
+            this.showSubcategories = true;
+            if (
+                this.formData.subcategorySlug !== '' &&
+                !this.data.subcategoryExistsInCategory(
+                    this.formData.subcategorySlug,
+                    this.formData.categorySlug,
+                )
+            ) {
+                this.formData.subcategorySlug = '';
+            }
+        },
     },
 });
 </script>
