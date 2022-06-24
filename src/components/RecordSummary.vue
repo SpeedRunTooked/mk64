@@ -80,7 +80,7 @@ export default {
 
 <style scoped>
 .subcategory-row {
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .cup-row {
@@ -88,7 +88,7 @@ export default {
 }
 .category-header {
     font-weight: bold;
-    padding: 0px 0 10px 0;
+    padding: 0px 0 8px 0;
     border-bottom: 1px solid lightgrey;
 }
 

@@ -29,6 +29,14 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-3 category-header">Date</div>
+            <div class="col-2 category-header">Category</div>
+            <div class="col-3 category-header">Subcategory</div>
+            <div class="col-2 category-header">Time</div>
+            <div class="col-2 category-header">Player</div>
+        </div>
         <div
             class="row time-row"
             v-for="time in recentTimes"
@@ -38,6 +46,10 @@
             <div class="col-3">
                 {{ moment(time.created).fromNow() }}
             </div>
+
+            <div class="col-2">
+                {{ data.getCategoryName(time.categorySlug) }}
+            </div>
             <div class="col-3">
                 {{
                     data.getSubcategoryName(
@@ -45,9 +57,6 @@
                         time.subcategorySlug,
                     )
                 }}
-            </div>
-            <div class="col-2">
-                {{ data.getCategoryName(time.categorySlug) }}
             </div>
             <div class="col-2" :title="getNote(time)">
                 <div v-if="linkPresent(time.link)">
@@ -125,5 +134,11 @@ select {
 <style scoped>
 .time-row {
     padding: 2px 0;
+}
+.category-header {
+    font-weight: bold;
+    padding: 0px 0 8px 0;
+    border-bottom: 1px solid lightgrey;
+    margin-bottom: 8px;
 }
 </style>

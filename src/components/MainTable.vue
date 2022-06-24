@@ -8,7 +8,6 @@
                     v-model="filters.categorySlug"
                     @change="resetRows()"
                 >
-                    <!-- <option value="" disabled selected>Record Type</option> -->
                     <option value="">All Categories</option>
 
                     <option
@@ -85,7 +84,7 @@
             </div>
         </div>
         <div class="row header-row bold">
-            <div class="col-2">Date Recorded</div>
+            <div class="col-2">Date</div>
             <div class="col-2">Category</div>
             <div class="col-3">Subcategory</div>
             <div class="col-1">Time</div>
@@ -99,15 +98,6 @@
             :class="{ highlight: time.isCurrentRecord }"
         >
             <div class="col-2">
-                {{
-                    time.created.toLocaleDateString('en-US', {
-                        year: '2-digit',
-                        month: '2-digit',
-                        day: '2-digit',
-                    })
-                }}
-                <br />
-
                 {{ moment(time.created).fromNow() }}
             </div>
             <div
