@@ -84,7 +84,8 @@
             </div>
         </div>
         <div class="row header-row bold">
-            <div class="col-2">Date</div>
+            <div class="col-2">Recorded</div>
+            <div class="col-3">Track</div>
             <div class="col-2">Category</div>
             <div class="col-3">Subcategory</div>
             <div class="col-1">Time</div>
@@ -271,7 +272,7 @@ select {
 
 .time-row {
     border-top: 1px solid lightgrey;
-    padding: 10px;
+    padding: 20px 0;
 }
 
 .subheader {
