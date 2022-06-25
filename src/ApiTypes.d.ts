@@ -1,9 +1,9 @@
 declare module 'ApiTypes' {
     interface DataJSON {
-        gamedata: GameDataJSON;
         users: UsersJSON;
         times: TimesJSON;
         categories: CategoryJSON[];
+        subcategoryGroups: SubcategoryGroupJSON[];
     }
 
     interface CategoryJSON {
@@ -18,10 +18,6 @@ declare module 'ApiTypes' {
         group: string;
         name: string;
         slug: string;
-    }
-
-    interface GameDataJSON {
-        subcategoryGroups: SubcategoryGroupJSON[];
     }
 
     interface TimesJSON {

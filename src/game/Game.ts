@@ -17,10 +17,10 @@ export class Game {
 
     constructor(data: DataJSON) {
         this.api = {
-            gamedata: data?.gamedata || {},
             users: data?.users || {},
             times: data?.times || {},
             categories: data.categories || [],
+            subcategoryGroups: data.subcategoryGroups || [],
         };
         if (data) {
             this.buildTimes(data);

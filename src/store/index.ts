@@ -6,12 +6,10 @@ import { config } from '@/config';
 export default createStore({
     state: {
         data: new Game({
-            gamedata: {
-                subcategoryGroups: [],
-            },
             users: {},
             times: {},
             categories: [],
+            subcategoryGroups: [],
         }),
     },
     getters: {},
