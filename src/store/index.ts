@@ -1,8 +1,7 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
 import { Game } from '@/game/Game';
-
-const ROOT_URL = 'https://mk64-ad77f-default-rtdb.firebaseio.com/db/';
+import { config } from '@/config';
 
 export default createStore({
     state: {
@@ -23,7 +22,7 @@ export default createStore({
     },
     actions: {
         async getApiData({ commit }) {
-            const result = await axios.get(ROOT_URL + '.json');
+            const result = await axios.get(config.ROOT_URL + '.json');
             commit('SAVE_APIDATA', result.data);
         },
     },

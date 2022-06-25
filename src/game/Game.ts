@@ -7,6 +7,7 @@ import {
     TimeJSON,
     UsersJSON,
 } from 'ApiTypes';
+
 import { Time } from './Time';
 
 export class Game {
@@ -84,7 +85,7 @@ export class Game {
     public subcategoryExistsInCategory(
         subcategorySlug: string,
         categorySlug: string,
-    ) {
+    ): boolean {
         const subcategoryList = this.getSubcategories(categorySlug);
         return (
             subcategoryList?.filter((x) => x.slug === subcategorySlug).length >

@@ -107,12 +107,15 @@ import { mapState } from 'vuex';
 import axios from 'axios';
 import qs from 'qs';
 import { Time } from '@/game/Time';
+import { config } from '../config.ts';
+
 export default {
     data() {
         return {
             success: false,
             uploading: false,
             Time,
+            config,
         };
     },
     props: {
@@ -142,8 +145,7 @@ export default {
 
             const config = {
                 method: 'post',
-                // url: 'https://us-central1-mk64-ad77f.cloudfunctions.net/addTime',
-                url: 'http://localhost:5001/mk64-ad77f/us-central1/addTime',
+                url: this.config.ADD_URL,
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
