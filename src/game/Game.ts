@@ -46,9 +46,11 @@ export class Game {
         );
     }
 
-    public getSubcategoryTypeName(categorySlug: string) {
-        return this.categories.find((x) => x.slug === categorySlug)
-            ?.subcategoryName;
+    public getSubcategoryTypeName(categorySlug: string): string {
+        return (
+            this.categories.find((x) => x.slug === categorySlug)
+                ?.subcategoryName || ''
+        );
     }
 
     public getCategory(categorySlug: string): CategoryJSON {
