@@ -53,13 +53,11 @@
                             v-model="formData.subcategorySlug"
                         >
                             <option value="" disabled selected>
-                                Select Subcategory
+                                Select {{ subcategoryName }}
                             </option>
 
                             <option
-                                v-for="subcategory in data.getSubcategories(
-                                    formData.categorySlug,
-                                )"
+                                v-for="subcategory in subcategoryList"
                                 :key="subcategory.slug"
                                 :value="subcategory.slug"
                             >
@@ -72,7 +70,8 @@
                         <div class="row reference-row">
                             <div class="col">
                                 Record Time:<br />
-                                {{ currentRecord?.timeElapsed }} <br />
+                                {{ currentRecord?.timeElapsed || 'None yet!' }}
+                                <br />
                                 <span class="small">{{
                                     currentRecord?.userDisplayName
                                 }}</span>
@@ -176,6 +175,7 @@ import { mapState } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
 import SubmitTimeConfirmationModal from '@/components/SubmitTimeConfirmationModal.vue';
 import { Time } from '@/game/Time';
+import _ from 'lodash';
 
 export default defineComponent({
     name: 'SubmitTimeView',
@@ -193,7 +193,6 @@ export default defineComponent({
                 notes: '',
                 categorySlug: this.$cookies.get('categorySlug') || '',
             },
-            showSubcategories: false,
         };
     },
     components: {
@@ -209,6 +208,13 @@ export default defineComponent({
                 this.formData.link !== ''
             );
         },
+        showSubcategories() {
+            return this.formData.categorySlug ? true : false;
+        },
+        subcategoryList() {
+            const list = this.data.getSubcategories(this.formData.categorySlug);
+            return _.orderBy(list, ['name']);
+        },
         msError(): boolean {
             return (
                 this.formData.time.ms !== '' &&
@@ -223,6 +229,14 @@ export default defineComponent({
                 );
             }
             return null;
+        },
+        subcategoryName() {
+            if (this.formData.categorySlug) {
+                return this.data.getSubcategoryTypeName(
+                    this.formData.categorySlug,
+                );
+            }
+            return 'Subcategory';
         },
         playerRecord(): string {
             if (this.categoryAndSubcategoryAndPlayerSelected) {

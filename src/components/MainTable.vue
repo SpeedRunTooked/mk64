@@ -27,7 +27,7 @@
                     v-model="filters.subcategorySlug"
                     @change="resetRows()"
                 >
-                    <option value="">All Subcategories</option>
+                    <option value="">All {{ subcategoryName }}s</option>
 
                     <option
                         v-for="subcategory in filterSets.subcategorySet"
@@ -54,7 +54,7 @@
                     <option value="">All Players</option>
 
                     <option
-                        v-for="(value, key) in data.users"
+                        v-for="(value, key) in userList"
                         :key="key"
                         :value="key"
                     >
@@ -86,7 +86,7 @@
         <div class="row header-row bold">
             <div class="col-3">Recorded</div>
             <div class="col-2">Category</div>
-            <div class="col-3">Subcategory</div>
+            <div class="col-3">{{ subcategoryName }}</div>
             <div class="col-1">Time</div>
             <div class="col-3">Player</div>
         </div>
@@ -178,8 +178,19 @@ export default {
                 (x) => x.slug === this.filters.categorySlug,
             ).subcategories;
             return {
-                subcategorySet,
+                subcategorySet: _.orderBy(subcategorySet, ['name']),
             };
+        },
+        userList() {
+            return _.orderBy(this.data.users, ['displayName']);
+        },
+        subcategoryName() {
+            if (this.filters.categorySlug) {
+                return this.data.getSubcategoryTypeName(
+                    this.filters.categorySlug,
+                );
+            }
+            return 'Subcategory';
         },
         rows() {
             let times = this.data.times;

@@ -28,7 +28,7 @@
             <div class="col category-header">Player</div>
         </div>
         <div
-            v-for="subcategory in selectedCategory.subcategories"
+            v-for="subcategory in rows"
             :key="subcategory.slug"
             class="row subcategory-row"
         >
@@ -45,6 +45,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import _ from 'lodash';
 
 export default {
     data() {
@@ -57,6 +58,9 @@ export default {
         ...mapState(['data']),
         selectedCategory() {
             return this.data.categories[this.selectedCategoryIndex];
+        },
+        rows() {
+            return _.orderBy(this.selectedCategory.subcategories, ['name']);
         },
     },
     methods: {
