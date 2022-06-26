@@ -84,21 +84,20 @@
             </div>
         </div>
         <div class="row header-row bold">
-            <div class="col-2">Recorded</div>
-            <div class="col-3">Track</div>
+            <div class="col-3">Recorded</div>
             <div class="col-2">Category</div>
             <div class="col-3">Subcategory</div>
             <div class="col-1">Time</div>
-            <div class="col-2">Player</div>
-            <div class="col-2">Notes</div>
+            <div class="col-3">Player</div>
         </div>
         <div
             class="row time-row"
             v-for="time in activeRows"
             :key="time.created"
             :class="{ highlight: time.isCurrentRecord }"
+            :title="getNote(time)"
         >
-            <div class="col-2">
+            <div class="col-3">
                 {{ moment(time.created).fromNow() }}
             </div>
             <div
@@ -118,7 +117,7 @@
                     )
                 }}
             </div>
-            <div class="col-1" :title="getNote(time)">
+            <div class="col-1">
                 <div v-if="linkPresent(time.link)">
                     <a :href="time.link" target="_blank">{{
                         time.timeElapsed
@@ -129,13 +128,10 @@
                 </div>
             </div>
             <div
-                class="col-2 clickable"
+                class="col-3 clickable"
                 @click="setFilter('userId', time.userId)"
             >
                 {{ time.userDisplayName }}
-            </div>
-            <div class="col-2 break-all">
-                {{ time.note }}
             </div>
         </div>
         <div class="row">

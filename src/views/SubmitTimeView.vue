@@ -134,7 +134,7 @@
                             class="form-control"
                             id="link"
                             v-model="formData.link"
-                            placeholder="Post a link or write 'witnessed'"
+                            placeholder="Post a link to a screenshot or video"
                         />
                     </div>
                     <div class="mb-5">
@@ -144,7 +144,7 @@
                             class="form-control"
                             id="notes"
                             v-model="formData.notes"
-                            placeholder="Write something memorable"
+                            placeholder="(Optional)"
                         />
                     </div>
                     <div class="d-grid gap-1">

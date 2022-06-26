@@ -38,7 +38,7 @@
             <div class="col-2 category-header">Player</div>
         </div>
         <div
-            class="row time-row"
+            class="row subcategory-row"
             v-for="time in recentTimes"
             :key="time.created"
             :class="{ highlight: time.isCurrentRecord }"
@@ -129,16 +129,5 @@ select {
     width: 70px;
     float: right;
     height: 50px;
-}
-</style>
-<style scoped>
-.time-row {
-    padding: 2px 0;
-}
-.category-header {
-    font-weight: bold;
-    padding: 0px 0 8px 0;
-    border-bottom: 1px solid lightgrey;
-    margin-bottom: 8px;
 }
 </style>

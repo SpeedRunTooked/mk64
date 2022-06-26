@@ -123,4 +123,14 @@ nav {
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
+
+.category-header {
+    font-weight: bold;
+    padding: 0px 0 8px 0;
+    border-bottom: 1px solid lightgrey;
+    margin-bottom: 8px;
+}
+.subcategory-row {
+    padding: 5px 0;
+}
 </style>

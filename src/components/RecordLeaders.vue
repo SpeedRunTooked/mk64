@@ -23,8 +23,8 @@
                         Total Submissions: {{ player.times.length }}
                     </div>
                     <div class="col-5">
-                        Favorite Category: <br />
-                        {{ displayFavoriteCategory(player) }} <br />
+                        Favorite Run: <br />
+                        {{ displayFavoriteCategory(player) }}
                         {{ displayFavoriteSubcategory(player) }}
                     </div>
                 </div>
