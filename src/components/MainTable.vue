@@ -20,7 +20,7 @@
                 </select>
             </div>
 
-            <div v-if="this.filters.categorySlug" class="col-3">
+            <div v-if="filters.categorySlug" class="col-3">
                 <select
                     class="form-select"
                     aria-label="Default select example"
@@ -36,9 +36,28 @@
                     >
                         {{
                             data.getSubcategoryName(
-                                this.filters.categorySlug,
+                                filters.categorySlug,
                                 subcategory.slug,
                             )
+                        }}
+                    </option>
+                </select>
+            </div>
+
+            <div v-if="!filters.categorySlug" class="col-3">
+                <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    disabled
+                >
+                    <option value="">
+                        {{
+                            filters.categorySlug
+                                ? data.getSubcategoryName(
+                                      filters.categorySlug,
+                                      subcategory.slug,
+                                  )
+                                : 'Select a category'
                         }}
                     </option>
                 </select>
@@ -54,7 +73,7 @@
                     <option value="">All Players</option>
 
                     <option
-                        v-for="(value, key) in userList"
+                        v-for="(value, key) in data.users"
                         :key="key"
                         :value="key"
                     >
@@ -180,9 +199,6 @@ export default {
             return {
                 subcategorySet: _.orderBy(subcategorySet, ['name']),
             };
-        },
-        userList() {
-            return _.orderBy(this.data.users, ['displayName']);
         },
         subcategoryName() {
             if (this.filters.categorySlug) {
