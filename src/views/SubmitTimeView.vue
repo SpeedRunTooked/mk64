@@ -209,7 +209,9 @@ export default defineComponent({
             );
         },
         showSubcategories() {
-            return this.formData.categorySlug ? true : false;
+            return this.formData.categorySlug && this.data.categories.length > 0
+                ? true
+                : false;
         },
         subcategoryList() {
             const list = this.data.getSubcategories(this.formData.categorySlug);
@@ -266,7 +268,6 @@ export default defineComponent({
     },
     methods: {
         resetSubcategory() {
-            this.showSubcategories = true;
             if (
                 this.formData.subcategorySlug !== '' &&
                 !this.data.subcategoryExistsInCategory(
