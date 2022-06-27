@@ -53,8 +53,17 @@ export class Game {
         );
     }
 
-    public getCategory(categorySlug: string): CategoryJSON {
+    public getCategoryJson(categorySlug: string): CategoryJSON {
         return this.categories.filter((x) => x.slug === categorySlug)[0];
+    }
+
+    public getSubcategoryJson(
+        categorySlug: string,
+        subcategorySlug: string,
+    ): SubcategoryJSON {
+        return this.getCategoryJson(categorySlug).subcategories.filter(
+            (subcategory) => subcategory.slug === subcategorySlug,
+        )[0];
     }
 
     public getCategoryName(recordSlug: string): string {
@@ -77,14 +86,14 @@ export class Game {
         const times = _.filter(
             this.times,
             (x) =>
-                x.subcategorySlug === subcategorySlug &&
+                x.subcategory === subcategorySlug &&
                 x.categorySlug === categorySlug,
         );
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
     }
 
     public getSubcategories(categorySlug: string): SubcategoryJSON[] {
-        return _.sortBy(this.getCategory(categorySlug).subcategories, [
+        return _.sortBy(this.getCategoryJson(categorySlug).subcategories, [
             'displayOrder',
         ]);
     }
@@ -124,7 +133,7 @@ export class Game {
         const sorted = _.orderBy(this.times, ['timeMs'], ['asc']);
         const recordArr: string[] = [];
         for (const time of sorted) {
-            const key = time.categorySlug + time.subcategorySlug;
+            const key = time.categorySlug + time.subcategory;
             if (recordArr.indexOf(key) === -1) {
                 time.isCurrentRecord = true;
                 recordArr.push(key);
@@ -136,7 +145,7 @@ export class Game {
         const sorted = _.orderBy(this.times, ['created'], ['asc']);
         const recordMap: { [key: string]: number } = {};
         for (const time of sorted) {
-            const key = time.categorySlug + time.subcategorySlug;
+            const key = time.categorySlug + time.subcategory;
             if (!recordMap[key]) {
                 time.isRecordImprovement = true;
                 recordMap[key] = time.timeMs;

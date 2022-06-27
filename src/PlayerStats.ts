@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { Category } from './game/Category';
 import { Time } from './game/Time';
 
 export interface SubcategoryStat {
@@ -31,7 +32,7 @@ export class PlayerStats {
 
     private buildSubcategoryMap(): void {
         for (const time of this.times) {
-            const key = `${time.categorySlug}:${time.subcategorySlug}`;
+            const key = `${time.category.slug}:${time.subcategory}`;
             if (this.subcategoryMap[key]) {
                 this.subcategoryMap[key] = this.subcategoryMap[key] + 1;
             } else {
@@ -41,7 +42,8 @@ export class PlayerStats {
         const subcategoryStatsArr = [];
         for (const key in this.subcategoryMap) {
             subcategoryStatsArr.push({
-                subcategorySlug: key,
+                categorySlug:new Category(key.split(':')[0], this.subcategoryMap[key].json)
+                subcategorySlug: key.split(':')[1],
                 totalTimes: this.subcategoryMap[key],
             });
         }
@@ -54,11 +56,16 @@ export class PlayerStats {
     ): Time | null {
         const filtered = this.times.filter((x) => {
             return (
-                x.subcategorySlug === subcategorySlug &&
-                x.categorySlug === categorySlug
+                x.subcategory === subcategorySlug &&
+                x.category.slug === categorySlug
             );
         });
         return _.minBy(filtered, 'timeMs') || null;
+    }
+
+    public getFavoriteCategory(): Category {
+        const subcategory = _.maxBy(this.subcategoryStats, 'totalTimes');
+        return subcategory || 'none';
     }
 
     public getFavoriteSubcategory(): string {
