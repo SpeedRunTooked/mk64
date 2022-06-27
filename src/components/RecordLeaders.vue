@@ -78,7 +78,7 @@ export default {
     font-weight: bold;
     padding-bottom: 5px;
     margin-bottom: 10px;
-    border-bottom: 1px solid lightgrey;
+    border-bottom: 2px solid lightgrey;
 }
 
 .player-badge {

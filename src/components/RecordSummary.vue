@@ -31,6 +31,7 @@
             v-for="subcategory in rows"
             :key="subcategory.slug"
             class="row subcategory-row"
+            :class="subcategory?.endOfGroup ? 'end-row' : ''"
         >
             <div class="col">{{ subcategory.name }}</div>
             <div class="col">
@@ -60,7 +61,16 @@ export default {
             return this.data.categories[this.selectedCategoryIndex];
         },
         rows() {
-            return _.orderBy(this.selectedCategory.subcategories, ['name']);
+            const rows = _.orderBy(this.selectedCategory.subcategories, [
+                'displayOrder',
+            ]);
+
+            for (let i = 0; i < rows.length - 1; i++) {
+                if (rows[i]['group'] !== rows[i + 1]['group']) {
+                    rows[i].endOfGroup = true;
+                }
+            }
+            return rows;
         },
     },
     methods: {
@@ -93,5 +103,8 @@ export default {
 
 select {
     float: right;
+}
+.end-row {
+    border-bottom: 1px dashed lightgrey;
 }
 </style>

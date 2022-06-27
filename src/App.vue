@@ -127,7 +127,7 @@ nav {
 .category-header {
     font-weight: bold;
     padding: 0px 0 8px 0;
-    border-bottom: 1px solid lightgrey;
+    border-bottom: 2px solid lightgrey;
     margin-bottom: 8px;
 }
 .subcategory-row {

@@ -294,7 +294,7 @@ select {
 }
 
 .time-row {
-    border-top: 1px solid lightgrey;
+    border-bottom: 1px dashed lightgrey;
     padding: 20px 0;
 }
 
@@ -303,7 +303,8 @@ select {
 }
 .header-row {
     margin-top: 25px;
-    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid lightgrey;
 }
 
 .material-symbols-outlined {
