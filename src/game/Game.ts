@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { PlayerStats } from '../PlayerStats';
 import {
     CategoryJSON,
-    DataJSON,
+    FirebaseDataJSON,
     SubcategoryJSON,
     TimeJSON,
     UsersJSON,
@@ -15,15 +15,15 @@ export class Game {
     public times: Time[] = [];
     public playerStats: PlayerStats[] = [];
 
-    constructor(data: DataJSON) {
+    constructor(firebaseData: FirebaseDataJSON) {
         this.api = {
-            users: data?.users || {},
-            times: data?.times || {},
-            categories: data.categories || [],
-            subcategoryGroups: data.subcategoryGroups || [],
+            users: firebaseData?.users || {},
+            times: firebaseData?.times || {},
+            categories: firebaseData.categories || [],
+            subcategoryGroups: firebaseData.subcategoryGroups || [],
         };
-        if (data) {
-            this.buildTimes(data);
+        if (firebaseData) {
+            this.buildTimes(firebaseData);
             this.buildCurrentRecords();
             this.buildRecordImprovements();
             this.buildPlayerStats();
@@ -85,9 +85,9 @@ export class Game {
     public getRecord(subcategorySlug: string, categorySlug: string): Time {
         const times = _.filter(
             this.times,
-            (x) =>
-                x.subcategory === subcategorySlug &&
-                x.categorySlug === categorySlug,
+            (time) =>
+                time.subcategory.slug === subcategorySlug &&
+                time.category.slug === categorySlug,
         );
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
     }
@@ -119,9 +119,9 @@ export class Game {
         }
     }
 
-    private buildTimes(data: DataJSON): void {
+    private buildTimes(firebaseData: FirebaseDataJSON): void {
         const result = [];
-        const times = data.times;
+        const times = firebaseData.times;
         for (const timeId in times) {
             const data: TimeJSON = times[timeId];
             result.push(new Time(timeId, data, this));
@@ -133,10 +133,9 @@ export class Game {
         const sorted = _.orderBy(this.times, ['timeMs'], ['asc']);
         const recordArr: string[] = [];
         for (const time of sorted) {
-            const key = time.categorySlug + time.subcategory;
-            if (recordArr.indexOf(key) === -1) {
+            if (recordArr.indexOf(time.runSlug) === -1) {
                 time.isCurrentRecord = true;
-                recordArr.push(key);
+                recordArr.push(time.runSlug);
             }
         }
     }
@@ -145,14 +144,13 @@ export class Game {
         const sorted = _.orderBy(this.times, ['created'], ['asc']);
         const recordMap: { [key: string]: number } = {};
         for (const time of sorted) {
-            const key = time.categorySlug + time.subcategory;
-            if (!recordMap[key]) {
+            if (!recordMap[time.runSlug]) {
                 time.isRecordImprovement = true;
-                recordMap[key] = time.timeMs;
+                recordMap[time.runSlug] = time.timeMs;
             } else {
-                if (recordMap[key] > time.timeMs) {
+                if (recordMap[time.runSlug] > time.timeMs) {
                     time.isRecordImprovement = true;
-                    recordMap[key] = time.timeMs;
+                    recordMap[time.runSlug] = time.timeMs;
                 }
             }
         }

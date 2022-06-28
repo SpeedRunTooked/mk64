@@ -5,7 +5,7 @@ import { config } from '@/config';
 
 export default createStore({
     state: {
-        data: new Game({
+        game: new Game({
             users: {},
             times: {},
             categories: [],
@@ -15,7 +15,7 @@ export default createStore({
     getters: {},
     mutations: {
         SAVE_APIDATA(state, data) {
-            state.data = new Game(data);
+            state.game = new Game(data);
         },
     },
     actions: {

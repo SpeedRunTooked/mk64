@@ -7,10 +7,10 @@ export class Time extends Entry {
     public timeElapsed: string;
     public entryTypeSlug = 'time';
 
-    constructor(id: string, data: TimeJSON, game: Game) {
-        super(id, data, game);
-        this.timeMs = Number(data.timeMs);
-        this.timeElapsed = Time.msToElapsedTime(Number(data.timeMs));
+    constructor(id: string, timeJson: TimeJSON, game: Game) {
+        super(id, timeJson, game);
+        this.timeMs = Number(timeJson.timeMs);
+        this.timeElapsed = Time.msToElapsedTime(Number(timeJson.timeMs));
     }
 
     public static zeroPad(num: number, places: number): string {

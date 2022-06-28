@@ -1,11 +1,8 @@
 import _ from 'lodash';
 import { Category } from './game/Category';
+import { Run } from './game/Run';
+import { Subcategory } from './game/Subcategory';
 import { Time } from './game/Time';
-
-export interface SubcategoryStat {
-    subcategorySlug: string;
-    totalTimes: number;
-}
 
 export class PlayerStats {
     public currentRecords: Time[] = [];
@@ -13,11 +10,11 @@ export class PlayerStats {
     public recordImprovements: Time[] = [];
     public recordImprovementTotal = 0;
     public subcategoryMap: { [key: string]: number } = {};
-    public subcategoryStats: SubcategoryStat[] = [];
+    public runs: Run[] = [];
 
     constructor(public playerId: string, public times: Time[]) {
         this.buildRecords();
-        this.buildSubcategoryMap();
+        this.buildRuns();
     }
 
     private buildRecords(): void {
@@ -30,24 +27,22 @@ export class PlayerStats {
         this.recordImprovementTotal = this.recordImprovements.length;
     }
 
-    private buildSubcategoryMap(): void {
+    private buildRuns(): void {
         for (const time of this.times) {
-            const key = `${time.category.slug}:${time.subcategory}`;
-            if (this.subcategoryMap[key]) {
-                this.subcategoryMap[key] = this.subcategoryMap[key] + 1;
+            const currentRun = this.runs.find(
+                (run) => run.slug === time.runSlug,
+            );
+            if (currentRun) {
+                currentRun.increaseCounter();
             } else {
-                this.subcategoryMap[key] = 1;
+                this.runs.push(
+                    new Run(
+                        new Category(time.category.json),
+                        new Subcategory(time.subcategory.json),
+                    ),
+                );
             }
         }
-        const subcategoryStatsArr = [];
-        for (const key in this.subcategoryMap) {
-            subcategoryStatsArr.push({
-                categorySlug:new Category(key.split(':')[0], this.subcategoryMap[key].json)
-                subcategorySlug: key.split(':')[1],
-                totalTimes: this.subcategoryMap[key],
-            });
-        }
-        this.subcategoryStats = subcategoryStatsArr;
     }
 
     public getRecord(
@@ -56,20 +51,15 @@ export class PlayerStats {
     ): Time | null {
         const filtered = this.times.filter((x) => {
             return (
-                x.subcategory === subcategorySlug &&
+                x.subcategory.slug === subcategorySlug &&
                 x.category.slug === categorySlug
             );
         });
         return _.minBy(filtered, 'timeMs') || null;
     }
 
-    public getFavoriteCategory(): Category {
-        const subcategory = _.maxBy(this.subcategoryStats, 'totalTimes');
-        return subcategory || 'none';
-    }
-
-    public getFavoriteSubcategory(): string {
-        const subcategory = _.maxBy(this.subcategoryStats, 'totalTimes');
-        return subcategory?.subcategorySlug || 'none';
+    public getFavoriteRun(): Run | null {
+        const run = _.maxBy(this.runs, 'attems');
+        return run || null;
     }
 }

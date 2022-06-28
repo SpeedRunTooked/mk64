@@ -23,20 +23,20 @@
                     <div class="row">
                         <div class="col-4 left-col">Player:</div>
                         <div class="col-8 right-col">
-                            {{ data.getUserDisplayName(formData.userId) }}
+                            {{ game.getUserDisplayName(formData.userId) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Category:</div>
                         <div class="col-8 right-col">
-                            {{ data.getCategoryName(formData.categorySlug) }}
+                            {{ game.getCategoryName(formData.categorySlug) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Subcategory:</div>
                         <div class="col-8 right-col">
                             {{
-                                data.getSubcategoryName(
+                                game.getSubcategoryName(
                                     formData.categorySlug,
                                     formData.subcategorySlug,
                                 )
@@ -125,7 +125,7 @@ export default {
         },
     },
     computed: {
-        ...mapState(['data']),
+        ...mapState(['game']),
     },
     methods: {
         async submitForm() {

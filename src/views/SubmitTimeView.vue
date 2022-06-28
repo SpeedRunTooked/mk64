@@ -17,7 +17,7 @@
                             </option>
 
                             <option
-                                v-for="(value, key) in data.users"
+                                v-for="(value, key) in game.users"
                                 :key="key"
                                 :value="key"
                             >
@@ -37,7 +37,7 @@
                             <option value="" disabled selected>Category</option>
 
                             <option
-                                v-for="(category, key) in data.categories"
+                                v-for="(category, key) in game.categories"
                                 :value="category.slug"
                                 :key="key"
                             >
@@ -199,7 +199,7 @@ export default defineComponent({
         SubmitTimeConfirmationModal,
     },
     computed: {
-        ...mapState(['data']),
+        ...mapState(['game']),
         ready(): boolean {
             return (
                 this.categoryAndSubcategoryAndPlayerSelected &&
@@ -209,12 +209,12 @@ export default defineComponent({
             );
         },
         showSubcategories() {
-            return this.formData.categorySlug && this.data.categories.length > 0
+            return this.formData.categorySlug && this.game.categories.length > 0
                 ? true
                 : false;
         },
         subcategoryList() {
-            const list = this.data.getSubcategories(this.formData.categorySlug);
+            const list = this.game.getSubcategories(this.formData.categorySlug);
             return _.orderBy(list, ['name']);
         },
         msError(): boolean {
@@ -225,7 +225,7 @@ export default defineComponent({
         },
         currentRecord(): Time | null {
             if (this.categoryAndSubcategorySelected) {
-                return this.data.getRecord(
+                return this.game.getRecord(
                     this.formData.subcategorySlug,
                     this.formData.categorySlug,
                 );
@@ -234,7 +234,7 @@ export default defineComponent({
         },
         subcategoryName() {
             if (this.formData.categorySlug) {
-                return this.data.getSubcategoryTypeName(
+                return this.game.getSubcategoryTypeName(
                     this.formData.categorySlug,
                 );
             }
@@ -242,7 +242,7 @@ export default defineComponent({
         },
         playerRecord(): string {
             if (this.categoryAndSubcategoryAndPlayerSelected) {
-                const stats = this.data.getPlayerStats(this.formData.userId);
+                const stats = this.game.getPlayerStats(this.formData.userId);
                 if (stats) {
                     return (
                         stats.getRecord(
@@ -270,7 +270,7 @@ export default defineComponent({
         resetSubcategory() {
             if (
                 this.formData.subcategorySlug !== '' &&
-                !this.data.subcategoryExistsInCategory(
+                !this.game.subcategoryExistsInCategory(
                     this.formData.subcategorySlug,
                     this.formData.categorySlug,
                 )

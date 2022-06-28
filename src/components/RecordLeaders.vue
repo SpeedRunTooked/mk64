@@ -9,7 +9,7 @@
                 <div class="row leaderboard-header text-start">
                     <div class="col">
                         #{{ index + 1 }} -
-                        {{ data.getUserDisplayName(player.playerId) }}
+                        {{ game.getUserDisplayName(player.playerId) }}
                     </div>
                 </div>
                 <div class="row badge-row text-start">
@@ -22,10 +22,9 @@
                         {{ player.recordImprovementTotal }} <br />
                         Total Submissions: {{ player.times.length }}
                     </div>
-                    <div class="col-5">
+                    <div v-if="player.getFavoriteRun()" class="col-5">
                         Favorite Run: <br />
-                        {{ displayFavoriteCategory(player) }}
-                        {{ displayFavoriteSubcategory(player) }}
+                        {{ player.getFavoriteRun().displayName }}
                     </div>
                 </div>
             </div>
@@ -39,10 +38,10 @@ import _ from 'lodash';
 
 export default {
     computed: {
-        ...mapState(['data']),
+        ...mapState(['game']),
         players() {
             const first = _.orderBy(
-                this.data.playerStats,
+                this.game.playerStats,
                 ['currentRecordTotal'],
                 ['desc'],
             );
@@ -56,17 +55,10 @@ export default {
     },
     methods: {
         displayFavoriteCategory(player) {
-            const fav = this.data.getCategoryName(
+            const fav = this.game.getCategoryName(
                 player.getFavoriteSubcategory().split(':')[0],
             );
             return fav === '' ? 'None yet!' : fav;
-        },
-        displayFavoriteSubcategory(player) {
-            const fav = this.data.getSubcategoryName(
-                player.getFavoriteSubcategory().split(':')[0],
-                player.getFavoriteSubcategory().split(':')[1],
-            );
-            return fav || '';
         },
     },
 };

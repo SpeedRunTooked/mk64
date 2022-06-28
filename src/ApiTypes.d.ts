@@ -1,5 +1,5 @@
 declare module 'ApiTypes' {
-    interface DataJSON {
+    interface FirebaseDataJSON {
         users: UsersJSON;
         times: TimesJSON;
         categories: CategoryJSON[];

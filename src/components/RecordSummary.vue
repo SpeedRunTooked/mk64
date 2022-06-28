@@ -1,5 +1,5 @@
 <template>
-    <div v-if="data.categories.length > 0" class="section-container mx-auto">
+    <div v-if="game.categories.length > 0" class="section-container mx-auto">
         <div class="row section-header">
             <div class="col">Record Summary</div>
             <div class="col">
@@ -10,7 +10,7 @@
                         v-model="selectedCategoryIndex"
                     >
                         <option
-                            v-for="(category, index) in data.categories"
+                            v-for="(category, index) in game.categories"
                             :key="category.slug"
                             :value="index"
                         >
@@ -56,9 +56,9 @@ export default {
     },
 
     computed: {
-        ...mapState(['data']),
+        ...mapState(['game']),
         selectedCategory() {
-            return this.data.categories[this.selectedCategoryIndex];
+            return this.game.categories[this.selectedCategoryIndex];
         },
         rows() {
             const rows = _.orderBy(this.selectedCategory.subcategories, [
@@ -75,14 +75,14 @@ export default {
     },
     methods: {
         getElapsedTime(subcategory) {
-            const time = this.data.getRecord(
+            const time = this.game.getRecord(
                 subcategory.slug,
                 this.selectedCategory.slug,
             )?.timeElapsed;
             return time || 'None yet!';
         },
         getPlayerDisplayName(subcategory) {
-            const name = this.data.getRecord(
+            const name = this.game.getRecord(
                 subcategory.slug,
                 this.selectedCategory.slug,
             )?.userDisplayName;

@@ -48,15 +48,10 @@
             </div>
 
             <div class="col-2">
-                {{ data.getCategoryName(time.categorySlug) }}
+                {{ time.category.name }}
             </div>
             <div class="col-3">
-                {{
-                    data.getSubcategoryName(
-                        time.categorySlug,
-                        time.subcategorySlug,
-                    )
-                }}
+                {{ time.subcategory.name }}
             </div>
             <div class="col-2" :title="getNote(time)">
                 <div v-if="linkPresent(time.link)">
@@ -91,9 +86,9 @@ export default {
         };
     },
     computed: {
-        ...mapState(['data']),
+        ...mapState(['game']),
         recentTimes() {
-            let times = this.data.getRecentEntries();
+            let times = this.game.getRecentEntries();
             if (this.filters.entryStatus) {
                 if (this.filters.entryStatus === 'improvements') {
                     times = _.filter(times, (x) => {

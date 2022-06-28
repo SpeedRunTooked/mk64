@@ -11,7 +11,7 @@
                     <option value="">All Categories</option>
 
                     <option
-                        v-for="(type, key) in data.categories"
+                        v-for="(type, key) in game.categories"
                         :value="type.slug"
                         :key="key"
                     >
@@ -35,7 +35,7 @@
                         :value="subcategory.slug"
                     >
                         {{
-                            data.getSubcategoryName(
+                            game.getSubcategoryName(
                                 filters.categorySlug,
                                 subcategory.slug,
                             )
@@ -53,7 +53,7 @@
                     <option value="">
                         {{
                             filters.categorySlug
-                                ? data.getSubcategoryName(
+                                ? game.getSubcategoryName(
                                       filters.categorySlug,
                                       subcategory.slug,
                                   )
@@ -73,7 +73,7 @@
                     <option value="">All Players</option>
 
                     <option
-                        v-for="(value, key) in data.users"
+                        v-for="(value, key) in game.users"
                         :key="key"
                         :value="key"
                     >
@@ -123,14 +123,14 @@
                 class="col-2 clickable"
                 @click="setFilter('categorySlug', time.categorySlug)"
             >
-                {{ data.getCategoryName(time.categorySlug) }}
+                {{ game.category.name }}
             </div>
             <div
                 class="col-3 clickable"
                 @click="setFilter('subcategorySlug', time.subcategorySlug)"
             >
                 {{
-                    data.getSubcategoryName(
+                    game.getSubcategoryName(
                         time.categorySlug,
                         time.subcategorySlug,
                     )
@@ -183,7 +183,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(['data']),
+        ...mapState(['game']),
         filterOn() {
             return (
                 this.filters.subcategorySlug ||
@@ -193,7 +193,7 @@ export default {
             );
         },
         filterSets() {
-            const subcategorySet = this.data.categories.find(
+            const subcategorySet = this.game.categories.find(
                 (x) => x.slug === this.filters.categorySlug,
             ).subcategories;
             return {
@@ -202,14 +202,14 @@ export default {
         },
         subcategoryName() {
             if (this.filters.categorySlug) {
-                return this.data.getSubcategoryTypeName(
+                return this.game.getSubcategoryTypeName(
                     this.filters.categorySlug,
                 );
             }
             return 'Subcategory';
         },
         rows() {
-            let times = this.data.times;
+            let times = this.game.times;
 
             if (this.filters.subcategorySlug) {
                 times = _.filter(times, (x) => {
