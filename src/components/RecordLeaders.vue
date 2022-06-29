@@ -41,7 +41,7 @@ export default {
         ...mapState(['game']),
         players() {
             const first = _.orderBy(
-                this.game.playerStats,
+                this.game.player,
                 ['currentRecordTotal'],
                 ['desc'],
             );

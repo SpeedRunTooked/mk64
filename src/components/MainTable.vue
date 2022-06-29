@@ -121,20 +121,15 @@
             </div>
             <div
                 class="col-2 clickable"
-                @click="setFilter('categorySlug', time.categorySlug)"
+                @click="setFilter('categorySlug', time.category.slug)"
             >
-                {{ game.category.name }}
+                {{ time.category.name }}
             </div>
             <div
                 class="col-3 clickable"
-                @click="setFilter('subcategorySlug', time.subcategorySlug)"
+                @click="setFilter('subcategorySlug', time.subcategory.slug)"
             >
-                {{
-                    game.getSubcategoryName(
-                        time.categorySlug,
-                        time.subcategorySlug,
-                    )
-                }}
+                {{ time.subcategory.name }}
             </div>
             <div class="col-1">
                 <div v-if="linkPresent(time.link)">
@@ -213,13 +208,13 @@ export default {
 
             if (this.filters.subcategorySlug) {
                 times = _.filter(times, (x) => {
-                    return x.subcategorySlug === this.filters.subcategorySlug;
+                    return x.subcategory.slug === this.filters.subcategorySlug;
                 });
             }
 
             if (this.filters.categorySlug) {
                 times = _.filter(times, (x) => {
-                    return x.categorySlug === this.filters.categorySlug;
+                    return x.category.slug === this.filters.categorySlug;
                 });
             }
 

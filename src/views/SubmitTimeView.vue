@@ -242,10 +242,10 @@ export default defineComponent({
         },
         playerRecord(): string {
             if (this.categoryAndSubcategoryAndPlayerSelected) {
-                const stats = this.game.getPlayerStats(this.formData.userId);
-                if (stats) {
+                const player = this.game.getPlayer(this.formData.userId);
+                if (player) {
                     return (
-                        stats.getRecord(
+                        player.getRecord(
                             this.formData.subcategorySlug,
                             this.formData.categorySlug,
                         )?.timeElapsed || 'None yet!'

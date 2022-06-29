@@ -4,7 +4,7 @@ import { Run } from './game/Run';
 import { Subcategory } from './game/Subcategory';
 import { Time } from './game/Time';
 
-export class PlayerStats {
+export class Player {
     public currentRecords: Time[] = [];
     public currentRecordTotal = 0;
     public recordImprovements: Time[] = [];
@@ -59,7 +59,7 @@ export class PlayerStats {
     }
 
     public getFavoriteRun(): Run | null {
-        const run = _.maxBy(this.runs, 'attems');
+        const run = _.maxBy(this.runs, 'attempts');
         return run || null;
     }
 }

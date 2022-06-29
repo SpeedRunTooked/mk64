@@ -1,16 +1,16 @@
-import { SubcategoryGroupJSON, SubcategoryJSON } from 'ApiTypes';
+import { SubcategoryJSON } from 'ApiTypes';
 
 export class Subcategory {
     constructor(public subcategoryJson: SubcategoryJSON) {}
 
-    get json() {
+    get json(): SubcategoryJSON {
         return this.subcategoryJson;
     }
-    get slug() {
+    get slug(): string {
         return this.json.slug;
     }
 
-    get name() {
+    get name(): string {
         return this.json.name;
     }
 }

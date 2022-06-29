@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { PlayerStats } from '../PlayerStats';
+import { Player } from '../Player';
 import {
     CategoryJSON,
     FirebaseDataJSON,
@@ -13,7 +13,7 @@ import { Time } from './Time';
 export class Game {
     public api;
     public times: Time[] = [];
-    public playerStats: PlayerStats[] = [];
+    public player: Player[] = [];
 
     constructor(firebaseData: FirebaseDataJSON) {
         this.api = {
@@ -26,7 +26,7 @@ export class Game {
             this.buildTimes(firebaseData);
             this.buildCurrentRecords();
             this.buildRecordImprovements();
-            this.buildPlayerStats();
+            this.buildPlayers();
         }
     }
 
@@ -78,8 +78,8 @@ export class Game {
         return sorted.slice(0, num);
     }
 
-    public getPlayerStats(userId: string): PlayerStats | null {
-        return this.playerStats.filter((x) => x.playerId === userId)[0] || null;
+    public getPlayer(userId: string): Player | null {
+        return this.player.filter((x) => x.playerId === userId)[0] || null;
     }
 
     public getRecord(subcategorySlug: string, categorySlug: string): Time {
@@ -109,13 +109,13 @@ export class Game {
         );
     }
 
-    private buildPlayerStats(): void {
+    private buildPlayers(): void {
         for (const user in this.api.users) {
-            const player = new PlayerStats(
+            const player = new Player(
                 user,
                 this.times.filter((x) => x.userId === user),
             );
-            this.playerStats.push(player);
+            this.player.push(player);
         }
     }
 

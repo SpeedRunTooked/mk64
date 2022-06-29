@@ -40,6 +40,6 @@ export abstract class Entry {
     }
 
     get runSlug(): string {
-        return this.category.slug + ':' + this.subcategory.slug;
+        return this.category.slug + '-' + this.subcategory.slug;
     }
 }
