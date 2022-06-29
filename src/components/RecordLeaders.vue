@@ -53,14 +53,6 @@ export default {
             return second;
         },
     },
-    methods: {
-        displayFavoriteCategory(player) {
-            const fav = this.game.getCategoryName(
-                player.getFavoriteSubcategory().split(':')[0],
-            );
-            return fav === '' ? 'None yet!' : fav;
-        },
-    },
 };
 </script>
 

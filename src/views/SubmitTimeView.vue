@@ -31,14 +31,14 @@
                         <select
                             class="form-select"
                             aria-label="Default select example"
-                            v-model="formData.categorySlug"
+                            v-model="formData.category"
                             @change="resetSubcategory()"
                         >
                             <option value="" disabled selected>Category</option>
 
                             <option
                                 v-for="(category, key) in game.categories"
-                                :value="category.slug"
+                                :value="category"
                                 :key="key"
                             >
                                 {{ category.name }}
@@ -50,7 +50,7 @@
                         <select
                             class="form-select"
                             aria-label="Default select example"
-                            v-model="formData.subcategorySlug"
+                            v-model="formData.subcategory"
                         >
                             <option value="" disabled selected>
                                 Select {{ subcategoryName }}
@@ -59,7 +59,7 @@
                             <option
                                 v-for="subcategory in subcategoryList"
                                 :key="subcategory.slug"
-                                :value="subcategory.slug"
+                                :value="subcategory"
                             >
                                 {{ subcategory.name }}
                             </option>
@@ -183,7 +183,7 @@ export default defineComponent({
         return {
             formData: {
                 userId: this.$cookies.get('userId') || '',
-                subcategorySlug: this.$cookies.get('subcategorySlug') || '',
+                subcategory: this.$cookies.get('subcategory') || '',
                 time: {
                     min: '',
                     sec: '',
@@ -191,7 +191,7 @@ export default defineComponent({
                 },
                 link: '',
                 notes: '',
-                categorySlug: this.$cookies.get('categorySlug') || '',
+                category: this.$cookies.get('category') || '',
             },
         };
     },
@@ -209,12 +209,12 @@ export default defineComponent({
             );
         },
         showSubcategories() {
-            return this.formData.categorySlug && this.game.categories.length > 0
+            return this.formData.category && this.game.categories.length > 0
                 ? true
                 : false;
         },
         subcategoryList() {
-            const list = this.game.getSubcategories(this.formData.categorySlug);
+            const list = this.formData.category.subcategories;
             return _.orderBy(list, ['name']);
         },
         msError(): boolean {
@@ -226,17 +226,15 @@ export default defineComponent({
         currentRecord(): Time | null {
             if (this.categoryAndSubcategorySelected) {
                 return this.game.getRecord(
-                    this.formData.subcategorySlug,
-                    this.formData.categorySlug,
+                    this.formData.subcategory.slug,
+                    this.formData.category.slug,
                 );
             }
             return null;
         },
         subcategoryName() {
-            if (this.formData.categorySlug) {
-                return this.game.getSubcategoryTypeName(
-                    this.formData.categorySlug,
-                );
+            if (this.formData.category) {
+                return this.formData.category.subcategoryName;
             }
             return 'Subcategory';
         },
@@ -246,8 +244,8 @@ export default defineComponent({
                 if (player) {
                     return (
                         player.getRecord(
-                            this.formData.subcategorySlug,
-                            this.formData.categorySlug,
+                            this.formData.subcategory.slug,
+                            this.formData.category.slug,
                         )?.timeElapsed || 'None yet!'
                     );
                 }
@@ -255,7 +253,7 @@ export default defineComponent({
             return 'None yet!';
         },
         categoryAndSubcategorySelected(): boolean {
-            return this.formData.subcategorySlug && this.formData.categorySlug;
+            return this.formData.subcategory && this.formData.category;
         },
         categoryAndSubcategoryAndPlayerSelected(): boolean {
             return this.categoryAndSubcategorySelected && this.formData.userId;
@@ -269,13 +267,12 @@ export default defineComponent({
     methods: {
         resetSubcategory() {
             if (
-                this.formData.subcategorySlug !== '' &&
-                !this.game.subcategoryExistsInCategory(
-                    this.formData.subcategorySlug,
-                    this.formData.categorySlug,
+                this.formData.subcategory.slug !== '' &&
+                !this.formData.category.subcategoryExists(
+                    this.formData.subcategory,
                 )
             ) {
-                this.formData.subcategorySlug = '';
+                this.formData.subcategory = '';
             }
         },
     },

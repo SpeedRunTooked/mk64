@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import { Category } from './game/Category';
-import { Run } from './game/Run';
-import { Subcategory } from './game/Subcategory';
-import { Time } from './game/Time';
+import { Category } from './Category';
+import { Run } from './Run';
+import { Subcategory } from './Subcategory';
+import { Time } from './Time';
 
 export class Player {
     public currentRecords: Time[] = [];

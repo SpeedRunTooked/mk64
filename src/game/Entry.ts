@@ -21,6 +21,9 @@ export abstract class Entry {
         this.userDisplayName = game.getUserDisplayName(timeJson.userId);
         this.created = new Date(timeJson.created);
         this.link = timeJson.link;
+        this.category = new Category(
+            game.getCategoryJson(timeJson.categorySlug),
+        );
         this.subcategory = new Subcategory(
             game.getSubcategoryJson(
                 timeJson.categorySlug,
@@ -28,9 +31,6 @@ export abstract class Entry {
             ),
         );
         this.note = timeJson.note;
-        this.category = new Category(
-            game.getCategoryJson(timeJson.categorySlug),
-        );
         this.isCurrentRecord = false;
         this.isRecordImprovement = false;
     }

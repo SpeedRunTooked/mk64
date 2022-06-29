@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { Player } from '../Player';
+import { Player } from './Player';
 import {
     CategoryJSON,
     FirebaseDataJSON,
@@ -9,11 +9,13 @@ import {
 } from 'ApiTypes';
 
 import { Time } from './Time';
+import { Category } from './Category';
 
 export class Game {
     public api;
     public times: Time[] = [];
     public player: Player[] = [];
+    public categories: Category[] = [];
 
     constructor(firebaseData: FirebaseDataJSON) {
         this.api = {
@@ -23,6 +25,7 @@ export class Game {
             subcategoryGroups: firebaseData.subcategoryGroups || [],
         };
         if (firebaseData) {
+            this.buildCategories();
             this.buildTimes(firebaseData);
             this.buildCurrentRecords();
             this.buildRecordImprovements();
@@ -34,43 +37,17 @@ export class Game {
         return this.users[userId]?.displayName;
     }
 
-    public getSubcategoryName(
-        categorySlug: string,
-        subcategorySlug: string,
-    ): string {
-        const subcategories = this.categories.find(
-            (x) => x.slug === categorySlug,
-        )?.subcategories;
-        return (
-            subcategories?.find((x) => x.slug === subcategorySlug)?.name || ''
-        );
-    }
-
-    public getSubcategoryTypeName(categorySlug: string): string {
-        return (
-            this.categories.find((x) => x.slug === categorySlug)
-                ?.subcategoryName || ''
-        );
-    }
-
     public getCategoryJson(categorySlug: string): CategoryJSON {
-        return this.categories.filter((x) => x.slug === categorySlug)[0];
+        return this.categories.filter((x) => x.slug === categorySlug)[0].json;
     }
 
     public getSubcategoryJson(
         categorySlug: string,
         subcategorySlug: string,
     ): SubcategoryJSON {
-        return this.getCategoryJson(categorySlug).subcategories.filter(
+        return this.getCategoryJson(categorySlug)?.subcategories.filter(
             (subcategory) => subcategory.slug === subcategorySlug,
         )[0];
-    }
-
-    public getCategoryName(recordSlug: string): string {
-        for (const type of this.categories) {
-            if (type.slug === recordSlug) return type.name;
-        }
-        return '';
     }
 
     public getRecentEntries(num: number): Time[] {
@@ -92,23 +69,6 @@ export class Game {
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
     }
 
-    public getSubcategories(categorySlug: string): SubcategoryJSON[] {
-        return _.sortBy(this.getCategoryJson(categorySlug).subcategories, [
-            'displayOrder',
-        ]);
-    }
-
-    public subcategoryExistsInCategory(
-        subcategorySlug: string,
-        categorySlug: string,
-    ): boolean {
-        const subcategoryList = this.getSubcategories(categorySlug);
-        return (
-            subcategoryList?.filter((x) => x.slug === subcategorySlug).length >
-            0
-        );
-    }
-
     private buildPlayers(): void {
         for (const user in this.api.users) {
             const player = new Player(
@@ -116,6 +76,12 @@ export class Game {
                 this.times.filter((x) => x.userId === user),
             );
             this.player.push(player);
+        }
+    }
+
+    private buildCategories(): void {
+        for (const categoryJson of this.api.categories) {
+            this.categories.push(new Category(categoryJson));
         }
     }
 
@@ -158,8 +124,5 @@ export class Game {
 
     get users(): UsersJSON {
         return this.api.users;
-    }
-    get categories(): CategoryJSON[] {
-        return _.sortBy(this.api.categories, ['displayOrder']);
     }
 }

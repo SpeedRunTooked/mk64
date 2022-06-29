@@ -5,6 +5,7 @@
         tabindex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
+        v-if="formReady"
     >
         <div class="modal-dialog">
             <div class="modal-content">
@@ -29,18 +30,13 @@
                     <div class="row">
                         <div class="col-4 left-col">Category:</div>
                         <div class="col-8 right-col">
-                            {{ game.getCategoryName(formData.categorySlug) }}
+                            {{ formData.category.name }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Subcategory:</div>
                         <div class="col-8 right-col">
-                            {{
-                                game.getSubcategoryName(
-                                    formData.categorySlug,
-                                    formData.subcategorySlug,
-                                )
-                            }}
+                            {{ formData.subcategory.name }}
                         </div>
                     </div>
                     <div class="row">
@@ -126,13 +122,20 @@ export default {
     },
     computed: {
         ...mapState(['game']),
+        formReady() {
+            return (
+                this.formData.userId &&
+                this.formData.subcategory &&
+                this.formData.category
+            );
+        },
     },
     methods: {
         async submitForm() {
             this.uploading = true;
             const data = qs.stringify({
                 userId: this.formData.userId,
-                subcategorySlug: this.formData.subcategorySlug,
+                subcategorySlug: this.formData.subcategory.slug,
                 timeMs: this.Time.elapsedTimeToMs(
                     `${this.formData.time.min || 0}'${
                         this.formData.time.sec || 0
@@ -140,7 +143,7 @@ export default {
                 ),
                 link: this.formData.link,
                 notes: this.formData.notes,
-                categorySlug: this.formData.categorySlug,
+                categorySlug: this.formData.category.slug,
             });
 
             const config = {
@@ -157,11 +160,8 @@ export default {
                 this.uploading = false;
                 this.success = true;
                 this.$cookies.set('userId', this.formData.userId);
-                this.$cookies.set(
-                    'subcategorySlug',
-                    this.formData.subcategorySlug,
-                );
-                this.$cookies.set('categorySlug', this.formData.categorySlug);
+                this.$cookies.set('subcategory', this.formData.subcategory);
+                this.$cookies.set('category', this.formData.category);
 
                 setTimeout(() => {
                     window.location.reload();

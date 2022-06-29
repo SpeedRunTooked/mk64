@@ -5,46 +5,41 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="filters.categorySlug"
+                    v-model="filters.category"
                     @change="resetRows()"
                 >
-                    <option value="">All Categories</option>
+                    <option value="null">All Categories</option>
 
                     <option
-                        v-for="(type, key) in game.categories"
-                        :value="type.slug"
+                        v-for="(category, key) in game.categories"
+                        :value="category"
                         :key="key"
                     >
-                        {{ type.name }}
+                        {{ category.name }}
                     </option>
                 </select>
             </div>
 
-            <div v-if="filters.categorySlug" class="col-3">
+            <div v-if="filters.category" class="col-3">
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="filters.subcategorySlug"
+                    v-model="filters.subcategory"
                     @change="resetRows()"
                 >
-                    <option value="">All {{ subcategoryName }}s</option>
+                    <option value="null">All {{ subcategoryName }}s</option>
 
                     <option
                         v-for="subcategory in filterSets.subcategorySet"
                         :key="subcategory.slug"
-                        :value="subcategory.slug"
+                        :value="subcategory"
                     >
-                        {{
-                            game.getSubcategoryName(
-                                filters.categorySlug,
-                                subcategory.slug,
-                            )
-                        }}
+                        {{ subcategory.name }}
                     </option>
                 </select>
             </div>
 
-            <div v-if="!filters.categorySlug" class="col-3">
+            <div v-if="!filters.category" class="col-3">
                 <select
                     class="form-select"
                     aria-label="Default select example"
@@ -52,11 +47,8 @@
                 >
                     <option value="">
                         {{
-                            filters.categorySlug
-                                ? game.getSubcategoryName(
-                                      filters.categorySlug,
-                                      subcategory.slug,
-                                  )
+                            filters.category
+                                ? subcategory.name
                                 : 'Select a category'
                         }}
                     </option>
@@ -70,7 +62,7 @@
                     v-model="filters.userId"
                     @change="resetRows()"
                 >
-                    <option value="">All Players</option>
+                    <option value="null">All Players</option>
 
                     <option
                         v-for="(value, key) in game.users"
@@ -88,7 +80,7 @@
                     v-model="filters.entryStatus"
                     @change="resetRows()"
                 >
-                    <option value="" selected>All Times</option>
+                    <option value="null" selected>All Times</option>
                     <option value="current">Current Records</option>
                     <option value="improvements">Record Improvements</option>
                 </select>
@@ -121,13 +113,13 @@
             </div>
             <div
                 class="col-2 clickable"
-                @click="setFilter('categorySlug', time.category.slug)"
+                @click="setFilter('category', time.category)"
             >
                 {{ time.category.name }}
             </div>
             <div
                 class="col-3 clickable"
-                @click="setFilter('subcategorySlug', time.subcategory.slug)"
+                @click="setFilter('subcategory', time.subcategory)"
             >
                 {{ time.subcategory.name }}
             </div>
@@ -168,10 +160,10 @@ export default {
         return {
             entries: 5,
             filters: {
-                subcategorySlug: '',
-                categorySlug: '',
-                userId: '',
-                entryStatus: '',
+                subcategory: null,
+                category: null,
+                userId: null,
+                entryStatus: null,
             },
 
             moment,
@@ -181,40 +173,38 @@ export default {
         ...mapState(['game']),
         filterOn() {
             return (
-                this.filters.subcategorySlug ||
-                this.filters.categorySlug ||
+                this.filters.subcategory ||
+                this.filters.category ||
                 this.filters.userId ||
                 this.filters.entryStatus
             );
         },
         filterSets() {
             const subcategorySet = this.game.categories.find(
-                (x) => x.slug === this.filters.categorySlug,
+                (x) => x.slug === this.filters.category.slug,
             ).subcategories;
             return {
                 subcategorySet: _.orderBy(subcategorySet, ['name']),
             };
         },
         subcategoryName() {
-            if (this.filters.categorySlug) {
-                return this.game.getSubcategoryTypeName(
-                    this.filters.categorySlug,
-                );
+            if (this.filters.category) {
+                return this.filters.category.subcategoryName;
             }
             return 'Subcategory';
         },
         rows() {
             let times = this.game.times;
 
-            if (this.filters.subcategorySlug) {
+            if (this.filters.subcategory) {
                 times = _.filter(times, (x) => {
-                    return x.subcategory.slug === this.filters.subcategorySlug;
+                    return x.subcategory.slug === this.filters.subcategory.slug;
                 });
             }
 
-            if (this.filters.categorySlug) {
+            if (this.filters.category) {
                 times = _.filter(times, (x) => {
-                    return x.category.slug === this.filters.categorySlug;
+                    return x.category.slug === this.filters.category.slug;
                 });
             }
 
@@ -249,7 +239,7 @@ export default {
         },
         resetFilters() {
             for (const filter in this.filters) {
-                this.filters[filter] = '';
+                this.filters[filter] = null;
             }
             this.resetRows();
         },
@@ -266,16 +256,15 @@ export default {
 
 <style scoped>
 select {
-    /* width: 150px; */
     float: right;
 }
+
 .select-wrapper {
     width: 70px;
     float: right;
     height: 50px;
 }
-</style>
-<style scoped>
+
 .time-row {
     padding: 2px;
 }
