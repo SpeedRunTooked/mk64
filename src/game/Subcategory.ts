@@ -1,7 +1,7 @@
 import { SubcategoryJSON } from 'ApiTypes';
 
 export class Subcategory {
-    constructor(public subcategoryJson: SubcategoryJSON) {}
+    constructor(private subcategoryJson: SubcategoryJSON) {}
 
     get json(): SubcategoryJSON {
         return this.subcategoryJson;

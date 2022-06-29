@@ -10,18 +10,18 @@
                         <select
                             class="form-select"
                             aria-label="Default select example"
-                            v-model="formData.userId"
+                            v-model="formData.user"
                         >
-                            <option value="" disabled selected>
+                            <option value="null" disabled selected>
                                 Select Player
                             </option>
 
                             <option
-                                v-for="(value, key) in game.users"
-                                :key="key"
-                                :value="key"
+                                v-for="user in game.users"
+                                :key="user.id"
+                                :value="user"
                             >
-                                {{ value.displayName }}
+                                {{ user.displayName }}
                             </option>
                             <!-- </li> -->
                         </select>
@@ -34,7 +34,9 @@
                             v-model="formData.category"
                             @change="resetSubcategory()"
                         >
-                            <option value="" disabled selected>Category</option>
+                            <option value="null" disabled selected>
+                                Category
+                            </option>
 
                             <option
                                 v-for="(category, key) in game.categories"
@@ -52,7 +54,7 @@
                             aria-label="Default select example"
                             v-model="formData.subcategory"
                         >
-                            <option value="" disabled selected>
+                            <option value="null" disabled selected>
                                 Select {{ subcategoryName }}
                             </option>
 
@@ -77,10 +79,10 @@
                                 }}</span>
                             </div>
                             <div
-                                v-if="categoryAndSubcategoryAndPlayerSelected"
+                                v-if="categoryAndSubcategoryAndUserSelected"
                                 class="col"
                             >
-                                Your Best Time: {{ playerRecord }}
+                                Your Best Time: {{ userRecord }}
                             </div>
                         </div>
                     </div>
@@ -182,16 +184,16 @@ export default defineComponent({
     data() {
         return {
             formData: {
-                userId: this.$cookies.get('userId') || '',
-                subcategory: this.$cookies.get('subcategory') || '',
+                user: this.$cookies.get('user') || null,
+                category: this.$cookies.get('category') || null,
+                subcategory: this.$cookies.get('subcategory') || null,
                 time: {
-                    min: '',
-                    sec: '',
-                    ms: '',
+                    min: null,
+                    sec: null,
+                    ms: null,
                 },
-                link: '',
+                link: null,
                 notes: '',
-                category: this.$cookies.get('category') || '',
             },
         };
     },
@@ -202,7 +204,7 @@ export default defineComponent({
         ...mapState(['game']),
         ready(): boolean {
             return (
-                this.categoryAndSubcategoryAndPlayerSelected &&
+                this.categoryAndSubcategoryAndUserSelected &&
                 this.formData.time.sec !== '' &&
                 String(this.formData.time.ms).length === 2 &&
                 this.formData.link !== ''
@@ -238,12 +240,12 @@ export default defineComponent({
             }
             return 'Subcategory';
         },
-        playerRecord(): string {
-            if (this.categoryAndSubcategoryAndPlayerSelected) {
-                const player = this.game.getPlayer(this.formData.userId);
-                if (player) {
+        userRecord(): string {
+            if (this.categoryAndSubcategoryAndUserSelected) {
+                const user = this.game.getUser(this.formData.user);
+                if (user) {
                     return (
-                        player.getRecord(
+                        user.getRecord(
                             this.formData.subcategory.slug,
                             this.formData.category.slug,
                         )?.timeElapsed || 'None yet!'
@@ -255,8 +257,8 @@ export default defineComponent({
         categoryAndSubcategorySelected(): boolean {
             return this.formData.subcategory && this.formData.category;
         },
-        categoryAndSubcategoryAndPlayerSelected(): boolean {
-            return this.categoryAndSubcategorySelected && this.formData.userId;
+        categoryAndSubcategoryAndUserSelected(): boolean {
+            return this.categoryAndSubcategorySelected && this.formData.user;
         },
         showRecordTimes() {
             return (
@@ -267,12 +269,12 @@ export default defineComponent({
     methods: {
         resetSubcategory() {
             if (
-                this.formData.subcategory.slug !== '' &&
+                this.formData.subcategory.slug !== null &&
                 !this.formData.category.subcategoryExists(
                     this.formData.subcategory,
                 )
             ) {
-                this.formData.subcategory = '';
+                this.formData.subcategory = null;
             }
         },
     },

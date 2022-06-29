@@ -20,10 +20,6 @@ declare module 'ApiTypes' {
         slug: string;
     }
 
-    interface TimesJSON {
-        [key: string]: TimeJSON;
-    }
-
     interface TimeJSON {
         created: string;
         link: string;
@@ -38,10 +34,6 @@ declare module 'ApiTypes' {
         name: string;
         slug: string;
         displayOrder: number;
-    }
-
-    interface UsersJSON {
-        [key: string]: UserJSON;
     }
 
     interface UserJSON {

@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-4 left-col">Player:</div>
                         <div class="col-8 right-col">
-                            {{ game.getUserDisplayName(formData.userId) }}
+                            {{ formData.user.displayName }}
                         </div>
                     </div>
                     <div class="row">
@@ -124,7 +124,7 @@ export default {
         ...mapState(['game']),
         formReady() {
             return (
-                this.formData.userId &&
+                this.formData.user &&
                 this.formData.subcategory &&
                 this.formData.category
             );
@@ -134,7 +134,8 @@ export default {
         async submitForm() {
             this.uploading = true;
             const data = qs.stringify({
-                userId: this.formData.userId,
+                userId: this.formData.user.id,
+                categorySlug: this.formData.category.slug,
                 subcategorySlug: this.formData.subcategory.slug,
                 timeMs: this.Time.elapsedTimeToMs(
                     `${this.formData.time.min || 0}'${
@@ -143,7 +144,6 @@ export default {
                 ),
                 link: this.formData.link,
                 notes: this.formData.notes,
-                categorySlug: this.formData.category.slug,
             });
 
             const config = {
@@ -159,9 +159,9 @@ export default {
                 console.log('Time submitted successfully!');
                 this.uploading = false;
                 this.success = true;
-                this.$cookies.set('userId', this.formData.userId);
-                this.$cookies.set('subcategory', this.formData.subcategory);
+                this.$cookies.set('user', this.formData.user);
                 this.$cookies.set('category', this.formData.category);
+                this.$cookies.set('subcategory', this.formData.subcategory);
 
                 setTimeout(() => {
                     window.location.reload();

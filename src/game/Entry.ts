@@ -2,23 +2,25 @@ import { TimeJSON } from 'ApiTypes';
 import { Category } from './Category';
 import { Game } from './Game';
 import { Subcategory } from './Subcategory';
+import { User } from './User';
 
 export abstract class Entry {
-    public userId: string;
-    public userDisplayName: string;
+    public id: string;
     public created: Date;
     public link: string;
     public subcategory: Subcategory;
     public note: string;
     public category: Category;
-    public id: string;
     public isCurrentRecord: boolean;
     public isRecordImprovement: boolean;
 
-    constructor(id: string, public timeJson: TimeJSON, game: Game) {
+    constructor(
+        id: string,
+        public timeJson: TimeJSON,
+        public user: User,
+        game: Game,
+    ) {
         this.id = id;
-        this.userId = timeJson.userId;
-        this.userDisplayName = game.getUserDisplayName(timeJson.userId);
         this.created = new Date(timeJson.created);
         this.link = timeJson.link;
         this.category = new Category(

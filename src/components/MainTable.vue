@@ -59,7 +59,7 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="filters.userId"
+                    v-model="filters.user"
                     @change="resetRows()"
                 >
                     <option value="null">All Players</option>
@@ -133,10 +133,7 @@
                     {{ time.timeElapsed }}
                 </div>
             </div>
-            <div
-                class="col-3 clickable"
-                @click="setFilter('userId', time.userId)"
-            >
+            <div class="col-3 clickable" @click="setFilter('user', time.user)">
                 {{ time.userDisplayName }}
             </div>
         </div>
@@ -162,7 +159,7 @@ export default {
             filters: {
                 subcategory: null,
                 category: null,
-                userId: null,
+                user: null,
                 entryStatus: null,
             },
 
@@ -175,7 +172,7 @@ export default {
             return (
                 this.filters.subcategory ||
                 this.filters.category ||
-                this.filters.userId ||
+                this.filters.user ||
                 this.filters.entryStatus
             );
         },
@@ -208,9 +205,9 @@ export default {
                 });
             }
 
-            if (this.filters.userId) {
-                times = _.filter(times, (x) => {
-                    return x.userId === this.filters.userId;
+            if (this.filters.user) {
+                times = _.filter(times, (time) => {
+                    return time.user.id === this.filters.user.id;
                 });
             }
 

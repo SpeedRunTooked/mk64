@@ -32,13 +32,14 @@
             :key="subcategory.slug"
             class="row subcategory-row"
             :class="subcategory?.endOfGroup ? 'end-row' : ''"
+            :v-if="subcategory"
         >
             <div class="col">{{ subcategory.name }}</div>
             <div class="col">
                 {{ getElapsedTime(subcategory) }}
             </div>
             <div class="col">
-                {{ getPlayerDisplayName(subcategory) }}
+                {{ getUserDisplayName(subcategory) }}
             </div>
         </div>
     </div>
@@ -81,12 +82,12 @@ export default {
             )?.timeElapsed;
             return time || 'None yet!';
         },
-        getPlayerDisplayName(subcategory) {
-            const name = this.game.getRecord(
+        getUserDisplayName(subcategory) {
+            const record = this.game.getRecord(
                 subcategory.slug,
                 this.selectedCategory.slug,
-            )?.userDisplayName;
-            return name || 'None yet!';
+            );
+            return record?.user?.displayName || 'None yet!';
         },
     },
 };

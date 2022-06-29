@@ -4,7 +4,7 @@ import { Subcategory } from './Subcategory';
 export class Category {
     public subcategories: Subcategory[] = [];
 
-    constructor(public categoryJson: CategoryJSON) {
+    constructor(private categoryJson: CategoryJSON) {
         this.buildSubcategories();
     }
 

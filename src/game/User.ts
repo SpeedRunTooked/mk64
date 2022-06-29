@@ -1,10 +1,11 @@
+import { UserJSON } from 'ApiTypes';
 import _ from 'lodash';
 import { Category } from './Category';
 import { Run } from './Run';
 import { Subcategory } from './Subcategory';
 import { Time } from './Time';
 
-export class Player {
+export class User {
     public currentRecords: Time[] = [];
     public currentRecordTotal = 0;
     public recordImprovements: Time[] = [];
@@ -12,9 +13,31 @@ export class Player {
     public subcategoryMap: { [key: string]: number } = {};
     public runs: Run[] = [];
 
-    constructor(public playerId: string, public times: Time[]) {
+    constructor(public id: string, public json: UserJSON) {
         this.buildRecords();
         this.buildRuns();
+    }
+
+    get displayName(): string {
+        return this.json.displayName;
+    }
+
+    public getRecord(
+        subcategorySlug: string,
+        categorySlug: string,
+    ): Time | null {
+        const filtered = this.times.filter((x) => {
+            return (
+                x.subcategory.slug === subcategorySlug &&
+                x.category.slug === categorySlug
+            );
+        });
+        return _.minBy(filtered, 'timeMs') || null;
+    }
+
+    get favoriteRun(): Run | null {
+        const run = _.maxBy(this.runs, 'attempts');
+        return run || null;
     }
 
     private buildRecords(): void {
@@ -43,23 +66,5 @@ export class Player {
                 );
             }
         }
-    }
-
-    public getRecord(
-        subcategorySlug: string,
-        categorySlug: string,
-    ): Time | null {
-        const filtered = this.times.filter((x) => {
-            return (
-                x.subcategory.slug === subcategorySlug &&
-                x.category.slug === categorySlug
-            );
-        });
-        return _.minBy(filtered, 'timeMs') || null;
-    }
-
-    public getFavoriteRun(): Run | null {
-        const run = _.maxBy(this.runs, 'attempts');
-        return run || null;
     }
 }

@@ -1,14 +1,15 @@
 import { TimeJSON } from 'ApiTypes';
 import { Game } from './Game';
 import { Entry } from './Entry';
+import { User } from './User';
 
 export class Time extends Entry {
     public timeMs: number;
     public timeElapsed: string;
     public entryTypeSlug = 'time';
 
-    constructor(id: string, timeJson: TimeJSON, game: Game) {
-        super(id, timeJson, game);
+    constructor(id: string, timeJson: TimeJSON, user: User, game: Game) {
+        super(id, timeJson, user, game);
         this.timeMs = Number(timeJson.timeMs);
         this.timeElapsed = Time.msToElapsedTime(Number(timeJson.timeMs));
     }

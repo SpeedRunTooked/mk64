@@ -1,30 +1,26 @@
 <template>
     <div class="section-container mx-auto">
-        <div
-            v-for="(player, index) in players"
-            :key="player.playerId"
-            class="row player-badge"
-        >
+        <div v-for="user in users" :key="user.id" class="row user-badge">
             <div class="col">
                 <div class="row leaderboard-header text-start">
                     <div class="col">
                         #{{ index + 1 }} -
-                        {{ game.getUserDisplayName(player.playerId) }}
+                        {{ user.displayName }}
                     </div>
                 </div>
                 <div class="row badge-row text-start">
                     <div class="col-7">
                         <span class="highlight"
                             >Current Records:
-                            {{ player.currentRecordTotal }} </span
+                            {{ user.currentRecordTotal }} </span
                         ><br />
                         Total Record Improvements:
-                        {{ player.recordImprovementTotal }} <br />
-                        Total Submissions: {{ player.times.length }}
+                        {{ user.recordImprovementTotal }} <br />
+                        Total Submissions: {{ user.times.length }}
                     </div>
-                    <div v-if="player.getFavoriteRun()" class="col-5">
+                    <div v-if="user.getFavoriteRun()" class="col-5">
                         Favorite Run: <br />
-                        {{ player.getFavoriteRun().displayName }}
+                        {{ user.favoriteRun.displayName }}
                     </div>
                 </div>
             </div>
@@ -39,9 +35,9 @@ import _ from 'lodash';
 export default {
     computed: {
         ...mapState(['game']),
-        players() {
+        users() {
             const first = _.orderBy(
-                this.game.player,
+                this.game.users,
                 ['currentRecordTotal'],
                 ['desc'],
             );
@@ -65,7 +61,7 @@ export default {
     border-bottom: 2px solid lightgrey;
 }
 
-.player-badge {
+.user-badge {
     margin: 30px;
 }
 

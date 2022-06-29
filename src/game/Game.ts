@@ -1,40 +1,24 @@
 import _ from 'lodash';
-import { Player } from './Player';
-import {
-    CategoryJSON,
-    FirebaseDataJSON,
-    SubcategoryJSON,
-    TimeJSON,
-    UsersJSON,
-} from 'ApiTypes';
+import { User } from './User';
+import { CategoryJSON, FirebaseDataJSON, SubcategoryJSON } from 'ApiTypes';
 
 import { Time } from './Time';
 import { Category } from './Category';
+import { FirebaseData } from './FirebaseData';
 
 export class Game {
-    public api;
+    public firebaseData;
     public times: Time[] = [];
-    public player: Player[] = [];
+    public users: User[] = [];
     public categories: Category[] = [];
 
-    constructor(firebaseData: FirebaseDataJSON) {
-        this.api = {
-            users: firebaseData?.users || {},
-            times: firebaseData?.times || {},
-            categories: firebaseData.categories || [],
-            subcategoryGroups: firebaseData.subcategoryGroups || [],
-        };
-        if (firebaseData) {
-            this.buildCategories();
-            this.buildTimes(firebaseData);
-            this.buildCurrentRecords();
-            this.buildRecordImprovements();
-            this.buildPlayers();
-        }
-    }
-
-    public getUserDisplayName(userId: string): string {
-        return this.users[userId]?.displayName;
+    constructor(firebaseDataJson: FirebaseDataJSON) {
+        this.firebaseData = new FirebaseData(firebaseDataJson);
+        this.buildCategories();
+        this.buildUsers();
+        this.buildTimes(firebaseDataJson);
+        this.buildCurrentRecords();
+        this.buildRecordImprovements();
     }
 
     public getCategoryJson(categorySlug: string): CategoryJSON {
@@ -55,8 +39,8 @@ export class Game {
         return sorted.slice(0, num);
     }
 
-    public getPlayer(userId: string): Player | null {
-        return this.player.filter((x) => x.playerId === userId)[0] || null;
+    public getUser(userId: string): User {
+        return this.users.filter((user) => user.id === userId)[0];
     }
 
     public getRecord(subcategorySlug: string, categorySlug: string): Time {
@@ -69,30 +53,29 @@ export class Game {
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
     }
 
-    private buildPlayers(): void {
-        for (const user in this.api.users) {
-            const player = new Player(
-                user,
-                this.times.filter((x) => x.userId === user),
+    private buildUsers(): void {
+        for (const userId in this.firebaseData.users) {
+            const user: User = new User(
+                userId,
+                this.firebaseData.users[userId],
             );
-            this.player.push(player);
+            this.users.push(user);
         }
     }
 
     private buildCategories(): void {
-        for (const categoryJson of this.api.categories) {
+        for (const categoryJson of this.firebaseData.categories) {
             this.categories.push(new Category(categoryJson));
         }
     }
 
     private buildTimes(firebaseData: FirebaseDataJSON): void {
-        const result = [];
         const times = firebaseData.times;
         for (const timeId in times) {
-            const data: TimeJSON = times[timeId];
-            result.push(new Time(timeId, data, this));
+            const timeJson = times[timeId];
+            const user = this.getUser(timeJson.userId);
+            this.times.push(new Time(timeId, timeJson, user, this));
         }
-        this.times = result;
     }
 
     private buildCurrentRecords(): void {
@@ -120,9 +103,5 @@ export class Game {
                 }
             }
         }
-    }
-
-    get users(): UsersJSON {
-        return this.api.users;
     }
 }
