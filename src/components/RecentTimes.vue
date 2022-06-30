@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="col-2">
-                {{ time.userDisplayName }}
+                {{ time.user.displayName }}
             </div>
         </div>
     </div>

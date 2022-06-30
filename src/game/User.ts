@@ -1,25 +1,22 @@
-import { UserJSON } from 'ApiTypes';
 import _ from 'lodash';
+import { UserJSON } from 'ApiTypes';
 import { Category } from './Category';
 import { Run } from './Run';
 import { Subcategory } from './Subcategory';
 import { Time } from './Time';
 
 export class User {
-    public currentRecords: Time[] = [];
-    public currentRecordTotal = 0;
-    public recordImprovements: Time[] = [];
-    public recordImprovementTotal = 0;
-    public subcategoryMap: { [key: string]: number } = {};
+    public times: Time[] = [];
     public runs: Run[] = [];
+    public currentRecords: Time[] = [];
+    public recordImprovements: Time[] = [];
+    public currentRecordTotal = 0;
+    public recordImprovementTotal = 0;
+    public favoriteRun: Run | null = null;
 
     constructor(public id: string, public json: UserJSON) {
         this.buildRecords();
         this.buildRuns();
-    }
-
-    get displayName(): string {
-        return this.json.displayName;
     }
 
     public getRecord(
@@ -35,9 +32,10 @@ export class User {
         return _.minBy(filtered, 'timeMs') || null;
     }
 
-    get favoriteRun(): Run | null {
-        const run = _.maxBy(this.runs, 'attempts');
-        return run || null;
+    public buildStats(times: Time[]): void {
+        this.times = times.filter((time) => time.user === this);
+        this.buildRecords();
+        this.buildRuns();
     }
 
     private buildRecords(): void {
@@ -66,5 +64,10 @@ export class User {
                 );
             }
         }
+        this.favoriteRun = _.maxBy(this.runs, 'attempts') || null;
+    }
+
+    get displayName(): string {
+        return this.json.displayName;
     }
 }

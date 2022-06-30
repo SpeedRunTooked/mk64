@@ -8,11 +8,11 @@
                     v-model="filters.category"
                     @change="resetRows()"
                 >
-                    <option value="null">All Categories</option>
+                    <option value="">All Categories</option>
 
                     <option
                         v-for="(category, key) in game.categories"
-                        :value="category"
+                        :value="category.slug"
                         :key="key"
                     >
                         {{ category.name }}
@@ -27,12 +27,12 @@
                     v-model="filters.subcategory"
                     @change="resetRows()"
                 >
-                    <option value="null">All {{ subcategoryName }}s</option>
+                    <option value="">All {{ subcategoryName }}s</option>
 
                     <option
-                        v-for="subcategory in filterSets.subcategorySet"
+                        v-for="subcategory in subcategoryFilterSet"
                         :key="subcategory.slug"
-                        :value="subcategory"
+                        :value="subcategory.slug"
                     >
                         {{ subcategory.name }}
                     </option>
@@ -47,9 +47,9 @@
                 >
                     <option value="">
                         {{
-                            filters.category
-                                ? subcategory.name
-                                : 'Select a category'
+                            filters.subcategory
+                                ? game.getSubcategory(filters.subcategory)?.name
+                                : ''
                         }}
                     </option>
                 </select>
@@ -61,15 +61,17 @@
                     aria-label="Default select example"
                     v-model="filters.user"
                     @change="resetRows()"
+                    v-if="game.users.length > 0"
                 >
-                    <option value="null">All Players</option>
+                    <option value="">All Players</option>
 
                     <option
-                        v-for="(value, key) in game.users"
+                        v-for="(user, key) in game.users"
                         :key="key"
-                        :value="key"
+                        :value="user.id"
+                        :v-if="game.users.length > 0"
                     >
-                        {{ value.displayName }}
+                        {{ user.displayName }}
                     </option>
                 </select>
             </div>
@@ -80,7 +82,7 @@
                     v-model="filters.entryStatus"
                     @change="resetRows()"
                 >
-                    <option value="null" selected>All Times</option>
+                    <option value="" selected>All Times</option>
                     <option value="current">Current Records</option>
                     <option value="improvements">Record Improvements</option>
                 </select>
@@ -104,7 +106,7 @@
         <div
             class="row time-row"
             v-for="time in activeRows"
-            :key="time.created"
+            :key="String(time.created)"
             :class="{ highlight: time.isCurrentRecord }"
             :title="getNote(time)"
         >
@@ -113,18 +115,18 @@
             </div>
             <div
                 class="col-2 clickable"
-                @click="setFilter('category', time.category)"
+                @click="setFilter('category', time.category.slug)"
             >
                 {{ time.category.name }}
             </div>
             <div
                 class="col-3 clickable"
-                @click="setFilter('subcategory', time.subcategory)"
+                @click="setFilter('subcategory', time.subcategory.slug)"
             >
                 {{ time.subcategory.name }}
             </div>
             <div class="col-1">
-                <div v-if="linkPresent(time.link)">
+                <div v-if="linkPresent(time)">
                     <a :href="time.link" target="_blank">{{
                         time.timeElapsed
                     }}</a>
@@ -133,8 +135,11 @@
                     {{ time.timeElapsed }}
                 </div>
             </div>
-            <div class="col-3 clickable" @click="setFilter('user', time.user)">
-                {{ time.userDisplayName }}
+            <div
+                class="col-3 clickable"
+                @click="setFilter('user', time.user.id)"
+            >
+                {{ time.user.displayName }}
             </div>
         </div>
         <div class="row">
@@ -143,28 +148,38 @@
     </div>
 </template>
 
-<script>
-import { mapState } from 'vuex';
+<script lang="ts">
 import _ from 'lodash';
 import moment from 'moment';
+import { mapState } from 'vuex';
+import { defineComponent } from '@vue/composition-api';
 import TableNav from '@/components/TableNav.vue';
 import AbstractTable from '@/components/AbstractTable.vue';
+import { Category } from '@/game/Category';
+import { Subcategory } from '@/game/Subcategory';
+import { Time } from '@/game/Time';
+import { reactive, ref } from '@vue/reactivity';
 
-export default {
+interface MainTableFilters {
+    subcategory: string;
+    category: string;
+    user: string;
+    entryStatus: string;
+    [key: string]: string;
+}
+
+export default defineComponent({
     extends: AbstractTable,
     components: { TableNav },
-    data() {
-        return {
-            entries: 5,
-            filters: {
-                subcategory: null,
-                category: null,
-                user: null,
-                entryStatus: null,
-            },
-
-            moment,
-        };
+    setup() {
+        const entries = ref(5);
+        const filters: MainTableFilters = reactive({
+            subcategory: '',
+            category: '',
+            user: '',
+            entryStatus: '',
+        });
+        return { entries, filters, moment };
     },
     computed: {
         ...mapState(['game']),
@@ -176,38 +191,51 @@ export default {
                 this.filters.entryStatus
             );
         },
-        filterSets() {
-            const subcategorySet = this.game.categories.find(
-                (x) => x.slug === this.filters.category.slug,
-            ).subcategories;
-            return {
-                subcategorySet: _.orderBy(subcategorySet, ['name']),
-            };
+        subcategoryFilterSet(): Subcategory[] {
+            if (this.filters.category) {
+                const subcategorySet = this.game.categories.find(
+                    (category: Category): boolean => {
+                        if (this.filters.category) {
+                            return category.slug === this.filters.category;
+                        } else {
+                            return false;
+                        }
+                    },
+                ).subcategories;
+                return _.orderBy(subcategorySet, ['name']);
+            }
+            return [];
         },
         subcategoryName() {
             if (this.filters.category) {
-                return this.filters.category.subcategoryName;
+                return this.game.getSubcategoryDisplayName(
+                    this.filters.category,
+                );
             }
             return 'Subcategory';
         },
-        rows() {
+        activeRows(): Time[] {
+            return this.getActiveRows();
+        },
+
+        rows(): Time[] {
             let times = this.game.times;
 
             if (this.filters.subcategory) {
                 times = _.filter(times, (x) => {
-                    return x.subcategory.slug === this.filters.subcategory.slug;
+                    return x.subcategory.slug === this.filters.subcategory;
                 });
             }
 
             if (this.filters.category) {
                 times = _.filter(times, (x) => {
-                    return x.category.slug === this.filters.category.slug;
+                    return x.category.slug === this.filters.category;
                 });
             }
 
             if (this.filters.user) {
                 times = _.filter(times, (time) => {
-                    return time.user.id === this.filters.user.id;
+                    return time.user.id === this.filters.user;
                 });
             }
 
@@ -228,19 +256,19 @@ export default {
         },
     },
     methods: {
-        linkPresent(link) {
-            return link.substr(0, 4) === 'http';
+        linkPresent(time: Time) {
+            return time.link.substr(0, 4) === 'http';
         },
-        getNote(time) {
+        getNote(time: Time) {
             return time.note || 'Empty note';
         },
-        resetFilters() {
+        resetFilters(): void {
             for (const filter in this.filters) {
-                this.filters[filter] = null;
+                this.filters[filter] = '';
             }
             this.resetRows();
         },
-        setFilter(filterId, filterValue) {
+        setFilter(filterId: string, filterValue: string) {
             this.filters[filterId] = filterValue;
             this.resetRows();
         },
@@ -248,7 +276,7 @@ export default {
             this.currentRow = 0;
         },
     },
-};
+});
 </script>
 
 <style scoped>

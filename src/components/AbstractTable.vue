@@ -1,7 +1,12 @@
-<script>
+<script lang="ts">
 import { mapState } from 'vuex';
+import { defineComponent } from '@vue/composition-api';
 
-export default {
+interface Row {
+    [key: string]: string;
+}
+
+export default defineComponent({
     data: () => ({
         showFilters: false,
         currentRow: 0,
@@ -13,19 +18,19 @@ export default {
 
     computed: {
         ...mapState(['account', 'options']),
-        rows() {
+        rows(): Row[] {
             return [];
         },
-        totalRows() {
+        totalRows(): number {
             return this.rows.length;
         },
-        firstRow() {
+        firstRow(): number {
             if (this.totalRows === 0) {
                 return 0;
             }
             return this.currentRow + 1;
         },
-        lastRow() {
+        lastRow(): number {
             if (this.totalRows === 0) {
                 return 0;
             }
@@ -34,13 +39,8 @@ export default {
                 ? this.totalRows - this.currentRow + this.firstRow - 1
                 : lastRow;
         },
-        activeRows() {
-            return this.rows.slice(
-                this.currentRow,
-                this.currentRow + this.rowsPerPage,
-            );
-        },
-        emptyRows() {
+
+        emptyRows(): number {
             return this.rowsPerPage - this.activeRows.length;
         },
     },
@@ -48,6 +48,12 @@ export default {
     methods: {
         isEmpty() {
             return this.rows.length === 0;
+        },
+        getActiveRows(): Row[] {
+            return this.rows.slice(
+                this.currentRow,
+                this.currentRow + this.rowsPerPage,
+            );
         },
         previousPageExists() {
             if (this.currentRow > 0) {
@@ -85,7 +91,7 @@ export default {
         goToNextPage() {
             this.currentRow += this.rowsPerPage;
         },
-        changeSort(name, order) {
+        changeSort(name: string, order: string) {
             if (order) {
                 this.orderBy = order;
             } else {
@@ -95,7 +101,7 @@ export default {
             }
             this.sortBy = name;
         },
-        getSet(field, transform = (i) => i, reverseSort = false) {
+        getSet(field: string, transform = (i: any) => i, reverseSort = false) {
             const values = this.rows.map((p) => p[field]);
             values.sort();
             if (reverseSort) {
@@ -105,5 +111,5 @@ export default {
             return new Set(transformedValued);
         },
     },
-};
+});
 </script>

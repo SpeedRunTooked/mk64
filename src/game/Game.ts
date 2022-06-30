@@ -1,37 +1,30 @@
 import _ from 'lodash';
 import { User } from './User';
-import { CategoryJSON, FirebaseDataJSON, SubcategoryJSON } from 'ApiTypes';
-
+import { CategoryJSON, FirebaseDataJSON } from 'ApiTypes';
 import { Time } from './Time';
 import { Category } from './Category';
-import { FirebaseData } from './FirebaseData';
+import { Subcategory } from './Subcategory';
 
 export class Game {
-    public firebaseData;
     public times: Time[] = [];
     public users: User[] = [];
     public categories: Category[] = [];
+    public subcategorySet: Set<Subcategory>;
 
     constructor(firebaseDataJson: FirebaseDataJSON) {
-        this.firebaseData = new FirebaseData(firebaseDataJson);
-        this.buildCategories();
-        this.buildUsers();
+        this.buildCategories(firebaseDataJson);
+        this.buildUsers(firebaseDataJson);
         this.buildTimes(firebaseDataJson);
+
+        this.subcategorySet = this.buildSubcategorySet();
+
         this.buildCurrentRecords();
         this.buildRecordImprovements();
+        this.buildUserStats();
     }
 
     public getCategoryJson(categorySlug: string): CategoryJSON {
         return this.categories.filter((x) => x.slug === categorySlug)[0].json;
-    }
-
-    public getSubcategoryJson(
-        categorySlug: string,
-        subcategorySlug: string,
-    ): SubcategoryJSON {
-        return this.getCategoryJson(categorySlug)?.subcategories.filter(
-            (subcategory) => subcategory.slug === subcategorySlug,
-        )[0];
     }
 
     public getRecentEntries(num: number): Time[] {
@@ -53,26 +46,36 @@ export class Game {
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
     }
 
-    private buildUsers(): void {
-        for (const userId in this.firebaseData.users) {
-            const user: User = new User(
-                userId,
-                this.firebaseData.users[userId],
-            );
-            this.users.push(user);
+    public getSubcategory(subcategorySlug: string): Subcategory | null {
+        for (const subcategory of this.subcategorySet.values()) {
+            if (subcategory.slug === subcategorySlug) return subcategory;
         }
+        return null;
     }
 
-    private buildCategories(): void {
-        for (const categoryJson of this.firebaseData.categories) {
+    public getSubcategoryDisplayName(categorySlug: string): string {
+        return (
+            this.categories.find((category) => category.slug === categorySlug)
+                ?.subcategoryName || 'Subcategory'
+        );
+    }
+
+    private buildCategories(firebaseDataJson: FirebaseDataJSON): void {
+        for (const categoryJson of firebaseDataJson.categories) {
             this.categories.push(new Category(categoryJson));
         }
     }
 
-    private buildTimes(firebaseData: FirebaseDataJSON): void {
-        const times = firebaseData.times;
-        for (const timeId in times) {
-            const timeJson = times[timeId];
+    private buildUsers(firebaseDataJson: FirebaseDataJSON): void {
+        for (const userId in firebaseDataJson.users) {
+            const user: User = new User(userId, firebaseDataJson.users[userId]);
+            this.users.push(user);
+        }
+    }
+
+    private buildTimes(firebaseDataJson: FirebaseDataJSON): void {
+        for (const timeId in firebaseDataJson.times) {
+            const timeJson = firebaseDataJson.times[timeId];
             const user = this.getUser(timeJson.userId);
             this.times.push(new Time(timeId, timeJson, user, this));
         }
@@ -103,5 +106,21 @@ export class Game {
                 }
             }
         }
+    }
+
+    private buildUserStats(): void {
+        for (const user of this.users) {
+            user.buildStats(this.times);
+        }
+    }
+
+    private buildSubcategorySet(): Set<Subcategory> {
+        const set: Set<Subcategory> = new Set();
+        for (const category of this.categories) {
+            for (const subcategory of category.subcategories) {
+                set.add(subcategory);
+            }
+        }
+        return set;
     }
 }

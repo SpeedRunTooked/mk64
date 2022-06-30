@@ -1,6 +1,11 @@
 <template>
     <div class="section-container mx-auto">
-        <div v-for="user in users" :key="user.id" class="row user-badge">
+        <div
+            v-for="(user, index) in users"
+            :key="user.id"
+            class="row user-badge"
+            :v-if="game.users.length > 0"
+        >
             <div class="col">
                 <div class="row leaderboard-header text-start">
                     <div class="col">
@@ -18,7 +23,7 @@
                         {{ user.recordImprovementTotal }} <br />
                         Total Submissions: {{ user.times.length }}
                     </div>
-                    <div v-if="user.getFavoriteRun()" class="col-5">
+                    <div v-if="user.favoriteRun" class="col-5">
                         Favorite Run: <br />
                         {{ user.favoriteRun.displayName }}
                     </div>

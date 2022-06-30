@@ -75,7 +75,7 @@
                                 {{ currentRecord?.timeElapsed || 'None yet!' }}
                                 <br />
                                 <span class="small">{{
-                                    currentRecord?.userDisplayName
+                                    currentRecord?.user.displayName
                                 }}</span>
                             </div>
                             <div
@@ -269,7 +269,8 @@ export default defineComponent({
     methods: {
         resetSubcategory() {
             if (
-                this.formData.subcategory.slug !== null &&
+                this.formData.subcategory &&
+                this.formData.subcategory?.slug !== null &&
                 !this.formData.category.subcategoryExists(
                     this.formData.subcategory,
                 )

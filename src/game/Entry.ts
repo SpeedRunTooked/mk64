@@ -5,7 +5,6 @@ import { Subcategory } from './Subcategory';
 import { User } from './User';
 
 export abstract class Entry {
-    public id: string;
     public created: Date;
     public link: string;
     public subcategory: Subcategory;
@@ -15,22 +14,18 @@ export abstract class Entry {
     public isRecordImprovement: boolean;
 
     constructor(
-        id: string,
-        public timeJson: TimeJSON,
+        public id: string,
+        protected timeJson: TimeJSON,
         public user: User,
         game: Game,
     ) {
-        this.id = id;
         this.created = new Date(timeJson.created);
         this.link = timeJson.link;
         this.category = new Category(
             game.getCategoryJson(timeJson.categorySlug),
         );
         this.subcategory = new Subcategory(
-            game.getSubcategoryJson(
-                timeJson.categorySlug,
-                timeJson.subcategorySlug,
-            ),
+            this.category.getSubcategoryJson(timeJson.subcategorySlug),
         );
         this.note = timeJson.note;
         this.isCurrentRecord = false;
