@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import { User } from './User';
-import { CategoryJSON, FirebaseDataJSON } from 'ApiTypes';
 import { Time } from './Time';
-import { Category } from './Category';
+import { User } from './User';
+import { Category, defaultCategoryJson } from './Category';
+import { FirebaseDataJSON } from 'ApiTypes';
 import { Subcategory } from './Subcategory';
 
 export class Game {
@@ -13,18 +13,21 @@ export class Game {
 
     constructor(firebaseDataJson: FirebaseDataJSON) {
         this.buildCategories(firebaseDataJson);
+        this.subcategorySet = this.buildSubcategorySet();
+
         this.buildUsers(firebaseDataJson);
         this.buildTimes(firebaseDataJson);
-
-        this.subcategorySet = this.buildSubcategorySet();
 
         this.buildCurrentRecords();
         this.buildRecordImprovements();
         this.buildUserStats();
     }
 
-    public getCategoryJson(categorySlug: string): CategoryJSON {
-        return this.categories.filter((x) => x.slug === categorySlug)[0].json;
+    public getCategory(categorySlug: string): Category {
+        return (
+            this.categories.find((x) => x.slug === categorySlug) ||
+            new Category(defaultCategoryJson)
+        );
     }
 
     public getRecentEntries(num: number): Time[] {
@@ -46,11 +49,11 @@ export class Game {
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
     }
 
-    public getSubcategory(subcategorySlug: string): Subcategory | null {
+    public getSubcategory(subcategorySlug: string): Subcategory | undefined {
         for (const subcategory of this.subcategorySet.values()) {
             if (subcategory.slug === subcategorySlug) return subcategory;
         }
-        return null;
+        return undefined;
     }
 
     public getSubcategoryDisplayName(categorySlug: string): string {

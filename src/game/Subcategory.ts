@@ -1,5 +1,11 @@
 import { SubcategoryJSON } from 'ApiTypes';
 
+export const defaultSubcategoryJson: SubcategoryJSON = {
+    group: '',
+    name: '',
+    slug: '',
+};
+
 export class Subcategory {
     constructor(private subcategoryJson: SubcategoryJSON) {}
 
@@ -12,5 +18,9 @@ export class Subcategory {
 
     get name(): string {
         return this.json.name;
+    }
+
+    get group(): string {
+        return this.json.group;
     }
 }

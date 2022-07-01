@@ -1,7 +1,7 @@
 import { TimeJSON } from 'ApiTypes';
-import { Category } from './Category';
+import { Category, defaultCategoryJson } from './Category';
 import { Game } from './Game';
-import { Subcategory } from './Subcategory';
+import { defaultSubcategoryJson, Subcategory } from './Subcategory';
 import { User } from './User';
 
 export abstract class Entry {
@@ -19,14 +19,20 @@ export abstract class Entry {
         public user: User,
         game: Game,
     ) {
+        const categoryJson = game.getCategory(timeJson.categorySlug);
+        const subcategoryJson = game.getSubcategory(timeJson.subcategorySlug);
+
         this.created = new Date(timeJson.created);
         this.link = timeJson.link;
-        this.category = new Category(
-            game.getCategoryJson(timeJson.categorySlug),
-        );
-        this.subcategory = new Subcategory(
-            this.category.getSubcategoryJson(timeJson.subcategorySlug),
-        );
+
+        this.category = categoryJson
+            ? categoryJson
+            : new Category(defaultCategoryJson);
+
+        this.subcategory = subcategoryJson
+            ? subcategoryJson
+            : new Subcategory(defaultSubcategoryJson);
+
         this.note = timeJson.note;
         this.isCurrentRecord = false;
         this.isRecordImprovement = false;

@@ -12,7 +12,7 @@ export class User {
     public recordImprovements: Time[] = [];
     public currentRecordTotal = 0;
     public recordImprovementTotal = 0;
-    public favoriteRun: Run | null = null;
+    public favoriteRun: Run | undefined;
 
     constructor(public id: string, public json: UserJSON) {
         this.buildRecords();
@@ -22,14 +22,14 @@ export class User {
     public getRecord(
         subcategorySlug: string,
         categorySlug: string,
-    ): Time | null {
+    ): Time | undefined {
         const filtered = this.times.filter((x) => {
             return (
                 x.subcategory.slug === subcategorySlug &&
                 x.category.slug === categorySlug
             );
         });
-        return _.minBy(filtered, 'timeMs') || null;
+        return _.minBy(filtered, 'timeMs');
     }
 
     public buildStats(times: Time[]): void {
@@ -64,7 +64,7 @@ export class User {
                 );
             }
         }
-        this.favoriteRun = _.maxBy(this.runs, 'attempts') || null;
+        this.favoriteRun = _.maxBy(this.runs, 'attempts') || undefined;
     }
 
     get displayName(): string {

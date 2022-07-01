@@ -12,7 +12,7 @@
                             aria-label="Default select example"
                             v-model="formData.user"
                         >
-                            <option value="null" disabled selected>
+                            <option value="" disabled selected>
                                 Select Player
                             </option>
 
@@ -34,9 +34,7 @@
                             v-model="formData.category"
                             @change="resetSubcategory()"
                         >
-                            <option value="null" disabled selected>
-                                Category
-                            </option>
+                            <option value="" disabled selected>Category</option>
 
                             <option
                                 v-for="(category, key) in game.categories"
@@ -54,7 +52,7 @@
                             aria-label="Default select example"
                             v-model="formData.subcategory"
                         >
-                            <option value="null" disabled selected>
+                            <option value="" disabled selected>
                                 Select {{ subcategoryName }}
                             </option>
 
@@ -184,15 +182,15 @@ export default defineComponent({
     data() {
         return {
             formData: {
-                user: this.$cookies.get('user') || null,
-                category: this.$cookies.get('category') || null,
-                subcategory: this.$cookies.get('subcategory') || null,
+                user: this.$cookies.get('user') || '',
+                category: this.$cookies.get('category') || '',
+                subcategory: this.$cookies.get('subcategory') || '',
                 time: {
-                    min: null,
-                    sec: null,
-                    ms: null,
+                    min: '',
+                    sec: '',
+                    ms: '',
                 },
-                link: null,
+                link: '',
                 notes: '',
             },
         };
@@ -225,14 +223,14 @@ export default defineComponent({
                 String(this.formData.time.ms).length !== 2
             );
         },
-        currentRecord(): Time | null {
+        currentRecord(): Time | undefined {
             if (this.categoryAndSubcategorySelected) {
                 return this.game.getRecord(
                     this.formData.subcategory.slug,
                     this.formData.category.slug,
                 );
             }
-            return null;
+            return undefined;
         },
         subcategoryName() {
             if (this.formData.category) {
@@ -242,7 +240,7 @@ export default defineComponent({
         },
         userRecord(): string {
             if (this.categoryAndSubcategoryAndUserSelected) {
-                const user = this.game.getUser(this.formData.user);
+                const user = this.formData.user;
                 if (user) {
                     return (
                         user.getRecord(
@@ -270,12 +268,12 @@ export default defineComponent({
         resetSubcategory() {
             if (
                 this.formData.subcategory &&
-                this.formData.subcategory?.slug !== null &&
+                this.formData.subcategory?.slug !== '' &&
                 !this.formData.category.subcategoryExists(
                     this.formData.subcategory,
                 )
             ) {
-                this.formData.subcategory = null;
+                this.formData.subcategory = '';
             }
         },
     },

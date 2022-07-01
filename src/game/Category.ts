@@ -1,6 +1,14 @@
 import { CategoryJSON, SubcategoryJSON } from 'ApiTypes';
 import { Subcategory } from './Subcategory';
 
+export const defaultCategoryJson: CategoryJSON = {
+    slug: '',
+    name: '',
+    subcategoryName: '',
+    subcategories: [],
+    displayOrder: 0,
+};
+
 export class Category {
     public subcategories: Subcategory[] = [];
 
@@ -9,9 +17,10 @@ export class Category {
     }
 
     private buildSubcategories(): void {
-        for (const subcategoryJson of this.categoryJson.subcategories) {
-            this.subcategories.push(new Subcategory(subcategoryJson));
-        }
+        if (this.categoryJson)
+            for (const subcategoryJson of this.categoryJson.subcategories) {
+                this.subcategories.push(new Subcategory(subcategoryJson));
+            }
     }
 
     public subcategoryExists(subcategory: Subcategory): boolean {
@@ -21,18 +30,19 @@ export class Category {
         );
     }
 
-    public getSubcategory(subcategorySlug: string): Subcategory | null {
-        return (
-            this.subcategories.find(
-                (subcategory) => subcategory.slug === subcategorySlug,
-            ) || null
+    public getSubcategory(subcategorySlug: string): Subcategory | undefined {
+        return this.subcategories.find(
+            (subcategory) => subcategory.slug === subcategorySlug,
         );
     }
 
-    public getSubcategoryJson(subcategorySlug: string): SubcategoryJSON {
-        return this.categoryJson.subcategories.filter(
-            (subcategory) => subcategory.slug === subcategorySlug,
-        )[0];
+    public getSubcategoryJson(
+        subcategorySlug: string,
+    ): SubcategoryJSON | undefined {
+        if (this.categoryJson)
+            return this.categoryJson.subcategories.find(
+                (subcategory) => subcategory.slug === subcategorySlug,
+            );
     }
 
     get json(): CategoryJSON {

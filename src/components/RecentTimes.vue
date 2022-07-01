@@ -40,7 +40,7 @@
         <div
             class="row subcategory-row"
             v-for="time in recentTimes"
-            :key="time.created"
+            :key="time.id"
             :class="{ highlight: time.isCurrentRecord }"
         >
             <div class="col-3">
@@ -54,7 +54,7 @@
                 {{ time.subcategory.name }}
             </div>
             <div class="col-2" :title="getNote(time)">
-                <div v-if="linkPresent(time.link)">
+                <div v-if="linkPresent(time)">
                     <a :href="time.link" target="_blank">{{
                         time.timeElapsed
                     }}</a>
@@ -70,24 +70,25 @@
     </div>
 </template>
 
-<script>
-import { mapState } from 'vuex';
+<script lang="ts">
 import _ from 'lodash';
 import moment from 'moment';
+import { mapState } from 'vuex';
+import { Time } from '@/game/Time';
+import { reactive } from '@vue/reactivity';
+import { defineComponent } from '@vue/composition-api';
 
-export default {
-    data() {
-        return {
-            filters: {
-                entryStatus: '',
-                entries: 5,
-            },
-            moment,
-        };
+export default defineComponent({
+    setup() {
+        const filters = reactive({
+            entryStatus: '',
+            entries: 5,
+        });
+        return { filters, moment };
     },
     computed: {
         ...mapState(['game']),
-        recentTimes() {
+        recentTimes(): Time[] {
             let times = this.game.getRecentEntries();
             if (this.filters.entryStatus) {
                 if (this.filters.entryStatus === 'improvements') {
@@ -105,14 +106,14 @@ export default {
         },
     },
     methods: {
-        linkPresent(link) {
-            return link.substr(0, 4) === 'http';
+        linkPresent(time: Time) {
+            return time.link.substr(0, 4) === 'http';
         },
-        getNote(time) {
+        getNote(time: Time) {
             return time.note || 'Empty note';
         },
     },
-};
+});
 </script>
 
 <style scoped>

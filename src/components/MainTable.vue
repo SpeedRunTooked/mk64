@@ -152,13 +152,13 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { mapState } from 'vuex';
-import { defineComponent } from '@vue/composition-api';
-import TableNav from '@/components/TableNav.vue';
-import AbstractTable from '@/components/AbstractTable.vue';
-import { Category } from '@/game/Category';
-import { Subcategory } from '@/game/Subcategory';
 import { Time } from '@/game/Time';
+import { Category } from '@/game/Category';
 import { reactive, ref } from '@vue/reactivity';
+import TableNav from '@/components/TableNav.vue';
+import { Subcategory } from '@/game/Subcategory';
+import { defineComponent } from '@vue/composition-api';
+import AbstractTable from '@/components/AbstractTable.vue';
 
 interface MainTableFilters {
     subcategory: string;

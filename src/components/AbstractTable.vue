@@ -101,7 +101,11 @@ export default defineComponent({
             }
             this.sortBy = name;
         },
-        getSet(field: string, transform = (i: any) => i, reverseSort = false) {
+        getSet(
+            field: string,
+            transform = (i: string) => i,
+            reverseSort = false,
+        ) {
             const values = this.rows.map((p) => p[field]);
             values.sort();
             if (reverseSort) {

@@ -5,7 +5,6 @@
         tabindex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
-        v-if="formReady"
     >
         <div class="modal-dialog">
             <div class="modal-content">
@@ -24,19 +23,24 @@
                     <div class="row">
                         <div class="col-4 left-col">Player:</div>
                         <div class="col-8 right-col">
-                            {{ formData.user.displayName }}
+                            {{ data.getUserDisplayName(formData.userId) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Category:</div>
                         <div class="col-8 right-col">
-                            {{ formData.category.name }}
+                            {{ data.getCategoryName(formData.categorySlug) }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Subcategory:</div>
                         <div class="col-8 right-col">
-                            {{ formData.subcategory.name }}
+                            {{
+                                data.getSubcategoryName(
+                                    formData.categorySlug,
+                                    formData.subcategorySlug,
+                                )
+                            }}
                         </div>
                     </div>
                     <div class="row">
@@ -98,45 +102,41 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapState } from 'vuex';
 import axios from 'axios';
 import qs from 'qs';
 import { Time } from '@/game/Time';
-import { config } from '../config.ts';
+import { config } from '../config';
+import { defineComponent } from '@vue/composition-api';
+import { ref } from '@vue/reactivity';
 
-export default {
-    data() {
-        return {
-            success: false,
-            uploading: false,
-            Time,
-            config,
-        };
-    },
+export default defineComponent({
     props: {
         formData: {
             type: Object,
             required: true,
         },
     },
+    setup() {
+        const success = ref(false);
+        const uploading = ref(false);
+        return {
+            success,
+            uploading,
+            Time,
+            config,
+        };
+    },
     computed: {
-        ...mapState(['game']),
-        formReady() {
-            return (
-                this.formData.user &&
-                this.formData.subcategory &&
-                this.formData.category
-            );
-        },
+        ...mapState(['data']),
     },
     methods: {
         async submitForm() {
-            this.uploading = true;
+            this.uploading.value = true;
             const data = qs.stringify({
-                userId: this.formData.user.id,
-                categorySlug: this.formData.category.slug,
-                subcategorySlug: this.formData.subcategory.slug,
+                userId: this.formData.userId,
+                subcategorySlug: this.formData.subcategorySlug,
                 timeMs: this.Time.elapsedTimeToMs(
                     `${this.formData.time.min || 0}'${
                         this.formData.time.sec || 0
@@ -144,6 +144,7 @@ export default {
                 ),
                 link: this.formData.link,
                 notes: this.formData.notes,
+                categorySlug: this.formData.categorySlug,
             });
 
             const config = {
@@ -155,24 +156,27 @@ export default {
                 data: data,
             };
             try {
-                await axios(config);
+                await axios(config as Record<string, unknown>);
                 console.log('Time submitted successfully!');
-                this.uploading = false;
-                this.success = true;
-                this.$cookies.set('user', this.formData.user);
-                this.$cookies.set('category', this.formData.category);
-                this.$cookies.set('subcategory', this.formData.subcategory);
+                this.uploading.value = false;
+                this.success.value = true;
+                this.$cookies.set('userId', this.formData.userId);
+                this.$cookies.set(
+                    'subcategorySlug',
+                    this.formData.subcategorySlug,
+                );
+                this.$cookies.set('categorySlug', this.formData.categorySlug);
 
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);
             } catch (error) {
-                this.uploading = false;
+                this.uploading.value = false;
                 console.log(error);
             }
         },
     },
-};
+});
 </script>
 
 <style scoped>
