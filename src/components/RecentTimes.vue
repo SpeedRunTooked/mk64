@@ -39,7 +39,7 @@
         </div>
         <div
             class="row subcategory-row"
-            v-for="time in recentTimes()"
+            v-for="time in recentTimes"
             :key="time.id"
             :class="{ highlight: time.isCurrentRecord }"
         >
@@ -73,47 +73,52 @@
 <script lang="ts">
 import _ from 'lodash';
 import moment from 'moment';
-import { useStore } from 'vuex';
+import { Game } from '@/game/Game';
 import { Time } from '@/game/Time';
-import { reactive } from '@vue/reactivity';
 import { defineComponent } from '@vue/composition-api';
-import { computed } from '@vue/runtime-core';
 
 export default defineComponent({
-    setup() {
-        const store = useStore();
-        const game = computed(() => store.state.game);
-        const filters = reactive({
-            entryStatus: '',
-            entries: 5,
-        });
+    data() {
+        return {
+            filters: {
+                entryStatus: '',
+                entries: 5,
+            },
+            moment,
+        };
+    },
 
-        const recentTimes = (): Time[] => {
-            let times = game.value.getRecentEntries();
-            if (filters.entryStatus) {
-                if (filters.entryStatus === 'improvements') {
+    computed: {
+        game(): Game {
+            return this.$store.state.game;
+        },
+
+        recentTimes(): Time[] {
+            let times = this.game.getRecentEntries(20);
+            if (this.filters.entryStatus) {
+                if (this.filters.entryStatus === 'improvements') {
                     times = _.filter(times, (x) => {
                         return x.isRecordImprovement === true;
                     });
                 }
-                if (filters.entryStatus === 'current') {
+                if (this.filters.entryStatus === 'current') {
                     times = _.filter(times, (x) => {
                         return x.isCurrentRecord === true;
                     });
                 }
             }
-            return times.splice(0, filters.entries);
-        };
+            return times.splice(0, this.filters.entries);
+        },
+    },
 
-        const linkPresent = (time: Time) => {
+    methods: {
+        linkPresent(time: Time): boolean {
             return time.link.substr(0, 4) === 'http';
-        };
+        },
 
-        const getNote = (time: Time) => {
+        getNote(time: Time): string {
             return time.note || 'Empty note';
-        };
-
-        return { filters, moment, game, recentTimes, linkPresent, getNote };
+        },
     },
 });
 </script>

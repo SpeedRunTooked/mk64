@@ -6,8 +6,8 @@ import { config } from '@/config';
 export default createStore({
     state: {
         game: new Game({
-            users: {},
-            times: {},
+            users: [],
+            times: [],
             categories: [],
             subcategoryGroups: [],
         }),

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Time } from './Time';
 import { User } from './User';
 import { Category, defaultCategoryJson } from './Category';
-import { FirebaseDataJSON } from 'ApiTypes';
+import { FirebaseDataJSON } from 'FirebaseTypes';
 import { defaultSubcategoryJson, Subcategory } from './Subcategory';
 
 export class Game {

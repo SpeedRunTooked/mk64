@@ -1,4 +1,4 @@
-import { TimeJSON } from 'ApiTypes';
+import { TimeJSON } from 'FirebaseTypes';
 import { Game } from './Game';
 import { Entry } from './Entry';
 import { User } from './User';

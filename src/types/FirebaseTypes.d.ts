@@ -1,7 +1,7 @@
-declare module 'ApiTypes' {
+declare module 'FirebaseTypes' {
     interface FirebaseDataJSON {
-        users: UsersJSON;
-        times: TimesJSON;
+        users: UserJSON[];
+        times: TimeJSON[];
         categories: CategoryJSON[];
         subcategoryGroups: SubcategoryGroupJSON[];
     }

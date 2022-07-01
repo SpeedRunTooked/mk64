@@ -26,7 +26,7 @@
         <div class="col-2 col-md-1 bold text-left" title="Go to next page">
             <span
                 class="clickable material-symbols-outlined noselect"
-                v-if="$parent.nextpageExists()"
+                v-if="$parent.nextPageExists()"
                 @click="$parent.goToNextPage()"
             >
                 arrow_forward
@@ -35,7 +35,7 @@
         <div class="col-2 col-md-1 bold text-left" title="Go to last page">
             <span
                 class="clickable noselect material-symbols-outlined noselect"
-                v-if="$parent.nextpageExists()"
+                v-if="$parent.nextPageExists()"
                 @click="$parent.goToLastPage()"
             >
                 fast_forward

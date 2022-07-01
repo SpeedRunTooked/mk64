@@ -151,10 +151,8 @@
 <script lang="ts">
 import _ from 'lodash';
 import moment from 'moment';
-import { mapState } from 'vuex';
 import { Time } from '@/game/Time';
-import { Category } from '@/game/Category';
-import { reactive, ref } from '@vue/reactivity';
+import { Game } from '@/game/Game';
 import TableNav from '@/components/TableNav.vue';
 import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from '@vue/composition-api';
@@ -171,42 +169,44 @@ interface MainTableFilters {
 export default defineComponent({
     extends: AbstractTable,
     components: { TableNav },
-    setup() {
-        const entries = ref(5);
-        const filters: MainTableFilters = reactive({
-            subcategory: '',
-            category: '',
-            user: '',
-            entryStatus: '',
-        });
-        return { entries, filters, moment };
+
+    data() {
+        return {
+            entries: 5,
+            filters: {
+                subcategory: '',
+                category: '',
+                user: '',
+                entryStatus: '',
+            },
+            moment,
+        };
     },
+
     computed: {
-        ...mapState(['game']),
-        filterOn() {
+        game(): Game {
+            return this.$store.state.game;
+        },
+
+        filterOn(): boolean {
             return (
-                this.filters.subcategory ||
-                this.filters.category ||
-                this.filters.user ||
-                this.filters.entryStatus
+                (
+                    this.filters.subcategory ||
+                    this.filters.category ||
+                    this.filters.user ||
+                    this.filters.entryStatus
+                ).length > 0
             );
         },
+
         subcategoryFilterSet(): Subcategory[] {
-            if (this.filters.category) {
-                const subcategorySet = this.game.categories.find(
-                    (category: Category): boolean => {
-                        if (this.filters.category) {
-                            return category.slug === this.filters.category;
-                        } else {
-                            return false;
-                        }
-                    },
-                ).subcategories;
-                return _.orderBy(subcategorySet, ['name']);
-            }
-            return [];
+            const subcategorySet = this.game.getCategory(
+                this.filters.category,
+            ).subcategories;
+            return _.orderBy(subcategorySet, ['name']);
         },
-        subcategoryName() {
+
+        subcategoryName(): string {
             if (this.filters.category) {
                 return this.game.getSubcategoryDisplayName(
                     this.filters.category,
@@ -214,6 +214,7 @@ export default defineComponent({
             }
             return 'Subcategory';
         },
+
         activeRows(): Time[] {
             return this.getActiveRows();
         },
@@ -255,24 +256,29 @@ export default defineComponent({
             return _.orderBy(times, ['created'], ['desc']);
         },
     },
+
     methods: {
-        linkPresent(time: Time) {
+        linkPresent(time: Time): boolean {
             return time.link.substr(0, 4) === 'http';
         },
-        getNote(time: Time) {
+
+        getNote(time: Time): string {
             return time.note || 'Empty note';
         },
+
         resetFilters(): void {
             for (const filter in this.filters) {
-                this.filters[filter] = '';
+                (this.filters as MainTableFilters)[filter] = '';
             }
             this.resetRows();
         },
-        setFilter(filterId: string, filterValue: string) {
-            this.filters[filterId] = filterValue;
+
+        setFilter(filter: string, filterValue: string) {
+            (this.filters as MainTableFilters)[filter] = filterValue;
             this.resetRows();
         },
-        resetRows() {
+
+        resetRows(): void {
             this.currentRow = 0;
         },
     },

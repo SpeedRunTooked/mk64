@@ -1,4 +1,4 @@
-import { TimeJSON } from 'ApiTypes';
+import { TimeJSON } from 'FirebaseTypes';
 import { Category, defaultCategoryJson } from './Category';
 import { Game } from './Game';
 import { defaultSubcategoryJson, Subcategory } from './Subcategory';

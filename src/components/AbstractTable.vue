@@ -1,5 +1,4 @@
 <script lang="ts">
-import { mapState } from 'vuex';
 import { defineComponent } from '@vue/composition-api';
 
 interface Row {
@@ -17,7 +16,6 @@ export default defineComponent({
     }),
 
     computed: {
-        ...mapState(['account', 'options']),
         rows(): Row[] {
             return [];
         },
@@ -46,7 +44,7 @@ export default defineComponent({
     },
 
     methods: {
-        isEmpty() {
+        isEmpty(): boolean {
             return this.rows.length === 0;
         },
         getActiveRows(): Row[] {
@@ -55,25 +53,25 @@ export default defineComponent({
                 this.currentRow + this.rowsPerPage,
             );
         },
-        previousPageExists() {
+        previousPageExists(): boolean {
             if (this.currentRow > 0) {
                 return true;
             }
             return false;
         },
-        nextpageExists() {
+        nextPageExists(): boolean {
             if (this.currentRow + this.rowsPerPage < this.totalRows) {
                 return true;
             }
             return false;
         },
-        rowsLargerThanLimit() {
+        rowsLargerThanLimit(): boolean {
             return this.rows.length > this.rowsPerPage;
         },
-        goToFirstPage() {
+        goToFirstPage(): void {
             this.currentRow = 0;
         },
-        goToLastPage() {
+        goToLastPage(): void {
             const remainder = this.totalRows % this.rowsPerPage;
             if (remainder === 0) {
                 this.currentRow = this.totalRows - this.rowsPerPage;
@@ -81,17 +79,17 @@ export default defineComponent({
                 this.currentRow = this.totalRows - remainder;
             }
         },
-        goToPreviousPage() {
+        goToPreviousPage(): void {
             if (this.currentRow < this.rowsPerPage) {
                 this.currentRow = 0;
             } else {
                 this.currentRow -= this.rowsPerPage;
             }
         },
-        goToNextPage() {
+        goToNextPage(): void {
             this.currentRow += this.rowsPerPage;
         },
-        changeSort(name: string, order: string) {
+        changeSort(name: string, order: string): void {
             if (order) {
                 this.orderBy = order;
             } else {
@@ -100,19 +98,6 @@ export default defineComponent({
                 }
             }
             this.sortBy = name;
-        },
-        getSet(
-            field: string,
-            transform = (i: string) => i,
-            reverseSort = false,
-        ) {
-            const values = this.rows.map((p) => p[field]);
-            values.sort();
-            if (reverseSort) {
-                values.reverse();
-            }
-            var transformedValued = values.map((i) => transform(i));
-            return new Set(transformedValued);
         },
     },
 });

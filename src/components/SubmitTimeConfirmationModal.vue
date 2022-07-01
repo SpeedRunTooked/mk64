@@ -23,23 +23,21 @@
                     <div class="row">
                         <div class="col-4 left-col">Player:</div>
                         <div class="col-8 right-col">
-                            {{ data.getUserDisplayName(formData.userId) }}
+                            {{ game.getUser(formData.userId)?.displayName }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Category:</div>
                         <div class="col-8 right-col">
-                            {{ data.getCategoryName(formData.categorySlug) }}
+                            {{ game.getCategory(formData.categorySlug)?.name }}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Subcategory:</div>
                         <div class="col-8 right-col">
                             {{
-                                data.getSubcategoryName(
-                                    formData.categorySlug,
-                                    formData.subcategorySlug,
-                                )
+                                game.getSubcategory(formData.subcategorySlug)
+                                    ?.name
                             }}
                         </div>
                     </div>
@@ -103,13 +101,12 @@
 </template>
 
 <script lang="ts">
-import { mapState } from 'vuex';
-import axios from 'axios';
 import qs from 'qs';
+import axios from 'axios';
 import { Time } from '@/game/Time';
 import { config } from '../config';
+import { Game } from '@/game/Game';
 import { defineComponent } from '@vue/composition-api';
-import { ref } from '@vue/reactivity';
 
 export default defineComponent({
     props: {
@@ -118,22 +115,25 @@ export default defineComponent({
             required: true,
         },
     },
-    setup() {
-        const success = ref(false);
-        const uploading = ref(false);
+
+    data() {
         return {
-            success,
-            uploading,
+            success: false,
+            uploading: false,
             Time,
             config,
         };
     },
+
     computed: {
-        ...mapState(['data']),
+        game(): Game {
+            return this.$store.state.game;
+        },
     },
+
     methods: {
         async submitForm() {
-            this.uploading.value = true;
+            this.uploading = true;
             const data = qs.stringify({
                 userId: this.formData.userId,
                 subcategorySlug: this.formData.subcategorySlug,
@@ -155,11 +155,12 @@ export default defineComponent({
                 },
                 data: data,
             };
+
             try {
                 await axios(config as Record<string, unknown>);
                 console.log('Time submitted successfully!');
-                this.uploading.value = false;
-                this.success.value = true;
+                this.uploading = false;
+                this.success = true;
                 this.$cookies.set('userId', this.formData.userId);
                 this.$cookies.set(
                     'subcategorySlug',
@@ -171,7 +172,7 @@ export default defineComponent({
                     window.location.reload();
                 }, 1000);
             } catch (error) {
-                this.uploading.value = false;
+                this.uploading = false;
                 console.log(error);
             }
         },

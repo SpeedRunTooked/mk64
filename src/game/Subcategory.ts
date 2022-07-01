@@ -1,4 +1,4 @@
-import { SubcategoryJSON } from 'ApiTypes';
+import { SubcategoryJSON } from 'FirebaseTypes';
 
 export const defaultSubcategoryJson: SubcategoryJSON = {
     group: '',

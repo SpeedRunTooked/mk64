@@ -1,10 +1,10 @@
 <template>
     <div class="section-container mx-auto">
         <div
-            v-for="(user, index) in users()"
+            v-for="(user, index) in users"
             :key="user.id"
             class="row user-badge"
-            :v-if="users().length > 0"
+            :v-if="users.length > 0"
         >
             <div class="col">
                 <div class="row leaderboard-header text-start">
@@ -35,18 +35,19 @@
 
 <script lang="ts">
 import _ from 'lodash';
-import { useStore } from 'vuex';
 import { User } from '@/game/User';
-import { computed, defineComponent } from '@vue/runtime-core';
+import { Game } from '@/game/Game';
+import { defineComponent } from '@vue/runtime-core';
 
 export default defineComponent({
-    setup() {
-        const store = useStore();
-        const game = computed(() => store.state.game);
+    computed: {
+        game(): Game {
+            return this.$store.state.game;
+        },
 
-        const users = (): User[] => {
+        users(): User[] {
             const first = _.orderBy(
-                game.value.users,
+                this.game.users,
                 ['currentRecordTotal'],
                 ['desc'],
             );
@@ -56,12 +57,7 @@ export default defineComponent({
                 ['desc'],
             );
             return second;
-        };
-
-        return {
-            game,
-            users,
-        };
+        },
     },
 });
 </script>

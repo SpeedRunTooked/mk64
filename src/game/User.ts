@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { UserJSON } from 'ApiTypes';
+import { UserJSON } from 'FirebaseTypes';
 import { Category } from './Category';
 import { Run } from './Run';
 import { Subcategory } from './Subcategory';

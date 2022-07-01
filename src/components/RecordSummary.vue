@@ -1,5 +1,5 @@
 <template>
-    <div class="section-container mx-auto">
+    <div v-if="selectedCategory" class="section-container mx-auto">
         <div class="row section-header">
             <div class="col">Record Summary</div>
             <div class="col">
@@ -10,7 +10,7 @@
                         v-model="selectedCategorySlug"
                     >
                         <option
-                            v-for="category in getAllCategories()"
+                            v-for="category in game.categories"
                             :key="category.slug"
                             :value="category.slug"
                         >
@@ -22,13 +22,13 @@
         </div>
         <div class="row">
             <div class="col category-header">
-                {{ getSelectedCategory().subcategoryName }}
+                {{ selectedCategory.subcategoryName }}
             </div>
             <div class="col category-header">Time</div>
             <div class="col category-header">Player</div>
         </div>
         <div
-            v-for="subcategory in rows()"
+            v-for="subcategory in rows"
             :key="subcategory.slug"
             class="row subcategory-row"
             :class="subcategory.endOfGroup ? 'end-row' : ''"
@@ -47,9 +47,8 @@
 
 <script lang="ts">
 import _ from 'lodash';
-import { useStore } from 'vuex';
-import { ref } from '@vue/reactivity';
-import { computed } from '@vue/runtime-core';
+import { Game } from '@/game/Game';
+import { Category } from '@/game/Category';
 import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from '@vue/composition-api';
 
@@ -58,19 +57,20 @@ interface RecordSummaryRow extends Subcategory {
 }
 
 export default defineComponent({
-    setup() {
-        const selectedCategorySlug = ref('3lap');
-        const store = useStore();
-        const game = computed(() => store.state.game);
+    data() {
+        return {
+            selectedCategorySlug: '3lap',
+        };
+    },
 
-        const getSelectedCategory = () =>
-            game.value.getCategory(selectedCategorySlug.value).json;
+    computed: {
+        game(): Game {
+            return this.$store.state.game;
+        },
 
-        const getAllCategories = () => game.value.categories;
-
-        const rows = () => {
+        rows(): RecordSummaryRow[] {
             const result: RecordSummaryRow[] = [];
-            const orderedJson = _.orderBy(getSelectedCategory().subcategories, [
+            const orderedJson = _.orderBy(this.selectedCategory.subcategories, [
                 'displayOrder',
             ]);
             for (const jsonRow of orderedJson) {
@@ -83,33 +83,29 @@ export default defineComponent({
                 }
             }
             return result;
-        };
+        },
 
-        const getElapsedTime = (subcategory: Subcategory) => {
-            const time = store.state.game.getRecord(
+        selectedCategory(): Category {
+            return this.game.getCategory(this.selectedCategorySlug);
+        },
+    },
+
+    methods: {
+        getElapsedTime(subcategory: Subcategory) {
+            const time = this.game.getRecord(
                 subcategory.slug,
-                getSelectedCategory().slug,
+                this.selectedCategory.slug,
             )?.timeElapsed;
             return time || 'None yet!';
-        };
+        },
 
-        const getUserDisplayName = (subcategory: Subcategory) => {
-            const record = store.state.game.getRecord(
+        getUserDisplayName(subcategory: Subcategory) {
+            const record = this.game.getRecord(
                 subcategory.slug,
-                getSelectedCategory().slug,
+                this.selectedCategory.slug,
             );
             return record?.user?.displayName || 'None yet!';
-        };
-
-        return {
-            selectedCategorySlug,
-            getSelectedCategory,
-            getAllCategories,
-            rows,
-            game,
-            getElapsedTime,
-            getUserDisplayName,
-        };
+        },
     },
 });
 </script>

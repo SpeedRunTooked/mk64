@@ -10,7 +10,7 @@
                         <select
                             class="form-select"
                             aria-label="Default select example"
-                            v-model="formData.user"
+                            v-model="formData.userId"
                         >
                             <option value="" disabled selected>
                                 Select Player
@@ -19,7 +19,7 @@
                             <option
                                 v-for="user in game.users"
                                 :key="user.id"
-                                :value="user"
+                                :value="user.id"
                             >
                                 {{ user.displayName }}
                             </option>
@@ -31,14 +31,14 @@
                         <select
                             class="form-select"
                             aria-label="Default select example"
-                            v-model="formData.category"
+                            v-model="formData.categorySlug"
                             @change="resetSubcategory()"
                         >
                             <option value="" disabled selected>Category</option>
 
                             <option
                                 v-for="(category, key) in game.categories"
-                                :value="category"
+                                :value="category.slug"
                                 :key="key"
                             >
                                 {{ category.name }}
@@ -50,7 +50,7 @@
                         <select
                             class="form-select"
                             aria-label="Default select example"
-                            v-model="formData.subcategory"
+                            v-model="formData.subcategorySlug"
                         >
                             <option value="" disabled selected>
                                 Select {{ subcategoryName }}
@@ -59,7 +59,7 @@
                             <option
                                 v-for="subcategory in subcategoryList"
                                 :key="subcategory.slug"
-                                :value="subcategory"
+                                :value="subcategory.slug"
                             >
                                 {{ subcategory.name }}
                             </option>
@@ -171,20 +171,26 @@
 </template>
 
 <script lang="ts">
-import { mapState } from 'vuex';
+import _ from 'lodash';
+import { Time } from '@/game/Time';
+import { Game } from '@/game/Game';
+import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from '@vue/composition-api';
 import SubmitTimeConfirmationModal from '@/components/SubmitTimeConfirmationModal.vue';
-import { Time } from '@/game/Time';
-import _ from 'lodash';
+import { Category } from '@/game/Category';
 
 export default defineComponent({
     name: 'SubmitTimeView',
+    components: {
+        SubmitTimeConfirmationModal,
+    },
+
     data() {
         return {
             formData: {
-                user: this.$cookies.get('user') || '',
-                category: this.$cookies.get('category') || '',
-                subcategory: this.$cookies.get('subcategory') || '',
+                userId: this.$cookies.get('userId') || '',
+                categorySlug: this.$cookies.get('categorySlug') || '',
+                subcategorySlug: this.$cookies.get('subcategorySlug') || '',
                 time: {
                     min: '',
                     sec: '',
@@ -195,11 +201,12 @@ export default defineComponent({
             },
         };
     },
-    components: {
-        SubmitTimeConfirmationModal,
-    },
+
     computed: {
-        ...mapState(['game']),
+        game(): Game {
+            return this.$store.state.game;
+        },
+
         ready(): boolean {
             return (
                 this.categoryAndSubcategoryAndUserSelected &&
@@ -208,72 +215,84 @@ export default defineComponent({
                 this.formData.link !== ''
             );
         },
-        showSubcategories() {
-            return this.formData.category && this.game.categories.length > 0
+
+        showSubcategories(): boolean {
+            return this.formData.categorySlug && this.game.categories.length > 0
                 ? true
                 : false;
         },
-        subcategoryList() {
-            const list = this.formData.category.subcategories;
+
+        subcategoryList(): Subcategory[] {
+            const list: Subcategory[] =
+                this.selectedCategory?.subcategories || [];
             return _.orderBy(list, ['name']);
         },
+
         msError(): boolean {
             return (
                 this.formData.time.ms !== '' &&
                 String(this.formData.time.ms).length !== 2
             );
         },
+
         currentRecord(): Time | undefined {
             if (this.categoryAndSubcategorySelected) {
                 return this.game.getRecord(
-                    this.formData.subcategory.slug,
-                    this.formData.category.slug,
+                    this.formData.subcategorySlug,
+                    this.formData.categorySlug,
                 );
             }
             return undefined;
         },
-        subcategoryName() {
-            if (this.formData.category) {
-                return this.formData.category.subcategoryName;
-            }
-            return 'Subcategory';
+
+        selectedCategory(): Category {
+            return this.game.getCategory(this.formData.categorySlug);
         },
+
+        subcategoryName(): string {
+            return this.selectedCategory?.subcategoryName || 'Subcategory';
+        },
+
         userRecord(): string {
             if (this.categoryAndSubcategoryAndUserSelected) {
-                const user = this.formData.user;
+                const user = this.game.getUser(this.formData.userId);
                 if (user) {
                     return (
                         user.getRecord(
-                            this.formData.subcategory.slug,
-                            this.formData.category.slug,
+                            this.formData.subcategorySlug,
+                            this.formData.categorySlug,
                         )?.timeElapsed || 'None yet!'
                     );
                 }
             }
             return 'None yet!';
         },
+
         categoryAndSubcategorySelected(): boolean {
-            return this.formData.subcategory && this.formData.category;
+            return this.formData.subcategorySlug && this.formData.categorySlug;
         },
+
         categoryAndSubcategoryAndUserSelected(): boolean {
-            return this.categoryAndSubcategorySelected && this.formData.user;
+            return this.categoryAndSubcategorySelected && this.formData.userId;
         },
-        showRecordTimes() {
+
+        showRecordTimes(): boolean {
             return (
                 this.categoryAndSubcategorySelected && this.showSubcategories
             );
         },
     },
+
     methods: {
-        resetSubcategory() {
+        resetSubcategory(): void {
             if (
-                this.formData.subcategory &&
-                this.formData.subcategory?.slug !== '' &&
-                !this.formData.category.subcategoryExists(
-                    this.formData.subcategory,
+                this.formData.subcategorySlug &&
+                this.formData.subcategorySlug !== '' &&
+                !this.selectedCategory.getSubcategory(
+                    this.formData.subcategorySlug,
                 )
             ) {
-                this.formData.subcategory = '';
+                this.formData.subcategorySlug = '';
             }
         },
     },

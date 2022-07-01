@@ -1,4 +1,4 @@
-import { CategoryJSON, SubcategoryJSON } from 'ApiTypes';
+import { CategoryJSON, SubcategoryJSON } from 'FirebaseTypes';
 import { Subcategory } from './Subcategory';
 
 export const defaultCategoryJson: CategoryJSON = {
@@ -21,13 +21,6 @@ export class Category {
             for (const subcategoryJson of this.categoryJson.subcategories) {
                 this.subcategories.push(new Subcategory(subcategoryJson));
             }
-    }
-
-    public subcategoryExists(subcategory: Subcategory): boolean {
-        return (
-            this.subcategories.filter((x) => x.slug === subcategory.slug)
-                .length > 0
-        );
     }
 
     public getSubcategory(subcategorySlug: string): Subcategory | undefined {
