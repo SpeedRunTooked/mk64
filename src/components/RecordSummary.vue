@@ -48,10 +48,9 @@
 <script lang="ts">
 import _ from 'lodash';
 import { useStore } from 'vuex';
-import { Game } from '@/game/Game';
+import { ref } from '@vue/reactivity';
 import { computed } from '@vue/runtime-core';
 import { Subcategory } from '@/game/Subcategory';
-import { ComputedRef, reactive, ref } from '@vue/reactivity';
 import { defineComponent } from '@vue/composition-api';
 
 interface RecordSummaryRow extends Subcategory {

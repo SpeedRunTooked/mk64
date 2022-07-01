@@ -39,7 +39,7 @@
         </div>
         <div
             class="row subcategory-row"
-            v-for="time in recentTimes"
+            v-for="time in recentTimes()"
             :key="time.id"
             :class="{ highlight: time.isCurrentRecord }"
         >
@@ -73,45 +73,47 @@
 <script lang="ts">
 import _ from 'lodash';
 import moment from 'moment';
-import { mapState } from 'vuex';
+import { useStore } from 'vuex';
 import { Time } from '@/game/Time';
 import { reactive } from '@vue/reactivity';
 import { defineComponent } from '@vue/composition-api';
+import { computed } from '@vue/runtime-core';
 
 export default defineComponent({
     setup() {
+        const store = useStore();
+        const game = computed(() => store.state.game);
         const filters = reactive({
             entryStatus: '',
             entries: 5,
         });
-        return { filters, moment };
-    },
-    computed: {
-        ...mapState(['game']),
-        recentTimes(): Time[] {
-            let times = this.game.getRecentEntries();
-            if (this.filters.entryStatus) {
-                if (this.filters.entryStatus === 'improvements') {
+
+        const recentTimes = (): Time[] => {
+            let times = game.value.getRecentEntries();
+            if (filters.entryStatus) {
+                if (filters.entryStatus === 'improvements') {
                     times = _.filter(times, (x) => {
                         return x.isRecordImprovement === true;
                     });
                 }
-                if (this.filters.entryStatus === 'current') {
+                if (filters.entryStatus === 'current') {
                     times = _.filter(times, (x) => {
                         return x.isCurrentRecord === true;
                     });
                 }
             }
-            return times.splice(0, this.filters.entries);
-        },
-    },
-    methods: {
-        linkPresent(time: Time) {
+            return times.splice(0, filters.entries);
+        };
+
+        const linkPresent = (time: Time) => {
             return time.link.substr(0, 4) === 'http';
-        },
-        getNote(time: Time) {
+        };
+
+        const getNote = (time: Time) => {
             return time.note || 'Empty note';
-        },
+        };
+
+        return { filters, moment, game, recentTimes, linkPresent, getNote };
     },
 });
 </script>
