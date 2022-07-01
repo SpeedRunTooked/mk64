@@ -30,9 +30,8 @@ export class Game {
         );
     }
 
-    public getRecentEntries(num: number): Time[] {
-        const sorted = _.orderBy(this.times, ['created'], ['desc']);
-        return sorted.slice(0, num);
+    public getRecentEntries(): Time[] {
+        return _.orderBy(this.times, ['created'], ['desc']);
     }
 
     public getUser(userId: string): User {

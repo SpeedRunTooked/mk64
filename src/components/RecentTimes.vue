@@ -94,7 +94,7 @@ export default defineComponent({
         },
 
         recentTimes(): Time[] {
-            let times = this.game.getRecentEntries(20);
+            let times = this.game.getRecentEntries();
             if (this.filters.entryStatus) {
                 if (this.filters.entryStatus === 'improvements') {
                     times = _.filter(times, (x) => {
