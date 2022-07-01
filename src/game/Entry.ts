@@ -34,6 +34,7 @@ export abstract class Entry {
             : new Subcategory(DEFAULT_SUBCATEGORY_JSON);
 
         this.note = timeJson.note;
+
         this.isCurrentRecord = false;
         this.isRecordImprovement = false;
     }

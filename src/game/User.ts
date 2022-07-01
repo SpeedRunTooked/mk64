@@ -14,10 +14,7 @@ export class User {
     public favoriteRun: Run | undefined;
     public recordImprovements: Time[] = [];
 
-    constructor(public id: string, public json: UserJSON) {
-        this.buildRecords();
-        this.buildRuns();
-    }
+    constructor(public id: string, public json: UserJSON) {}
 
     public getRecord(
         subcategorySlug: string,
@@ -32,10 +29,14 @@ export class User {
         return _.minBy(filtered, 'timeMs');
     }
 
-    public buildStats(times: Time[]): void {
+    public appendTimes(times: Time[]): void {
         this.times = times.filter((time) => time.user === this);
+    }
+
+    public generateStats(): void {
         this.buildRecords();
         this.buildRuns();
+        this.setFavoriteRun();
     }
 
     private buildRecords(): void {
@@ -64,6 +65,9 @@ export class User {
                 );
             }
         }
+    }
+
+    private setFavoriteRun(): void {
         this.favoriteRun = _.maxBy(this.runs, 'attempts') || undefined;
     }
 

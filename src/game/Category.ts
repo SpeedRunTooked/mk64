@@ -1,7 +1,8 @@
 import { GameElement } from './Game';
 import { Subcategory } from './Subcategory';
-import { CategoryJSON, SubcategoryJSON } from 'FirebaseTypes';
+import { CategoryJSON } from 'FirebaseTypes';
 
+// The default category is just used for stricter type safety throughout
 export const DEFAULT_CATEGORY_JSON: CategoryJSON = {
     slug: '',
     name: '',
@@ -28,15 +29,6 @@ export class Category implements GameElement {
         return this.subcategories.find(
             (subcategory) => subcategory.slug === subcategorySlug,
         );
-    }
-
-    public getSubcategoryJson(
-        subcategorySlug: string,
-    ): SubcategoryJSON | undefined {
-        if (this.categoryJson)
-            return this.categoryJson.subcategories.find(
-                (subcategory) => subcategory.slug === subcategorySlug,
-            );
     }
 
     get json(): CategoryJSON {

@@ -1,6 +1,8 @@
 import { Category } from './Category';
 import { Subcategory } from './Subcategory';
 
+/* A Run represents a combination of category + subcategory which can be attempted to create Entries */
+
 export class Run {
     public attempts = 1;
 

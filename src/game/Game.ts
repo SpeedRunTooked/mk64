@@ -102,7 +102,10 @@ export class Game {
 
     private buildRecordImprovements(): void {
         const sorted = _.orderBy(this.times, ['created'], ['asc']);
+
+        // Build a record map that keeps track of each category-subcategory combination
         const recordMap: { [key: string]: number } = {};
+
         for (const time of sorted) {
             if (!recordMap[time.runSlug]) {
                 time.isRecordImprovement = true;
@@ -118,7 +121,8 @@ export class Game {
 
     private buildUserStats(): void {
         for (const user of this.users) {
-            user.buildStats(this.times);
+            user.appendTimes(this.times);
+            user.generateStats();
         }
     }
 
