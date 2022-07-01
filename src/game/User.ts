@@ -1,18 +1,18 @@
 import _ from 'lodash';
-import { UserJSON } from 'FirebaseTypes';
-import { Category } from './Category';
 import { Run } from './Run';
-import { Subcategory } from './Subcategory';
 import { Time } from './Time';
+import { Category } from './Category';
+import { UserJSON } from 'FirebaseTypes';
+import { Subcategory } from './Subcategory';
 
 export class User {
-    public times: Time[] = [];
     public runs: Run[] = [];
-    public currentRecords: Time[] = [];
-    public recordImprovements: Time[] = [];
+    public times: Time[] = [];
     public currentRecordTotal = 0;
     public recordImprovementTotal = 0;
+    public currentRecords: Time[] = [];
     public favoriteRun: Run | undefined;
+    public recordImprovements: Time[] = [];
 
     constructor(public id: string, public json: UserJSON) {
         this.buildRecords();

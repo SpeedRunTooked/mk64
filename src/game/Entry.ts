@@ -1,16 +1,16 @@
-import { TimeJSON } from 'FirebaseTypes';
-import { Category, defaultCategoryJson } from './Category';
 import { Game } from './Game';
-import { defaultSubcategoryJson, Subcategory } from './Subcategory';
 import { User } from './User';
+import { TimeJSON } from 'FirebaseTypes';
+import { Category, DEFAULT_CATEGORY_JSON } from './Category';
+import { DEFAULT_SUBCATEGORY_JSON, Subcategory } from './Subcategory';
 
 export abstract class Entry {
-    public created: Date;
     public link: string;
-    public subcategory: Subcategory;
     public note: string;
+    public created: Date;
     public category: Category;
     public isCurrentRecord: boolean;
+    public subcategory: Subcategory;
     public isRecordImprovement: boolean;
 
     constructor(
@@ -27,11 +27,11 @@ export abstract class Entry {
 
         this.category = categoryJson
             ? categoryJson
-            : new Category(defaultCategoryJson);
+            : new Category(DEFAULT_CATEGORY_JSON);
 
         this.subcategory = subcategoryJson
             ? subcategoryJson
-            : new Subcategory(defaultSubcategoryJson);
+            : new Subcategory(DEFAULT_SUBCATEGORY_JSON);
 
         this.note = timeJson.note;
         this.isCurrentRecord = false;

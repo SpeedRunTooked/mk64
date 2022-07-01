@@ -6,18 +6,19 @@ declare module 'FirebaseTypes' {
         subcategoryGroups: SubcategoryGroupJSON[];
     }
 
-    interface CategoryJSON {
+    interface GameElementJSON {
         slug: string;
         name: string;
+    }
+
+    interface CategoryJSON extends GameElementJSON {
         subcategoryName: string;
         subcategories: SubcategoryJSON[];
         displayOrder: number;
     }
 
-    interface SubcategoryJSON {
+    interface SubcategoryJSON extends GameElementJSON {
         group: string;
-        name: string;
-        slug: string;
     }
 
     interface TimeJSON {

@@ -1,15 +1,16 @@
-import { CategoryJSON, SubcategoryJSON } from 'FirebaseTypes';
+import { GameElement } from './Game';
 import { Subcategory } from './Subcategory';
+import { CategoryJSON, SubcategoryJSON } from 'FirebaseTypes';
 
-export const defaultCategoryJson: CategoryJSON = {
+export const DEFAULT_CATEGORY_JSON: CategoryJSON = {
     slug: '',
     name: '',
-    subcategoryName: '',
-    subcategories: [],
     displayOrder: 0,
+    subcategories: [],
+    subcategoryName: '',
 };
 
-export class Category {
+export class Category implements GameElement {
     public subcategories: Subcategory[] = [];
 
     constructor(private categoryJson: CategoryJSON) {

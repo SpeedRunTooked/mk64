@@ -1,9 +1,15 @@
 import _ from 'lodash';
 import { Time } from './Time';
 import { User } from './User';
-import { Category, defaultCategoryJson } from './Category';
-import { FirebaseDataJSON } from 'FirebaseTypes';
-import { defaultSubcategoryJson, Subcategory } from './Subcategory';
+import { Category, DEFAULT_CATEGORY_JSON } from './Category';
+import { FirebaseDataJSON, GameElementJSON } from 'FirebaseTypes';
+import { DEFAULT_SUBCATEGORY_JSON, Subcategory } from './Subcategory';
+
+export interface GameElement {
+    slug: string;
+    name: string;
+    json: GameElementJSON;
+}
 
 export class Game {
     public times: Time[] = [];
@@ -26,7 +32,7 @@ export class Game {
     public getCategory(categorySlug: string): Category {
         return (
             this.categories.find((x) => x.slug === categorySlug) ||
-            new Category(defaultCategoryJson)
+            new Category(DEFAULT_CATEGORY_JSON)
         );
     }
 
@@ -52,7 +58,7 @@ export class Game {
         for (const subcategory of this.subcategorySet.values()) {
             if (subcategory.slug === subcategorySlug) return subcategory;
         }
-        return new Subcategory(defaultSubcategoryJson);
+        return new Subcategory(DEFAULT_SUBCATEGORY_JSON);
     }
 
     public getSubcategoryDisplayName(categorySlug: string): string {

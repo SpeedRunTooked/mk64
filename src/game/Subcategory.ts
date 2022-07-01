@@ -1,17 +1,19 @@
+import { GameElement } from './Game';
 import { SubcategoryJSON } from 'FirebaseTypes';
 
-export const defaultSubcategoryJson: SubcategoryJSON = {
-    group: '',
-    name: '',
+export const DEFAULT_SUBCATEGORY_JSON: SubcategoryJSON = {
     slug: '',
+    name: '',
+    group: '',
 };
 
-export class Subcategory {
+export class Subcategory implements GameElement {
     constructor(private subcategoryJson: SubcategoryJSON) {}
 
     get json(): SubcategoryJSON {
         return this.subcategoryJson;
     }
+
     get slug(): string {
         return this.json.slug;
     }

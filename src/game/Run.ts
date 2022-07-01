@@ -3,6 +3,7 @@ import { Subcategory } from './Subcategory';
 
 export class Run {
     public attempts = 1;
+
     constructor(public category: Category, public subcategory: Subcategory) {}
 
     public increaseCounter(): void {
