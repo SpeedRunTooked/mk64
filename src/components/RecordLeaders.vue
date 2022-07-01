@@ -1,10 +1,10 @@
 <template>
     <div class="section-container mx-auto">
         <div
-            v-for="(user, index) in users"
+            v-for="(user, index) in users()"
             :key="user.id"
             class="row user-badge"
-            :v-if="game.users.length > 0"
+            :v-if="users().length > 0"
         >
             <div class="col">
                 <div class="row leaderboard-header text-start">
@@ -33,16 +33,20 @@
     </div>
 </template>
 
-<script>
-import { mapState } from 'vuex';
+<script lang="ts">
 import _ from 'lodash';
+import { useStore } from 'vuex';
+import { User } from '@/game/User';
+import { computed, defineComponent } from '@vue/runtime-core';
 
-export default {
-    computed: {
-        ...mapState(['game']),
-        users() {
+export default defineComponent({
+    setup() {
+        const store = useStore();
+        const game = computed(() => store.state.game);
+
+        const users = (): User[] => {
             const first = _.orderBy(
-                this.game.users,
+                game.value.users,
                 ['currentRecordTotal'],
                 ['desc'],
             );
@@ -52,9 +56,14 @@ export default {
                 ['desc'],
             );
             return second;
-        },
+        };
+
+        return {
+            game,
+            users,
+        };
     },
-};
+});
 </script>
 
 <style scoped>

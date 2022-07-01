@@ -3,7 +3,7 @@ import { Time } from './Time';
 import { User } from './User';
 import { Category, defaultCategoryJson } from './Category';
 import { FirebaseDataJSON } from 'ApiTypes';
-import { Subcategory } from './Subcategory';
+import { defaultSubcategoryJson, Subcategory } from './Subcategory';
 
 export class Game {
     public times: Time[] = [];
@@ -49,11 +49,11 @@ export class Game {
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
     }
 
-    public getSubcategory(subcategorySlug: string): Subcategory | undefined {
+    public getSubcategory(subcategorySlug: string): Subcategory {
         for (const subcategory of this.subcategorySet.values()) {
             if (subcategory.slug === subcategorySlug) return subcategory;
         }
-        return undefined;
+        return new Subcategory(defaultSubcategoryJson);
     }
 
     public getSubcategoryDisplayName(categorySlug: string): string {
