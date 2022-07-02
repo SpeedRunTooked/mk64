@@ -97,13 +97,13 @@ export default defineComponent({
             let times = this.game.getRecentEntries();
             if (this.filters.entryStatus) {
                 if (this.filters.entryStatus === 'improvements') {
-                    times = _.filter(times, (x) => {
-                        return x.isRecordImprovement === true;
+                    times = _.filter(times, (time) => {
+                        return time.isRecordImprovement === true;
                     });
                 }
                 if (this.filters.entryStatus === 'current') {
-                    times = _.filter(times, (x) => {
-                        return x.isCurrentRecord === true;
+                    times = _.filter(times, (time) => {
+                        return time.isCurrentRecord === true;
                     });
                 }
             }

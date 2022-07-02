@@ -31,8 +31,9 @@ export class Game {
 
     public getCategory(categorySlug: string): Category {
         return (
-            this.categories.find((x) => x.slug === categorySlug) ||
-            new Category(DEFAULT_CATEGORY_JSON)
+            this.categories.find(
+                (category) => category.slug === categorySlug,
+            ) || new Category(DEFAULT_CATEGORY_JSON)
         );
     }
 
@@ -90,9 +91,9 @@ export class Game {
     }
 
     private buildCurrentRecords(): void {
-        const sorted = _.orderBy(this.times, ['timeMs'], ['asc']);
+        const sortedTimes = _.orderBy(this.times, ['timeMs'], ['asc']);
         const recordArr: string[] = [];
-        for (const time of sorted) {
+        for (const time of sortedTimes) {
             if (recordArr.indexOf(time.runSlug) === -1) {
                 time.isCurrentRecord = true;
                 recordArr.push(time.runSlug);
@@ -101,12 +102,12 @@ export class Game {
     }
 
     private buildRecordImprovements(): void {
-        const sorted = _.orderBy(this.times, ['created'], ['asc']);
+        const sortedTimes = _.orderBy(this.times, ['created'], ['asc']);
 
         // Build a record map that keeps track of each category-subcategory combination
         const recordMap: { [key: string]: number } = {};
 
-        for (const time of sorted) {
+        for (const time of sortedTimes) {
             if (!recordMap[time.runSlug]) {
                 time.isRecordImprovement = true;
                 recordMap[time.runSlug] = time.timeMs;

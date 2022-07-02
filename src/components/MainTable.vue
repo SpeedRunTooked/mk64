@@ -223,14 +223,14 @@ export default defineComponent({
             let times = this.game.times;
 
             if (this.filters.subcategory) {
-                times = _.filter(times, (x) => {
-                    return x.subcategory.slug === this.filters.subcategory;
+                times = _.filter(times, (time) => {
+                    return time.subcategory.slug === this.filters.subcategory;
                 });
             }
 
             if (this.filters.category) {
-                times = _.filter(times, (x) => {
-                    return x.category.slug === this.filters.category;
+                times = _.filter(times, (time) => {
+                    return time.category.slug === this.filters.category;
                 });
             }
 
@@ -242,13 +242,13 @@ export default defineComponent({
 
             if (this.filters.entryStatus) {
                 if (this.filters.entryStatus === 'improvements') {
-                    times = _.filter(times, (x) => {
-                        return x.isRecordImprovement === true;
+                    times = _.filter(times, (time) => {
+                        return time.isRecordImprovement === true;
                     });
                 }
                 if (this.filters.entryStatus === 'current') {
-                    times = _.filter(times, (x) => {
-                        return x.isCurrentRecord === true;
+                    times = _.filter(times, (time) => {
+                        return time.isCurrentRecord === true;
                     });
                 }
             }

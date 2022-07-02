@@ -20,10 +20,10 @@ export class User {
         subcategorySlug: string,
         categorySlug: string,
     ): Time | undefined {
-        const filtered = this.times.filter((x) => {
+        const filtered = this.times.filter((time) => {
             return (
-                x.subcategory.slug === subcategorySlug &&
-                x.category.slug === categorySlug
+                time.subcategory.slug === subcategorySlug &&
+                time.category.slug === categorySlug
             );
         });
         return _.minBy(filtered, 'timeMs');
@@ -40,11 +40,14 @@ export class User {
     }
 
     private buildRecords(): void {
-        this.currentRecords = _.filter(this.times, (x) => x.isCurrentRecord);
+        this.currentRecords = _.filter(
+            this.times,
+            (time) => time.isCurrentRecord,
+        );
         this.currentRecordTotal = this.currentRecords.length;
         this.recordImprovements = _.filter(
             this.times,
-            (x) => x.isRecordImprovement,
+            (time) => time.isRecordImprovement,
         );
         this.recordImprovementTotal = this.recordImprovements.length;
     }
