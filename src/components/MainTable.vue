@@ -319,7 +319,7 @@ select {
 .header-row {
     margin-top: 25px;
     padding-bottom: 10px;
-    border-bottom: 2px solid lightgrey;
+    border-bottom: 1px solid grey;
 }
 
 .material-symbols-outlined {
