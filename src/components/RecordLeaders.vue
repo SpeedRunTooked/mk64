@@ -68,7 +68,7 @@ export default defineComponent({
     font-weight: bold;
     padding-bottom: 5px;
     margin-bottom: 10px;
-    border-bottom: 2px solid lightgrey;
+    border-bottom: 1px solid grey;
 }
 
 .user-badge {
