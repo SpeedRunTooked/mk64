@@ -4,6 +4,7 @@ import { User } from './User';
 import { Category, DEFAULT_CATEGORY_JSON } from './Category';
 import { FirebaseDataJSON, GameElementJSON } from 'FirebaseTypes';
 import { DEFAULT_SUBCATEGORY_JSON, Subcategory } from './Subcategory';
+import { RunStats } from './RunStats';
 
 export interface GameElement {
     slug: string;
@@ -16,6 +17,7 @@ export class Game {
     public users: User[] = [];
     public categories: Category[] = [];
     public subcategorySet: Set<Subcategory>;
+    public runStats: RunStats;
 
     constructor(firebaseDataJson: FirebaseDataJSON) {
         this.buildCategories(firebaseDataJson);
@@ -27,6 +29,7 @@ export class Game {
         this.buildCurrentRecords();
         this.buildRecordImprovements();
         this.buildUserStats();
+        this.runStats = new RunStats(this.times);
     }
 
     public getCategory(categorySlug: string): Category {

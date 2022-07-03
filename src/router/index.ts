@@ -22,6 +22,11 @@ const routes: Array<RouteRecordRaw> = [
         name: 'leaderboard',
         component: () => import('../views/LeaderboardView.vue'),
     },
+    {
+        path: '/stats',
+        name: 'stats',
+        component: () => import('../views/StatsPageView.vue'),
+    },
 ];
 
 const router = createRouter({
