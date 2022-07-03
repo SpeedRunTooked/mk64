@@ -25,7 +25,7 @@
             <div class="col category-header">
                 {{ selectedCategory.subcategoryName || 'Subcategory' }}
             </div>
-            <div class="col category-header">Time</div>
+            <div class="col category-header">Uploaded Runs</div>
         </div>
         <div
             v-for="run in activeRows"
@@ -42,7 +42,12 @@
             <div class="col">-</div>
         </div>
         <div class="row">
-            <div class="col"><table-nav></table-nav></div>
+            <div class="col">
+                <table-nav
+                    :show-text-display="false"
+                    :show-fast-arrows="false"
+                ></table-nav>
+            </div>
         </div>
     </div>
 </template>
@@ -51,9 +56,7 @@
 import _ from 'lodash';
 import { Game } from '@/game/Game';
 import { Category } from '@/game/Category';
-import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from '@vue/composition-api';
-import { Run } from '@/game/Run';
 import AbstractTableVue from './AbstractTable.vue';
 import { MostPlayedSubcategory } from '@/game/RunStats';
 import TableNav from '@/components/TableNav.vue';
@@ -111,5 +114,6 @@ select {
 
 .title {
     margin-top: 5px;
+    margin-bottom: 15px;
 }
 </style>

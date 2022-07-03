@@ -1,20 +1,20 @@
 <template>
     <div class="row text-center row-even pagination-buttons">
-        <div class="col-4 col-md-4">
+        <div class="col-4 col-md-4" v-if="showTextDisplay">
             Rows {{ $parent.firstRow }}-{{ $parent.lastRow }} of
             {{ $parent.totalRows }}
         </div>
 
-        <div class="col-2 col-md-1 bold text-right" title="Go to first page">
+        <div class="col bold text-right" title="Go to first page">
             <span
-                v-if="$parent.previousPageExists()"
+                v-if="$parent.previousPageExists() && showFastArrows"
                 class="clickable noselect material-symbols-outlined"
                 @click="$parent.goToFirstPage()"
             >
                 fast_rewind
             </span>
         </div>
-        <div class="col-2 col-md-1 bold text-right" title="Go to previous page">
+        <div class="col bold text-right" title="Go to previous page">
             <span
                 v-if="$parent.previousPageExists()"
                 class="clickable noselect material-symbols-outlined"
@@ -23,7 +23,7 @@
                 arrow_back
             </span>
         </div>
-        <div class="col-2 col-md-1 bold text-left" title="Go to next page">
+        <div class="col bold text-left" title="Go to next page">
             <span
                 class="clickable material-symbols-outlined noselect"
                 v-if="$parent.nextPageExists()"
@@ -32,10 +32,10 @@
                 arrow_forward
             </span>
         </div>
-        <div class="col-2 col-md-1 bold text-left" title="Go to last page">
+        <div class="col bold text-left" title="Go to last page">
             <span
                 class="clickable noselect material-symbols-outlined noselect"
-                v-if="$parent.nextPageExists()"
+                v-if="$parent.nextPageExists() && showFastArrows"
                 @click="$parent.goToLastPage()"
             >
                 fast_forward
@@ -47,7 +47,22 @@
     </div>
 </template>
 
-<script></script>
+<script lang="ts">
+import { defineComponent } from '@vue/composition-api';
+
+export default defineComponent({
+    props: {
+        showTextDisplay: {
+            default: true,
+            type: Boolean,
+        },
+        showFastArrows: {
+            default: true,
+            type: Boolean,
+        },
+    },
+});
+</script>
 
 <style scoped>
 .pagination-buttons {
