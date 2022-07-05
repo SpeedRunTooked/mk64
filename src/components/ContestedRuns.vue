@@ -1,7 +1,7 @@
 <template>
     <div v-if="selectedCategory" class="stats-table mx-auto">
         <div class="row section-header">
-            <div class="col title">Most Popular</div>
+            <div class="col title">Most Contested</div>
             <div class="col">
                 <div class="select-wrapper status">
                     <select
@@ -9,7 +9,6 @@
                         aria-label="Default select example"
                         v-model="selectedCategorySlug"
                     >
-                        <option value="" selected>All Categories</option>
                         <option
                             v-for="category in game.categories"
                             :key="category.slug"
@@ -25,7 +24,7 @@
             <div class="col category-header">
                 {{ selectedCategory.subcategoryName || 'Subcategory' }}
             </div>
-            <div class="col category-header">Uploaded Runs</div>
+            <div class="col category-header">Times Contested</div>
         </div>
         <div
             v-for="run in activeRows"
@@ -34,7 +33,7 @@
         >
             <div class="col">{{ run.subcategory.name }}</div>
             <div class="col">
-                {{ run.attempts }}
+                {{ run.timesContested }}
             </div>
         </div>
         <div v-for="row in emptyRows" :key="row.id" class="row subcategory-row">
@@ -65,7 +64,7 @@ export default defineComponent({
     components: { TableNav },
     data() {
         return {
-            selectedCategorySlug: '',
+            selectedCategorySlug: '3lap',
             entries: 5,
             rowsPerPage: 8,
         };
@@ -81,9 +80,11 @@ export default defineComponent({
         },
 
         rows(): MostPlayedSubcategory[] {
-            return this.game.stats.getMostPlayedSubcategories(
-                this.selectedCategorySlug,
-            );
+            return this.game.stats
+                .getMostContested()
+                .filter(
+                    (run) => run.category.slug === this.selectedCategorySlug,
+                );
         },
 
         selectedCategory(): Category {

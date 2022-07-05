@@ -238,8 +238,8 @@ export default defineComponent({
         currentRecord(): Time | undefined {
             if (this.categoryAndSubcategorySelected) {
                 return this.game.getRecord(
-                    this.formData.subcategorySlug,
                     this.formData.categorySlug,
+                    this.formData.subcategorySlug,
                 );
             }
             return undefined;
@@ -259,8 +259,8 @@ export default defineComponent({
                 if (user) {
                     return (
                         user.getRecord(
-                            this.formData.subcategorySlug,
                             this.formData.categorySlug,
+                            this.formData.subcategorySlug,
                         )?.timeElapsed || 'None yet!'
                     );
                 }

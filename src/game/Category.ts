@@ -13,16 +13,23 @@ export const DEFAULT_CATEGORY_JSON: CategoryJSON = {
 
 export class Category implements GameElement {
     public subcategories: Subcategory[] = [];
+    public name: string;
+    public slug: string;
+    public subcategoryName: string;
+    public displayOrder: number;
 
-    constructor(private categoryJson: CategoryJSON) {
-        this.buildSubcategories();
+    constructor(categoryJson: CategoryJSON) {
+        this.buildSubcategories(categoryJson);
+        this.slug = categoryJson.slug;
+        this.name = categoryJson.name;
+        this.subcategoryName = categoryJson.subcategoryName;
+        this.displayOrder = categoryJson.displayOrder;
     }
 
-    private buildSubcategories(): void {
-        if (this.categoryJson)
-            for (const subcategoryJson of this.categoryJson.subcategories) {
-                this.subcategories.push(new Subcategory(subcategoryJson));
-            }
+    private buildSubcategories(categoryJson: CategoryJSON): void {
+        for (const subcategoryJson of categoryJson.subcategories) {
+            this.subcategories.push(new Subcategory(subcategoryJson));
+        }
     }
 
     public getSubcategory(subcategorySlug: string): Subcategory | undefined {
@@ -32,18 +39,12 @@ export class Category implements GameElement {
     }
 
     get json(): CategoryJSON {
-        return this.categoryJson;
-    }
-
-    get slug(): string {
-        return this.json.slug;
-    }
-
-    get name(): string {
-        return this.json.name;
-    }
-
-    get subcategoryName(): string {
-        return this.json.subcategoryName;
+        return {
+            name: this.name,
+            slug: this.slug,
+            subcategoryName: this.subcategoryName,
+            subcategories: this.subcategories,
+            displayOrder: this.displayOrder,
+        };
     }
 }

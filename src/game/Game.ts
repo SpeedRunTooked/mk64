@@ -4,7 +4,7 @@ import { User } from './User';
 import { Category, DEFAULT_CATEGORY_JSON } from './Category';
 import { FirebaseDataJSON, GameElementJSON } from 'FirebaseTypes';
 import { DEFAULT_SUBCATEGORY_JSON, Subcategory } from './Subcategory';
-import { RunStats } from './RunStats';
+import { GameStats } from './GameStats';
 
 export interface GameElement {
     slug: string;
@@ -17,7 +17,7 @@ export class Game {
     public users: User[] = [];
     public categories: Category[] = [];
     public subcategorySet: Set<Subcategory>;
-    public runStats: RunStats;
+    public stats: GameStats;
 
     constructor(firebaseDataJson: FirebaseDataJSON) {
         this.buildCategories(firebaseDataJson);
@@ -29,7 +29,7 @@ export class Game {
         this.buildCurrentRecords();
         this.buildRecordImprovements();
         this.buildUserStats();
-        this.runStats = new RunStats(this.times);
+        this.stats = new GameStats(this, this.times);
     }
 
     public getCategory(categorySlug: string): Category {
@@ -48,13 +48,17 @@ export class Game {
         return this.users.filter((user) => user.id === userId)[0];
     }
 
-    public getRecord(subcategorySlug: string, categorySlug: string): Time {
-        const times = _.filter(
+    public getTimes(categorySlug: string, subcategorySlug: string) {
+        return _.filter(
             this.times,
             (time) =>
                 time.subcategory.slug === subcategorySlug &&
                 time.category.slug === categorySlug,
         );
+    }
+
+    public getRecord(categorySlug: string, subcategorySlug: string): Time {
+        const times = this.getTimes(categorySlug, subcategorySlug);
         return _.orderBy(times, ['timeMs'], ['asc'])[0];
     }
 

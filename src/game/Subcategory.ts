@@ -9,21 +9,21 @@ export const DEFAULT_SUBCATEGORY_JSON: SubcategoryJSON = {
 };
 
 export class Subcategory implements GameElement {
-    constructor(private subcategoryJson: SubcategoryJSON) {}
+    public slug: string;
+    public name: string;
+    public group: string;
+
+    constructor(subcategoryJson: SubcategoryJSON) {
+        this.slug = subcategoryJson.slug;
+        this.name = subcategoryJson.name;
+        this.group = subcategoryJson.group;
+    }
 
     get json(): SubcategoryJSON {
-        return this.subcategoryJson;
-    }
-
-    get slug(): string {
-        return this.json.slug;
-    }
-
-    get name(): string {
-        return this.json.name;
-    }
-
-    get group(): string {
-        return this.json.group;
+        return {
+            slug: this.slug,
+            name: this.name,
+            group: this.group,
+        };
     }
 }

@@ -17,8 +17,8 @@ export class User {
     constructor(public id: string, public json: UserJSON) {}
 
     public getRecord(
-        subcategorySlug: string,
         categorySlug: string,
+        subcategorySlug: string,
     ): Time | undefined {
         const filtered = this.times.filter((time) => {
             return (

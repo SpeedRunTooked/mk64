@@ -93,16 +93,16 @@ export default defineComponent({
     methods: {
         getElapsedTime(subcategory: Subcategory) {
             const time = this.game.getRecord(
-                subcategory.slug,
                 this.selectedCategory.slug,
+                subcategory.slug,
             )?.timeElapsed;
             return time || 'None yet!';
         },
 
         getUserDisplayName(subcategory: Subcategory) {
             const record = this.game.getRecord(
-                subcategory.slug,
                 this.selectedCategory.slug,
+                subcategory.slug,
             );
             return record?.user?.displayName || 'None yet!';
         },

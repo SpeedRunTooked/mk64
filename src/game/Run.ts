@@ -5,6 +5,7 @@ import { Subcategory } from './Subcategory';
 
 export class Run {
     public attempts = 1;
+    public timesContested = 0;
 
     constructor(public category: Category, public subcategory: Subcategory) {}
 

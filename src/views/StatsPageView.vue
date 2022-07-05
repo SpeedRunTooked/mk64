@@ -2,7 +2,7 @@
     <div class="stats-page-wrapper">
         <div class="row">
             <div class="col"><popular-runs></popular-runs></div>
-            <div class="col"><popular-runs></popular-runs></div>
+            <div class="col"><contested-runs></contested-runs></div>
         </div>
     </div>
 </template>
@@ -10,10 +10,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import PopularRuns from '@/components/PopularRuns.vue';
+import ContestedRuns from '@/components/ContestedRuns.vue';
 
 export default defineComponent({
     name: 'StatsPageView',
-    components: { PopularRuns },
+    components: { PopularRuns, ContestedRuns },
 });
 </script>
 
@@ -24,8 +25,5 @@ export default defineComponent({
 }
 .stats-table {
     padding: 0 30px;
-}
-.stats-page-wrapper {
-    /* margin-top: -25px; */
 }
 </style>
