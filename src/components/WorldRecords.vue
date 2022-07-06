@@ -1,7 +1,7 @@
 <template>
     <div v-if="selectedCategory" class="stats-table mx-auto">
         <div class="row section-header">
-            <div class="col title">Comparison to World Records</div>
+            <div class="col title">World Record Comparisons</div>
         </div>
         <div class="row filter-row">
             <div class="col">

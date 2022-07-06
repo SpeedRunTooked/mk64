@@ -203,7 +203,7 @@ export default defineComponent({
             const subcategorySet = this.game.getCategory(
                 this.filters.category,
             ).subcategories;
-            return _.orderBy(subcategorySet, ['name']);
+            return _.orderBy(subcategorySet, ['displayOrder']);
         },
 
         subcategoryName(): string {

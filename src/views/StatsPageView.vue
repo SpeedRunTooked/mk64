@@ -23,7 +23,7 @@ export default defineComponent({
 </script>
 
 <style>
-.front-page {
+.stats-page-wrapper {
     margin-top: -20px;
     margin-bottom: 40px;
 }
