@@ -17,7 +17,7 @@ export class Game {
     public users: User[] = [];
     public categories: Category[] = [];
     public subcategorySet: Set<Subcategory>;
-    public stats: GameStats;
+    public stats: GameStats = new GameStats(this, [], []);
 
     constructor(firebaseDataJson: FirebaseDataJSON) {
         this.buildCategories(firebaseDataJson);

@@ -1,5 +1,6 @@
 <template>
-    <div v-if="selectedCategory" class="stats-table mx-auto">
+    <div v-if="game.stats">
+        0" class="stats-table mx-auto">
         <div class="row section-header">
             <div class="col title">Comparison to World Records</div>
         </div>
@@ -12,9 +13,8 @@
                         v-model="selectedCategorySlug"
                         @change="goToFirstPage()"
                     >
-                        <option value="" selected>All Categories</option>
                         <option
-                            v-for="category in game.categories"
+                            v-for="category in getCategories()"
                             :key="category.slug"
                             :value="category.slug"
                         >
@@ -28,21 +28,20 @@
                     <select
                         class="form-select"
                         aria-label="Default select example"
-                        v-model="selectedCategorySlug"
+                        v-model="selectedSubcategorySlug"
                         @change="goToFirstPage()"
                     >
-                        <option value="" selected>All Categories</option>
                         <option
-                            v-for="category in game.categories"
-                            :key="category.slug"
-                            :value="category.slug"
+                            v-for="subcategory in getSubcategories()"
+                            :key="subcategory.slug"
+                            :value="subcategory.slug"
                         >
-                            {{ category.name }}
+                            {{ subcategory.name }}
                         </option>
                     </select>
                 </div>
             </div>
-            <div class="col current-record">
+            <div class="col current-record" v-if="currentRecord">
                 {{ currentRecord.timeElapsed }} by
                 {{ currentRecord.user.displayName }}
             </div>
@@ -53,7 +52,7 @@
         </div>
         <div
             v-for="oldRecord in activeRows"
-            :key="oldRecord.date"
+            :key="getOldRecordKey(oldRecord)"
             class="row subcategory-row"
         >
             <div class="col">{{ oldRecord.date }}</div>
@@ -93,7 +92,7 @@ export default defineComponent({
         return {
             selectedCategorySlug: '3lap',
             selectedSubcategorySlug: 'luigiraceway',
-            rowsPerPage: 12,
+            rowsPerPage: 10,
         };
     },
 
@@ -114,7 +113,7 @@ export default defineComponent({
         },
 
         rows(): OldRecordTimeEntry[] {
-            const oldRecordCategory = this.game.stats.oldRecords.find(
+            const oldRecordCategory = this.game?.stats?.oldRecords.find(
                 (oldRecord) =>
                     oldRecord.categorySlug === this.selectedCategorySlug,
             );
@@ -122,7 +121,8 @@ export default defineComponent({
             return (
                 oldRecordCategory?.subcategoryRecords?.find(
                     (subcategoryRecord: OldRecordSubcategoryEntry) =>
-                        subcategoryRecord.subcategorySlug,
+                        subcategoryRecord.subcategorySlug ===
+                        this.selectedSubcategorySlug,
                 )?.records || []
             );
         },
@@ -132,7 +132,20 @@ export default defineComponent({
         },
     },
 
-    methods: {},
+    methods: {
+        getCategories() {
+            return this.game.stats.oldRecords.map(
+                (category: OldRecordCategoryEntry) =>
+                    this.game.getCategory(category.categorySlug),
+            );
+        },
+        getSubcategories() {
+            return this.selectedCategory.subcategories;
+        },
+        getOldRecordKey(oldRecord: OldRecordTimeEntry) {
+            return oldRecord.date + oldRecord.time;
+        },
+    },
 });
 </script>
 
