@@ -23,13 +23,19 @@ export class Game {
         this.buildCategories(firebaseDataJson);
         this.subcategorySet = this.buildSubcategorySet();
 
+        console.log(firebaseDataJson);
+
         this.buildUsers(firebaseDataJson);
         this.buildTimes(firebaseDataJson);
 
         this.buildCurrentRecords();
         this.buildRecordImprovements();
         this.buildUserStats();
-        this.stats = new GameStats(this, this.times);
+        this.stats = new GameStats(
+            this,
+            this.times,
+            firebaseDataJson.gamedata?.oldRecords || [],
+        );
     }
 
     public getCategory(categorySlug: string): Category {
@@ -48,7 +54,7 @@ export class Game {
         return this.users.filter((user) => user.id === userId)[0];
     }
 
-    public getTimes(categorySlug: string, subcategorySlug: string) {
+    public getTimes(categorySlug: string, subcategorySlug: string): Time[] {
         return _.filter(
             this.times,
             (time) =>

@@ -8,6 +8,7 @@
                         class="form-select"
                         aria-label="Default select example"
                         v-model="selectedCategorySlug"
+                        @change="goToFirstPage()"
                     >
                         <option value="" selected>All Categories</option>
                         <option
@@ -66,7 +67,6 @@ export default defineComponent({
     data() {
         return {
             selectedCategorySlug: '',
-            entries: 5,
             rowsPerPage: 8,
         };
     },

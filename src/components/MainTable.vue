@@ -6,7 +6,7 @@
                     class="form-select"
                     aria-label="Default select example"
                     v-model="filters.category"
-                    @change="resetRows()"
+                    @change="goToFirstPage()"
                 >
                     <option value="">All Categories</option>
 
@@ -25,7 +25,7 @@
                     class="form-select"
                     aria-label="Default select example"
                     v-model="filters.subcategory"
-                    @change="resetRows()"
+                    @change="goToFirstPage()"
                 >
                     <option value="">All {{ subcategoryName }}s</option>
 
@@ -60,7 +60,7 @@
                     class="form-select"
                     aria-label="Default select example"
                     v-model="filters.user"
-                    @change="resetRows()"
+                    @change="goToFirstPage()"
                     v-if="game.users.length > 0"
                 >
                     <option value="">All Players</option>
@@ -80,7 +80,7 @@
                     class="form-select"
                     aria-label="Default select example"
                     v-model="filters.entryStatus"
-                    @change="resetRows()"
+                    @change="goToFirstPage()"
                 >
                     <option value="" selected>All Times</option>
                     <option value="current">Current Records</option>
@@ -270,16 +270,12 @@ export default defineComponent({
             for (const filter in this.filters) {
                 (this.filters as MainTableFilters)[filter] = '';
             }
-            this.resetRows();
+            this.goToFirstPage();
         },
 
         setFilter(filter: string, filterValue: string) {
             (this.filters as MainTableFilters)[filter] = filterValue;
-            this.resetRows();
-        },
-
-        resetRows(): void {
-            this.currentRow = 0;
+            this.goToFirstPage();
         },
     },
 });

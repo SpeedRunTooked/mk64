@@ -8,6 +8,7 @@
                         class="form-select"
                         aria-label="Default select example"
                         v-model="selectedCategorySlug"
+                        @change="goToFirstPage()"
                     >
                         <option
                             v-for="category in game.categories"
@@ -56,8 +57,8 @@ import { Game } from '@/game/Game';
 import { Category } from '@/game/Category';
 import { defineComponent } from '@vue/composition-api';
 import AbstractTableVue from './AbstractTable.vue';
-import { MostPlayedSubcategory } from '@/game/GameStats';
 import TableNav from '@/components/TableNav.vue';
+import { Run } from '@/game/Run';
 
 export default defineComponent({
     extends: AbstractTableVue,
@@ -65,7 +66,6 @@ export default defineComponent({
     data() {
         return {
             selectedCategorySlug: '3lap',
-            entries: 5,
             rowsPerPage: 8,
         };
     },
@@ -75,11 +75,11 @@ export default defineComponent({
             return this.$store.state.game;
         },
 
-        activeRows(): MostPlayedSubcategory[] {
+        activeRows(): Run[] {
             return this.getActiveRows();
         },
 
-        rows(): MostPlayedSubcategory[] {
+        rows(): Run[] {
             return this.game.stats
                 .getMostContested()
                 .filter(

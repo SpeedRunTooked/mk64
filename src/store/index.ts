@@ -9,7 +9,10 @@ export default createStore({
             users: [],
             times: [],
             categories: [],
-            subcategoryGroups: [],
+            gamedata: {
+                subcategoryGroups: [],
+                oldRecords: [],
+            },
         }),
     },
     getters: {},

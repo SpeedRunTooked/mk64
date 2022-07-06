@@ -1,3 +1,4 @@
+import { OldRecordCategoryEntry } from 'FirebaseTypes';
 import _ from 'lodash';
 import { Game } from './Game';
 import { Run } from './Run';
@@ -10,21 +11,26 @@ export interface MostPlayedSubcategory {
 }
 
 export class GameStats {
-    public runList: Run[] = [];
+    public runs: Run[] = [];
+    public oldRecords: OldRecordCategoryEntry[] = [];
 
-    constructor(game: Game, times: Time[]) {
-        this.buildRunList(times);
+    constructor(
+        game: Game,
+        times: Time[],
+        oldRecords: OldRecordCategoryEntry[],
+    ) {
+        this.buildRunList(game, times, oldRecords);
         this.buildMostContestedSubcategories(game);
     }
 
     public getMostPopularRuns(): Run[] {
-        return _.orderBy(this.runList, ['attempts'], ['desc']);
+        return _.orderBy(this.runs, ['attempts'], ['desc']);
     }
 
     public getMostContested(): Run[] {
         return _.orderBy(
-            this.runList,
-            ['timesContested', 'attemts'],
+            this.runs,
+            ['timesContested', 'attempts'],
             ['desc', 'desc'],
         );
     }
@@ -32,11 +38,11 @@ export class GameStats {
     public getMostPlayedSubcategories(
         categorySlug?: string,
     ): MostPlayedSubcategory[] {
-        let runs = this.runList;
+        let runs = this.runs;
         const mostPlayedSubcategories: MostPlayedSubcategory[] = [];
 
         if (categorySlug) {
-            runs = this.runList.filter(
+            runs = this.runs.filter(
                 (run) => run.category.slug === categorySlug,
             );
         }
@@ -60,7 +66,7 @@ export class GameStats {
     }
 
     private buildMostContestedSubcategories(game: Game): void {
-        for (const run of this.runList) {
+        for (const run of this.runs) {
             run.timesContested = this.calculateMostContested(
                 game.getTimes(run.category.slug, run.subcategory.slug),
             );
@@ -72,13 +78,13 @@ export class GameStats {
             timeList,
             (time) => time.isRecordImprovement === true,
         );
-        console.log(recordImprovements);
+
         const recordImprovementsSorted = _.orderBy(
             recordImprovements,
             ['created'],
             ['asc'],
         );
-        console.log(recordImprovementsSorted);
+
         let count = 0;
 
         for (let i = 0; i < recordImprovementsSorted.length; i++) {
@@ -94,9 +100,13 @@ export class GameStats {
         return count;
     }
 
-    private buildRunList(times: Time[]): void {
+    private buildRunList(
+        game: Game,
+        times: Time[],
+        oldRecords: OldRecordCategoryEntry[],
+    ): void {
         for (const time of times) {
-            const existingRun = this.runList.find(
+            const existingRun = this.runs.find(
                 (run) =>
                     run.category == time.category &&
                     run.subcategory === time.subcategory,
@@ -104,8 +114,24 @@ export class GameStats {
             if (existingRun) {
                 existingRun.increaseCounter();
             } else {
-                this.runList.push(new Run(time.category, time.subcategory));
+                this.runs.push(new Run(time.category, time.subcategory));
             }
         }
+        this.addRecordsToRuns(game);
+        // this.addOldRecordComparisons(oldRecords);
+        this.oldRecords = oldRecords;
     }
+
+    private addRecordsToRuns(game: Game): void {
+        for (const run of this.runs) {
+            run.recordTime = game.getRecord(
+                run.category.slug,
+                run.subcategory.slug,
+            );
+        }
+    }
+
+    // private addOldRecordComparisons(oldRecords: OldRecord[]): void {
+    //     console.log(oldRecords);
+    // }
 }

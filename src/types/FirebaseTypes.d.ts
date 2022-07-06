@@ -1,14 +1,34 @@
 declare module 'FirebaseTypes' {
     interface FirebaseDataJSON {
-        users: UserJSON[];
-        times: TimeJSON[];
         categories: CategoryJSON[];
+        gamedata: GameDataJSON;
+        times: TimeJSON[];
+        users: UserJSON[];
+    }
+
+    interface GameDataJSON {
+        oldRecords: OldRecordCategoryEntry[];
         subcategoryGroups: SubcategoryGroupJSON[];
     }
 
     interface GameElementJSON {
         slug: string;
         name: string;
+    }
+
+    interface OldRecordCategoryEntry {
+        categorySlug: string;
+        subcategoryRecords: OldRecordSubcategoryEntry[];
+    }
+
+    interface OldRecordTimeEntry {
+        date: string;
+        time: string;
+    }
+
+    interface OldRecordSubcategoryEntry {
+        records: OldRecordTimeEntry[];
+        subcategorySlug: string;
     }
 
     interface CategoryJSON extends GameElementJSON {
