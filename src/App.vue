@@ -1,6 +1,11 @@
 <template>
     <div class="container">
-        <div class="row"><div class="col page-title">MK64</div></div>
+        <div class="row">
+            <div class="col">
+                <img class="logo-img" src="assets/mario-kart-icon-25842.jpg" />
+            </div>
+        </div>
+        <!-- <div class="row"><div class="col page-title">MK64</div></div> -->
         <nav>
             <router-link to="/">Summary</router-link> |
             <router-link to="/leaderboard">Leaderboard</router-link> |
@@ -135,5 +140,9 @@ nav {
 }
 .subcategory-row {
     padding: 5px 0;
+}
+
+.logo-img {
+    width: 100px;
 }
 </style>
