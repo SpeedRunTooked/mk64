@@ -1,6 +1,5 @@
 <template>
-    <div v-if="game.stats">
-        0" class="stats-table mx-auto">
+    <div v-if="selectedCategory" class="stats-table mx-auto">
         <div class="row section-header">
             <div class="col title">Comparison to World Records</div>
         </div>
@@ -41,23 +40,29 @@
                     </select>
                 </div>
             </div>
-            <div class="col current-record" v-if="currentRecord">
-                {{ currentRecord.timeElapsed }} by
+            <div class="col current-record highlight" v-if="currentRecord">
+                <span class="larger-text">{{ currentRecord.timeElapsed }}</span>
+                by
                 {{ currentRecord.user.displayName }}
             </div>
         </div>
         <div class="row">
             <div class="col category-header">World Record Date</div>
             <div class="col category-header">World Record Time</div>
+            <div class="col category-header">Time Difference</div>
         </div>
         <div
             v-for="oldRecord in activeRows"
             :key="getOldRecordKey(oldRecord)"
             class="row subcategory-row"
+            :class="oldRecordSlowerThanCurrent(oldRecord) ? 'highlight' : ''"
         >
             <div class="col">{{ oldRecord.date }}</div>
             <div class="col">
                 {{ oldRecord.time }}
+            </div>
+            <div class="col">
+                {{ getTimeDifference(oldRecord) }}
             </div>
         </div>
         <div v-for="row in emptyRows" :key="row.id" class="row subcategory-row">
@@ -92,7 +97,7 @@ export default defineComponent({
         return {
             selectedCategorySlug: '3lap',
             selectedSubcategorySlug: 'luigiraceway',
-            rowsPerPage: 10,
+            rowsPerPage: 12,
         };
     },
 
@@ -145,6 +150,24 @@ export default defineComponent({
         getOldRecordKey(oldRecord: OldRecordTimeEntry) {
             return oldRecord.date + oldRecord.time;
         },
+        oldRecordSlowerThanCurrent(oldRecord: OldRecordTimeEntry) {
+            const oldTimeMs = Time.elapsedTimeToMs(oldRecord.time);
+            return oldTimeMs > this.currentRecord.timeMs;
+        },
+        getTimeDifference(oldRecord: OldRecordTimeEntry) {
+            const oldTimeMs = Time.elapsedTimeToMs(oldRecord.time);
+            if (oldTimeMs > this.currentRecord.timeMs) {
+                return (
+                    '+' +
+                    Time.msToElapsedTime(oldTimeMs - this.currentRecord.timeMs)
+                );
+            } else {
+                return (
+                    '-' +
+                    Time.msToElapsedTime(this.currentRecord.timeMs - oldTimeMs)
+                );
+            }
+        },
     },
 });
 </script>
@@ -175,6 +198,11 @@ select {
 }
 
 .current-record {
-    margin-top: 5px;
+    margin-top: 2px;
+}
+
+.larger-text {
+    font-size: 20px;
+    margin-right: 10px;
 }
 </style>
