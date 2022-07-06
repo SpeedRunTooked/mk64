@@ -106,7 +106,7 @@
         <div
             class="row time-row"
             v-for="time in activeRows"
-            :key="String(time.created)"
+            :key="time.id"
             :class="{ highlight: time.isCurrentRecord }"
             :title="getNote(time)"
         >
