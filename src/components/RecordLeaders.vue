@@ -21,7 +21,7 @@
                         ><br />
                         Total Record Improvements:
                         {{ user.recordImprovementTotal }} <br />
-                        Total Submissions: {{ user.times.length }}
+                        Total Submissions: {{ user.entries.length }}
                     </div>
                     <div v-if="user.favoriteRun" class="col-5">
                         Favorite Run: <br />

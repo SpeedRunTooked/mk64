@@ -13,7 +13,7 @@ export interface GameElement {
 }
 
 export class Game {
-    public times: Time[] = [];
+    public entries: Time[] = [];
     public users: User[] = [];
     public categories: Category[] = [];
     public subcategorySet: Set<Subcategory>;
@@ -33,7 +33,7 @@ export class Game {
         this.buildUserStats();
         this.stats = new GameStats(
             this,
-            this.times,
+            this.entries,
             firebaseDataJson.gamedata?.oldRecords || [],
         );
     }
@@ -47,7 +47,7 @@ export class Game {
     }
 
     public getRecentEntries(): Time[] {
-        return _.orderBy(this.times, ['created'], ['desc']);
+        return _.orderBy(this.entries, ['created'], ['desc']);
     }
 
     public getUser(userId: string): User {
@@ -56,7 +56,7 @@ export class Game {
 
     public getTimes(categorySlug: string, subcategorySlug: string): Time[] {
         return _.filter(
-            this.times,
+            this.entries,
             (time) =>
                 time.subcategory.slug === subcategorySlug &&
                 time.category.slug === categorySlug,
@@ -96,15 +96,15 @@ export class Game {
     }
 
     private buildTimes(firebaseDataJson: FirebaseDataJSON): void {
-        for (const timeId in firebaseDataJson.times) {
-            const timeJson = firebaseDataJson.times[timeId];
-            const user = this.getUser(timeJson.userId);
-            this.times.push(new Time(timeId, timeJson, user, this));
+        for (const entryId in firebaseDataJson.entries) {
+            const entryJson = firebaseDataJson.entries[entryId];
+            const user = this.getUser(entryJson.userId);
+            this.entries.push(new Time(entryId, entryJson, user, this));
         }
     }
 
     private buildCurrentRecords(): void {
-        const sortedTimes = _.orderBy(this.times, ['timeMs'], ['asc']);
+        const sortedTimes = _.orderBy(this.entries, ['timeMs'], ['asc']);
         const recordArr: string[] = [];
         for (const time of sortedTimes) {
             if (recordArr.indexOf(time.runSlug) === -1) {
@@ -115,7 +115,7 @@ export class Game {
     }
 
     private buildRecordImprovements(): void {
-        const sortedTimes = _.orderBy(this.times, ['created'], ['asc']);
+        const sortedTimes = _.orderBy(this.entries, ['created'], ['asc']);
 
         // Build a record map that keeps track of each category-subcategory combination
         const recordMap: { [key: string]: number } = {};
@@ -135,7 +135,7 @@ export class Game {
 
     private buildUserStats(): void {
         for (const user of this.users) {
-            user.appendTimes(this.times);
+            user.appendTimes(this.entries);
             user.generateStats();
         }
     }

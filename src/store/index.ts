@@ -7,7 +7,7 @@ export default createStore({
     state: {
         game: new Game({
             users: [],
-            times: [],
+            entries: [],
             categories: [],
             gamedata: {
                 subcategoryGroups: [],
@@ -23,8 +23,15 @@ export default createStore({
     },
     actions: {
         async getApiData({ commit }) {
-            const result = await axios.get(config.ROOT_URL + '.json');
-            commit('SAVE_API_DATA', result.data);
+            const gameAxiosResponse = await axios.get(
+                config.ROOT_URL + '.json',
+            );
+            const usersAxiosResponse = await axios.get(config.GET_USERS_URL);
+
+            console.log(usersAxiosResponse.data);
+
+            gameAxiosResponse.data.users = usersAxiosResponse.data;
+            commit('SAVE_API_DATA', gameAxiosResponse.data);
         },
     },
     modules: {},

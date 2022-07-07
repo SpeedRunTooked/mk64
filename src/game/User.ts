@@ -7,7 +7,7 @@ import { Subcategory } from './Subcategory';
 
 export class User {
     public runs: Run[] = [];
-    public times: Time[] = [];
+    public entries: Time[] = [];
     public currentRecordTotal = 0;
     public recordImprovementTotal = 0;
     public currentRecords: Time[] = [];
@@ -20,7 +20,7 @@ export class User {
         categorySlug: string,
         subcategorySlug: string,
     ): Time | undefined {
-        const filtered = this.times.filter((time) => {
+        const filtered = this.entries.filter((time) => {
             return (
                 time.subcategory.slug === subcategorySlug &&
                 time.category.slug === categorySlug
@@ -30,7 +30,7 @@ export class User {
     }
 
     public appendTimes(times: Time[]): void {
-        this.times = times.filter((time) => time.user === this);
+        this.entries = times.filter((time) => time.user === this);
     }
 
     public generateStats(): void {
@@ -41,19 +41,19 @@ export class User {
 
     private buildRecords(): void {
         this.currentRecords = _.filter(
-            this.times,
+            this.entries,
             (time) => time.isCurrentRecord,
         );
         this.currentRecordTotal = this.currentRecords.length;
         this.recordImprovements = _.filter(
-            this.times,
+            this.entries,
             (time) => time.isRecordImprovement,
         );
         this.recordImprovementTotal = this.recordImprovements.length;
     }
 
     private buildRuns(): void {
-        for (const time of this.times) {
+        for (const time of this.entries) {
             const currentRun = this.runs.find(
                 (run) => run.slug === time.runSlug,
             );

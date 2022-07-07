@@ -2,7 +2,7 @@ declare module 'FirebaseTypes' {
     interface FirebaseDataJSON {
         categories: CategoryJSON[];
         gamedata: GameDataJSON;
-        times: TimeJSON[];
+        entries: TimeJSON[];
         users: UserJSON[];
     }
 
@@ -41,11 +41,14 @@ declare module 'FirebaseTypes' {
         group: string;
     }
 
-    interface TimeJSON {
+    interface TimeJSON extends EntryJSON {
+        timeMs: string;
+    }
+
+    interface EntryJSON {
         created: string;
         link: string;
         note: string;
-        timeMs: string;
         subcategorySlug: string;
         categorySlug: string;
         userId: string;

@@ -220,40 +220,40 @@ export default defineComponent({
         },
 
         rows(): Time[] {
-            let times = this.game.times;
+            let entries = this.game.entries;
 
             if (this.filters.subcategory) {
-                times = _.filter(times, (time) => {
+                entries = _.filter(entries, (time) => {
                     return time.subcategory.slug === this.filters.subcategory;
                 });
             }
 
             if (this.filters.category) {
-                times = _.filter(times, (time) => {
+                entries = _.filter(entries, (time) => {
                     return time.category.slug === this.filters.category;
                 });
             }
 
             if (this.filters.user) {
-                times = _.filter(times, (time) => {
+                entries = _.filter(entries, (time) => {
                     return time.user.id === this.filters.user;
                 });
             }
 
             if (this.filters.entryStatus) {
                 if (this.filters.entryStatus === 'improvements') {
-                    times = _.filter(times, (time) => {
+                    entries = _.filter(entries, (time) => {
                         return time.isRecordImprovement === true;
                     });
                 }
                 if (this.filters.entryStatus === 'current') {
-                    times = _.filter(times, (time) => {
+                    entries = _.filter(entries, (time) => {
                         return time.isCurrentRecord === true;
                     });
                 }
             }
 
-            return _.orderBy(times, ['created'], ['desc']);
+            return _.orderBy(entries, ['created'], ['desc']);
         },
     },
 
