@@ -10,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/submit',
         name: 'submit',
-        component: () => import('../views/SubmitTimeView.vue'),
+        component: () => import('../views/SubmitEntryView.vue'),
     },
     {
         path: '/data',

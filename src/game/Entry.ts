@@ -1,6 +1,5 @@
 import { Game } from './Game';
-import { User } from './User';
-import { TimeJSON } from 'FirebaseTypes';
+import { EntryJSON } from 'FirebaseTypes';
 import { Category, DEFAULT_CATEGORY_JSON } from './Category';
 import { DEFAULT_SUBCATEGORY_JSON, Subcategory } from './Subcategory';
 
@@ -12,18 +11,20 @@ export abstract class Entry {
     public isCurrentRecord: boolean;
     public subcategory: Subcategory;
     public isRecordImprovement: boolean;
+    public score: number;
+    public formattedScore: string;
 
     constructor(
         public id: string,
-        protected timeJson: TimeJSON,
-        public user: User,
+        protected entryJson: EntryJSON,
+        public userId: string,
         game: Game,
     ) {
-        const categoryJson = game.getCategory(timeJson.categorySlug);
-        const subcategoryJson = game.getSubcategory(timeJson.subcategorySlug);
+        const categoryJson = game.getCategory(entryJson.categorySlug);
+        const subcategoryJson = game.getSubcategory(entryJson.subcategorySlug);
 
-        this.created = new Date(timeJson.created);
-        this.link = timeJson.link;
+        this.created = new Date(entryJson.created);
+        this.link = entryJson.link;
 
         this.category = categoryJson
             ? categoryJson
@@ -33,14 +34,17 @@ export abstract class Entry {
             ? subcategoryJson
             : new Subcategory(DEFAULT_SUBCATEGORY_JSON);
 
-        this.note = timeJson.note;
+        this.note = entryJson.note;
+
+        this.score = Number(entryJson.score);
 
         this.isCurrentRecord = false;
         this.isRecordImprovement = false;
+        this.formattedScore = String(this.score);
     }
 
-    get json(): TimeJSON {
-        return this.timeJson;
+    get json(): EntryJSON {
+        return this.entryJson;
     }
 
     get runSlug(): string {

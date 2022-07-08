@@ -71,7 +71,7 @@
                         :value="user.id"
                         :v-if="game.users.length > 0"
                     >
-                        {{ user.displayName }}
+                        {{ game.getUser(user.id).displayName }}
                     </option>
                 </select>
             </div>
@@ -104,42 +104,42 @@
             <div class="col-3">Player</div>
         </div>
         <div
-            class="row time-row"
-            v-for="time in activeRows"
-            :key="time.id"
-            :class="{ highlight: time.isCurrentRecord }"
-            :title="getNote(time)"
+            class="row entry-row"
+            v-for="entry in activeRows"
+            :key="entry.id"
+            :class="{ highlight: entry.isCurrentRecord }"
+            :title="getNote(entry)"
         >
             <div class="col-3">
-                {{ moment(time.created).fromNow() }}
+                {{ moment(entry.created).fromNow() }}
             </div>
             <div
                 class="col-2 clickable"
-                @click="setFilter('category', time.category.slug)"
+                @click="setFilter('category', entry.category.slug)"
             >
-                {{ time.category.name }}
+                {{ entry.category.name }}
             </div>
             <div
                 class="col-3 clickable"
-                @click="setFilter('subcategory', time.subcategory.slug)"
+                @click="setFilter('subcategory', entry.subcategory.slug)"
             >
-                {{ time.subcategory.name }}
+                {{ entry.subcategory.name }}
             </div>
             <div class="col-1">
-                <div v-if="linkPresent(time)">
-                    <a :href="time.link" target="_blank">{{
-                        time.timeElapsed
+                <div v-if="linkPresent(entry)">
+                    <a :href="entry.link" target="_blank">{{
+                        entry.formattedScore
                     }}</a>
                 </div>
                 <div v-else>
-                    {{ time.timeElapsed }}
+                    {{ entry.formattedScore }}
                 </div>
             </div>
             <div
                 class="col-3 clickable"
-                @click="setFilter('user', time.user.id)"
+                @click="setFilter('user', entry.user.id)"
             >
-                {{ time.user.displayName }}
+                {{ game.getUser(entry.userId).displayName }}
             </div>
         </div>
         <div class="row">
@@ -151,7 +151,7 @@
 <script lang="ts">
 import _ from 'lodash';
 import moment from 'moment';
-import { Time } from '@/game/Time';
+import { Entry } from '@/game/Entry';
 import { Game } from '@/game/Game';
 import TableNav from '@/components/TableNav.vue';
 import { Subcategory } from '@/game/Subcategory';
@@ -215,40 +215,40 @@ export default defineComponent({
             return 'Subcategory';
         },
 
-        activeRows(): Time[] {
+        activeRows(): Entry[] {
             return this.getActiveRows();
         },
 
-        rows(): Time[] {
+        rows(): Entry[] {
             let entries = this.game.entries;
 
             if (this.filters.subcategory) {
-                entries = _.filter(entries, (time) => {
-                    return time.subcategory.slug === this.filters.subcategory;
+                entries = _.filter(entries, (entry) => {
+                    return entry.subcategory.slug === this.filters.subcategory;
                 });
             }
 
             if (this.filters.category) {
-                entries = _.filter(entries, (time) => {
-                    return time.category.slug === this.filters.category;
+                entries = _.filter(entries, (entry) => {
+                    return entry.category.slug === this.filters.category;
                 });
             }
 
             if (this.filters.user) {
-                entries = _.filter(entries, (time) => {
-                    return time.user.id === this.filters.user;
+                entries = _.filter(entries, (entry) => {
+                    return entry.userId === this.filters.user;
                 });
             }
 
             if (this.filters.entryStatus) {
                 if (this.filters.entryStatus === 'improvements') {
-                    entries = _.filter(entries, (time) => {
-                        return time.isRecordImprovement === true;
+                    entries = _.filter(entries, (entry) => {
+                        return entry.isRecordImprovement === true;
                     });
                 }
                 if (this.filters.entryStatus === 'current') {
-                    entries = _.filter(entries, (time) => {
-                        return time.isCurrentRecord === true;
+                    entries = _.filter(entries, (entry) => {
+                        return entry.isCurrentRecord === true;
                     });
                 }
             }
@@ -258,12 +258,12 @@ export default defineComponent({
     },
 
     methods: {
-        linkPresent(time: Time): boolean {
-            return time.link.substr(0, 4) === 'http';
+        linkPresent(entry: Entry): boolean {
+            return entry.link.substr(0, 4) === 'http';
         },
 
-        getNote(time: Time): string {
-            return time.note || 'Empty note';
+        getNote(entry: Entry): string {
+            return entry.note || 'Empty note';
         },
 
         resetFilters(): void {
@@ -292,7 +292,7 @@ select {
     height: 50px;
 }
 
-.time-row {
+.entry-row {
     padding: 2px;
 }
 
@@ -304,7 +304,7 @@ select {
     margin-bottom: 20px;
 }
 
-.time-row {
+.entry-row {
     border-bottom: 1px dashed lightgrey;
     padding: 20px 0;
 }

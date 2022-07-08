@@ -5,33 +5,44 @@ import { config } from '@/config';
 
 export default createStore({
     state: {
-        game: new Game({
-            users: [],
-            entries: [],
-            categories: [],
-            gamedata: {
-                subcategoryGroups: [],
-                oldRecords: [],
+        game: new Game(
+            {
+                categories: [],
+                config: {
+                    discordChannel: '',
+                    discordChannelTest: '',
+                    entryType: '',
+                },
+                gamedata: {
+                    subcategoryGroups: [],
+                    oldRecords: [],
+                },
+                entries: {},
+                userList: [],
             },
-        }),
+            {},
+        ),
     },
     getters: {},
     mutations: {
-        SAVE_API_DATA(state, data) {
-            state.game = new Game(data);
+        SAVE_API_DATA(state, data): void {
+            state.game = new Game(data.gameData, data.userData);
         },
     },
     actions: {
         async getApiData({ commit }) {
-            const gameAxiosResponse = await axios.get(
-                config.ROOT_URL + '.json',
-            );
-            const usersAxiosResponse = await axios.get(config.GET_USERS_URL);
+            const gameAxiosRequest = axios.get(config.ROOT_URL + '.json');
+            const usersAxiosRequest = axios.get(config.GET_USERS_URL);
 
-            console.log(usersAxiosResponse.data);
+            const [gameAxiosResponse, usersAxiosResponse] = await Promise.all([
+                gameAxiosRequest,
+                usersAxiosRequest,
+            ]);
 
-            gameAxiosResponse.data.users = usersAxiosResponse.data;
-            commit('SAVE_API_DATA', gameAxiosResponse.data);
+            commit('SAVE_API_DATA', {
+                gameData: gameAxiosResponse.data,
+                userData: usersAxiosResponse.data,
+            });
         },
     },
     modules: {},

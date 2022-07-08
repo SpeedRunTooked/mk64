@@ -1,7 +1,7 @@
 <template>
     <div
         class="modal fade"
-        id="submitTimeConfirmationModal"
+        id="submitEntryConfirmationModal"
         tabindex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
@@ -137,7 +137,7 @@ export default defineComponent({
             const data = qs.stringify({
                 userId: this.formData.userId,
                 subcategorySlug: this.formData.subcategorySlug,
-                timeMs: this.Time.elapsedTimeToMs(
+                score: this.Time.elapsedTimeToMs(
                     `${this.formData.time.min || 0}'${
                         this.formData.time.sec || 0
                     }"${this.formData.time.ms || 0}'`,

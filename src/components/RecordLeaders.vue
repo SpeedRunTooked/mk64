@@ -10,7 +10,7 @@
                 <div class="row leaderboard-header text-start">
                     <div class="col">
                         #{{ index + 1 }} -
-                        {{ user.displayName }}
+                        {{ game.getUser(user.id).displayName }}
                     </div>
                 </div>
                 <div class="row badge-row text-start">

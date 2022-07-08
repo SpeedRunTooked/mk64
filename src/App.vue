@@ -11,7 +11,7 @@
             <router-link to="/leaderboard">Leaderboard</router-link> |
             <router-link to="/stats">Stats</router-link> |
             <router-link to="/data">All Entries</router-link> |
-            <router-link to="/submit">Submit Time</router-link>
+            <router-link to="/submit">Submit Entry</router-link>
         </nav>
         <router-view />
     </div>

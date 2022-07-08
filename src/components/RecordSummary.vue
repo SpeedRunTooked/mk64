@@ -39,7 +39,7 @@
                 {{ getElapsedTime(subcategory) }}
             </div>
             <div class="col">
-                {{ getUserDisplayName(subcategory) }}
+                {{ subcategory.name }}
             </div>
         </div>
     </div>
@@ -92,19 +92,11 @@ export default defineComponent({
 
     methods: {
         getElapsedTime(subcategory: Subcategory) {
-            const time = this.game.getRecord(
-                this.selectedCategory.slug,
-                subcategory.slug,
-            )?.timeElapsed;
-            return time || 'None yet!';
-        },
-
-        getUserDisplayName(subcategory: Subcategory) {
             const record = this.game.getRecord(
                 this.selectedCategory.slug,
                 subcategory.slug,
             );
-            return record?.user?.displayName || 'None yet!';
+            return record?.formattedScore || 'None yet!';
         },
     },
 });

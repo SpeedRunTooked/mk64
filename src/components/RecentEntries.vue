@@ -20,7 +20,7 @@
 
             <div class="col align-end">
                 <div class="select-wrapper entries">
-                    <select class="form-select" v-model="filters.entries">
+                    <select class="form-select" v-model="filters.rows">
                         <option value="5" selected>5</option>
                         <option value="10" selected>10</option>
                         <option value="15" selected>15</option>
@@ -39,7 +39,7 @@
         </div>
         <div
             class="row subcategory-row"
-            v-for="time in recentTimes"
+            v-for="time in recentEntries"
             :key="time.id"
             :class="{ highlight: time.isCurrentRecord }"
         >
@@ -56,15 +56,15 @@
             <div class="col-2" :title="getNote(time)">
                 <div v-if="linkPresent(time)">
                     <a :href="time.link" target="_blank">{{
-                        time.timeElapsed
+                        time.formattedScore
                     }}</a>
                 </div>
                 <div v-else>
-                    {{ time.timeElapsed }}
+                    {{ time.formattedScore }}
                 </div>
             </div>
             <div class="col-2">
-                {{ time.user.displayName }}
+                {{ game.getUser(time.userId).displayName }}
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { Game } from '@/game/Game';
-import { Time } from '@/game/Time';
+import { Entry } from '@/game/Entry';
 import { defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
@@ -82,7 +82,7 @@ export default defineComponent({
         return {
             filters: {
                 entryStatus: '',
-                entries: 5,
+                rows: 5,
             },
             moment,
         };
@@ -93,31 +93,31 @@ export default defineComponent({
             return this.$store.state.game;
         },
 
-        recentTimes(): Time[] {
-            let times = this.game.getRecentEntries();
+        recentEntries(): Entry[] {
+            let entries = this.game.getRecentEntries();
             if (this.filters.entryStatus) {
                 if (this.filters.entryStatus === 'improvements') {
-                    times = _.filter(times, (time) => {
-                        return time.isRecordImprovement === true;
+                    entries = _.filter(entries, (entry) => {
+                        return entry.isRecordImprovement === true;
                     });
                 }
                 if (this.filters.entryStatus === 'current') {
-                    times = _.filter(times, (time) => {
-                        return time.isCurrentRecord === true;
+                    entries = _.filter(entries, (entry) => {
+                        return entry.isCurrentRecord === true;
                     });
                 }
             }
-            return times.splice(0, this.filters.entries);
+            return entries.splice(0, this.filters.rows);
         },
     },
 
     methods: {
-        linkPresent(time: Time): boolean {
-            return time.link.substr(0, 4) === 'http';
+        linkPresent(entry: Entry): boolean {
+            return entry.link.substr(0, 4) === 'http';
         },
 
-        getNote(time: Time): string {
-            return time.note || 'Empty note';
+        getNote(entry: Entry): string {
+            return entry.note || 'Empty note';
         },
     },
 });

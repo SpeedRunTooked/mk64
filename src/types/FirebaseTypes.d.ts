@@ -1,13 +1,25 @@
 declare module 'FirebaseTypes' {
     interface FirebaseDataJSON {
+        games: GameJSON[];
+        users: UsersJSON;
+    }
+
+    export interface GameJSON {
         categories: CategoryJSON[];
+        config: GameConfigJSON;
         gamedata: GameDataJSON;
-        entries: TimeJSON[];
-        users: UserJSON[];
+        entries: EntriesJSON;
+        userList: string[];
+    }
+
+    export interface GameConfigJSON {
+        discordChannel: string;
+        discordChannelTest: string;
+        entryType: string;
     }
 
     interface GameDataJSON {
-        oldRecords: OldRecordCategoryEntry[];
+        oldRecords: OldRecordCategoryJSON[];
         subcategoryGroups: SubcategoryGroupJSON[];
     }
 
@@ -16,19 +28,19 @@ declare module 'FirebaseTypes' {
         name: string;
     }
 
-    interface OldRecordCategoryEntry {
+    interface OldRecordCategoryJSON {
         categorySlug: string;
-        subcategoryRecords: OldRecordSubcategoryEntry[];
+        subcategoryRecords: OldRecordSubcategoryJSON[];
     }
 
-    interface OldRecordTimeEntry {
+    interface OldRecordSubcategoryJSON {
+        records: OldRecordTimeJSON[];
+        subcategorySlug: string;
+    }
+
+    interface OldRecordTimeJSON {
         date: string;
         time: string;
-    }
-
-    interface OldRecordSubcategoryEntry {
-        records: OldRecordTimeEntry[];
-        subcategorySlug: string;
     }
 
     interface CategoryJSON extends GameElementJSON {
@@ -41,14 +53,15 @@ declare module 'FirebaseTypes' {
         group: string;
     }
 
-    interface TimeJSON extends EntryJSON {
-        timeMs: string;
+    interface EntriesJSON {
+        [key: string]: EntryJSON;
     }
 
     interface EntryJSON {
         created: string;
         link: string;
         note: string;
+        score: string;
         subcategorySlug: string;
         categorySlug: string;
         userId: string;
@@ -58,6 +71,10 @@ declare module 'FirebaseTypes' {
         name: string;
         slug: string;
         displayOrder: number;
+    }
+
+    interface UsersJSON {
+        [key: string]: UserJSON;
     }
 
     interface UserJSON {

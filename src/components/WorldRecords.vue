@@ -41,9 +41,11 @@
                 </div>
             </div>
             <div class="col current-record highlight" v-if="currentRecord">
-                <span class="larger-text">{{ currentRecord.timeElapsed }}</span>
+                <span class="larger-text">{{
+                    currentRecord.formattedScore
+                }}</span>
                 by
-                {{ currentRecord.user.displayName }}
+                {{ game.getUser(currentRecord.userId).displayName }}
             </div>
         </div>
         <div class="row">
@@ -84,10 +86,11 @@ import { defineComponent } from '@vue/composition-api';
 import AbstractTableVue from './AbstractTable.vue';
 import TableNav from '@/components/TableNav.vue';
 import {
-    OldRecordCategoryEntry,
-    OldRecordSubcategoryEntry,
-    OldRecordTimeEntry,
+    OldRecordCategoryJSON,
+    OldRecordSubcategoryJSON,
+    OldRecordTimeJSON,
 } from 'FirebaseTypes';
+import { Entry } from '@/game/Entry';
 import { Time } from '@/game/Time';
 
 export default defineComponent({
@@ -106,18 +109,18 @@ export default defineComponent({
             return this.$store.state.game;
         },
 
-        activeRows(): OldRecordTimeEntry[] {
+        activeRows(): OldRecordTimeJSON[] {
             return this.getActiveRows();
         },
 
-        currentRecord(): Time {
+        currentRecord(): Entry {
             return this.game.getRecord(
                 this.selectedCategorySlug,
                 this.selectedSubcategorySlug,
             );
         },
 
-        rows(): OldRecordTimeEntry[] {
+        rows(): OldRecordTimeJSON[] {
             const oldRecordCategory = this.game?.stats?.oldRecords.find(
                 (oldRecord) =>
                     oldRecord.categorySlug === this.selectedCategorySlug,
@@ -125,7 +128,7 @@ export default defineComponent({
 
             return (
                 oldRecordCategory?.subcategoryRecords?.find(
-                    (subcategoryRecord: OldRecordSubcategoryEntry) =>
+                    (subcategoryRecord: OldRecordSubcategoryJSON) =>
                         subcategoryRecord.subcategorySlug ===
                         this.selectedSubcategorySlug,
                 )?.records || []
@@ -140,31 +143,31 @@ export default defineComponent({
     methods: {
         getCategories() {
             return this.game.stats.oldRecords.map(
-                (category: OldRecordCategoryEntry) =>
+                (category: OldRecordCategoryJSON) =>
                     this.game.getCategory(category.categorySlug),
             );
         },
         getSubcategories() {
             return this.selectedCategory.subcategories;
         },
-        getOldRecordKey(oldRecord: OldRecordTimeEntry) {
+        getOldRecordKey(oldRecord: OldRecordTimeJSON) {
             return oldRecord.date + oldRecord.time;
         },
-        oldRecordSlowerThanCurrent(oldRecord: OldRecordTimeEntry) {
+        oldRecordSlowerThanCurrent(oldRecord: OldRecordTimeJSON) {
             const oldTimeMs = Time.elapsedTimeToMs(oldRecord.time);
-            return oldTimeMs > this.currentRecord.timeMs;
+            return oldTimeMs > this.currentRecord.score;
         },
-        getTimeDifference(oldRecord: OldRecordTimeEntry) {
+        getTimeDifference(oldRecord: OldRecordTimeJSON) {
             const oldTimeMs = Time.elapsedTimeToMs(oldRecord.time);
-            if (oldTimeMs > this.currentRecord.timeMs) {
+            if (oldTimeMs > this.currentRecord.score) {
                 return (
                     '+' +
-                    Time.msToElapsedTime(oldTimeMs - this.currentRecord.timeMs)
+                    Time.msToElapsedTime(oldTimeMs - this.currentRecord.score)
                 );
             } else {
                 return (
                     '-' +
-                    Time.msToElapsedTime(this.currentRecord.timeMs - oldTimeMs)
+                    Time.msToElapsedTime(this.currentRecord.score - oldTimeMs)
                 );
             }
         },

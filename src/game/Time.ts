@@ -1,17 +1,14 @@
 import { Game } from './Game';
-import { User } from './User';
 import { Entry } from './Entry';
-import { TimeJSON } from 'FirebaseTypes';
+import { EntryJSON } from 'FirebaseTypes';
 
 export class Time extends Entry {
-    public timeMs: number;
-    public timeElapsed: string;
-    public entryTypeSlug = 'time';
+    public formattedScore: string;
+    public entryTypeSlug = 'timeMs';
 
-    constructor(id: string, timeJson: TimeJSON, user: User, game: Game) {
-        super(id, timeJson, user, game);
-        this.timeMs = Number(timeJson.timeMs);
-        this.timeElapsed = Time.msToElapsedTime(Number(timeJson.timeMs));
+    constructor(id: string, entryJson: EntryJSON, userId: string, game: Game) {
+        super(id, entryJson, userId, game);
+        this.formattedScore = Time.msToElapsedTime(Number(entryJson.score));
     }
 
     public static zeroPad(num: number, places: number): string {

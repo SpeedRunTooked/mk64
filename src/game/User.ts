@@ -1,36 +1,36 @@
 import _ from 'lodash';
 import { Run } from './Run';
-import { Time } from './Time';
 import { Category } from './Category';
 import { UserJSON } from 'FirebaseTypes';
 import { Subcategory } from './Subcategory';
+import { Entry } from './Entry';
 
 export class User {
     public runs: Run[] = [];
-    public entries: Time[] = [];
+    public entries: Entry[] = [];
     public currentRecordTotal = 0;
     public recordImprovementTotal = 0;
-    public currentRecords: Time[] = [];
+    public currentRecords: Entry[] = [];
     public favoriteRun: Run | undefined;
-    public recordImprovements: Time[] = [];
+    public recordImprovements: Entry[] = [];
 
     constructor(public id: string, public json: UserJSON) {}
 
     public getRecord(
         categorySlug: string,
         subcategorySlug: string,
-    ): Time | undefined {
-        const filtered = this.entries.filter((time) => {
+    ): Entry | undefined {
+        const filtered = this.entries.filter((entry) => {
             return (
-                time.subcategory.slug === subcategorySlug &&
-                time.category.slug === categorySlug
+                entry.subcategory.slug === subcategorySlug &&
+                entry.category.slug === categorySlug
             );
         });
-        return _.minBy(filtered, 'timeMs');
+        return _.minBy(filtered, 'score');
     }
 
-    public appendTimes(times: Time[]): void {
-        this.entries = times.filter((time) => time.user === this);
+    public appendEntries(entries: Entry[]): void {
+        this.entries = entries.filter((entry) => entry.userId === this.id);
     }
 
     public generateStats(): void {
@@ -42,12 +42,12 @@ export class User {
     private buildRecords(): void {
         this.currentRecords = _.filter(
             this.entries,
-            (time) => time.isCurrentRecord,
+            (entry) => entry.isCurrentRecord,
         );
         this.currentRecordTotal = this.currentRecords.length;
         this.recordImprovements = _.filter(
             this.entries,
-            (time) => time.isRecordImprovement,
+            (entry) => entry.isRecordImprovement,
         );
         this.recordImprovementTotal = this.recordImprovements.length;
     }

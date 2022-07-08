@@ -1,8 +1,8 @@
 <template>
     <div class="section-container mx-auto">
-        <SubmitTimeConfirmationModal
+        <SubmitEntryConfirmationModal
             :formData="formData"
-        ></SubmitTimeConfirmationModal>
+        ></SubmitEntryConfirmationModal>
         <div class="row">
             <div class="col">
                 <form>
@@ -21,7 +21,7 @@
                                 :key="user.id"
                                 :value="user.id"
                             >
-                                {{ user.displayName }}
+                                {{ game.getUser(user.id)?.displayName }}
                             </option>
                             <!-- </li> -->
                         </select>
@@ -70,10 +70,13 @@
                         <div class="row reference-row">
                             <div class="col">
                                 Record Time:<br />
-                                {{ currentRecord?.timeElapsed || 'None yet!' }}
+                                {{
+                                    currentRecord?.formattedScore || 'None yet!'
+                                }}
                                 <br />
                                 <span class="small">{{
-                                    currentRecord?.user.displayName
+                                    game.getUser(currentRecord?.user.id)
+                                        ?.displayName
                                 }}</span>
                             </div>
                             <div
@@ -152,7 +155,7 @@
                             type="button"
                             class="btn btn-primary"
                             data-bs-toggle="modal"
-                            data-bs-target="#submitTimeConfirmationModal"
+                            data-bs-target="#submitEntryConfirmationModal"
                         >
                             Submit Time
                         </button>
@@ -172,17 +175,17 @@
 
 <script lang="ts">
 import _ from 'lodash';
-import { Time } from '@/game/Time';
+import { Entry } from '@/game/Entry';
 import { Game } from '@/game/Game';
 import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from '@vue/composition-api';
-import SubmitTimeConfirmationModal from '@/components/SubmitTimeConfirmationModal.vue';
+import SubmitEntryConfirmationModal from '@/components/SubmitEntryConfirmationModal.vue';
 import { Category } from '@/game/Category';
 
 export default defineComponent({
-    name: 'SubmitTimeView',
+    name: 'SubmitEntryView',
     components: {
-        SubmitTimeConfirmationModal,
+        SubmitEntryConfirmationModal,
     },
 
     data() {
@@ -235,7 +238,7 @@ export default defineComponent({
             );
         },
 
-        currentRecord(): Time | undefined {
+        currentRecord(): Entry | undefined {
             if (this.categoryAndSubcategorySelected) {
                 return this.game.getRecord(
                     this.formData.categorySlug,
@@ -257,12 +260,11 @@ export default defineComponent({
             if (this.categoryAndSubcategoryAndUserSelected) {
                 const user = this.game.getUser(this.formData.userId);
                 if (user) {
-                    return (
-                        user.getRecord(
-                            this.formData.categorySlug,
-                            this.formData.subcategorySlug,
-                        )?.timeElapsed || 'None yet!'
+                    const record = user.getRecord(
+                        this.formData.categorySlug,
+                        this.formData.subcategorySlug,
                     );
+                    return record?.formattedScore || 'None yet!';
                 }
             }
             return 'None yet!';

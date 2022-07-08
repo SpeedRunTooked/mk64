@@ -1,13 +1,13 @@
 import { Category } from './Category';
+import { Entry } from './Entry';
 import { Subcategory } from './Subcategory';
-import { Time } from './Time';
 
 /* A Run represents a combination of category + subcategory which can be attempted to create Entries */
 
 export class Run {
     public attempts = 1;
     public timesContested = 0;
-    public recordTime: Time | null = null;
+    public record: Entry | null = null;
 
     constructor(public category: Category, public subcategory: Subcategory) {}
 
