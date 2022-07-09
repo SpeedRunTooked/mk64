@@ -28,18 +28,18 @@
             <div class="col category-header">Player</div>
         </div>
         <div
-            v-for="subcategory in rows"
-            :key="subcategory.slug"
+            v-for="summary in rows"
+            :key="summary.slug"
             class="row subcategory-row"
-            :class="subcategory.endOfGroup ? 'end-row' : ''"
-            :v-if="subcategory"
+            :class="summary.endOfGroup ? 'end-row' : ''"
+            :v-if="summary"
         >
-            <div class="col">{{ subcategory.name }}</div>
+            <div class="col">{{ summary.name }}</div>
             <div class="col">
-                {{ getElapsedTime(subcategory) }}
+                {{ getRecord(summary).formattedScore }}
             </div>
             <div class="col">
-                {{ subcategory.name }}
+                {{ game.getUser(getRecord(summary).userId).displayName }}
             </div>
         </div>
     </div>
@@ -48,6 +48,7 @@
 <script lang="ts">
 import _ from 'lodash';
 import { Game } from '@/game/Game';
+import { Entry } from '@/game/Entry';
 import { Category } from '@/game/Category';
 import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from '@vue/composition-api';
@@ -91,12 +92,12 @@ export default defineComponent({
     },
 
     methods: {
-        getElapsedTime(subcategory: Subcategory) {
+        getRecord(subcategory: Subcategory): Entry | undefined {
             const record = this.game.getRecord(
                 this.selectedCategory.slug,
                 subcategory.slug,
             );
-            return record?.formattedScore || 'None yet!';
+            return record;
         },
     },
 });
