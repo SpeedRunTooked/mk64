@@ -228,7 +228,7 @@ export default defineComponent({
         subcategoryList(): Subcategory[] {
             const list: Subcategory[] =
                 this.selectedCategory?.subcategories || [];
-            return _.orderBy(list, ['name']);
+            return _.orderBy(list, ['displayOrder']);
         },
 
         msError(): boolean {
