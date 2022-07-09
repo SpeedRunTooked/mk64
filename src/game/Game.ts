@@ -1,22 +1,11 @@
 import _ from 'lodash';
 import { User } from './User';
 import { Category, DEFAULT_CATEGORY_JSON } from './Category';
-import {
-    GameConfigJSON,
-    GameElementJSON,
-    GameJSON,
-    UsersJSON,
-} from 'FirebaseTypes';
+import { GameConfigJSON, GameJSON, UsersJSON } from 'FirebaseTypes';
 import { DEFAULT_SUBCATEGORY_JSON, Subcategory } from './Subcategory';
 import { GameStats } from './GameStats';
 import { Entry } from './Entry';
 import { Time } from './Time';
-
-export interface GameElement {
-    slug: string;
-    name: string;
-    json: GameElementJSON;
-}
 
 export class Game {
     public entries: Entry[] = [];

@@ -12,9 +12,28 @@ declare module 'FirebaseTypes' {
         userList: string[];
     }
 
-    export interface GameConfigJSON {
-        discordChannel: string;
-        discordChannelTest: string;
+    interface UsersJSON {
+        [key: string]: UserJSON;
+    }
+
+    interface UserJSON {
+        created: string;
+        displayName: string;
+    }
+
+    interface CategoryJSON {
+        subcategoryName: string;
+        subcategories: SubcategoryJSON[];
+        displayOrder: number;
+        entryType: string;
+        name: string;
+        slug: string;
+    }
+
+    interface SubcategoryJSON {
+        group: string;
+        name: string;
+        slug: string;
     }
 
     interface GameDataJSON {
@@ -22,35 +41,17 @@ declare module 'FirebaseTypes' {
         subcategoryGroups: SubcategoryGroupJSON[];
     }
 
-    interface GameElementJSON {
-        slug: string;
+    interface SubcategoryGroupJSON {
         name: string;
-    }
-
-    interface OldRecordCategoryJSON {
-        categorySlug: string;
-        subcategoryRecords: OldRecordSubcategoryJSON[];
-    }
-
-    interface OldRecordSubcategoryJSON {
-        records: OldRecordTimeJSON[];
-        subcategorySlug: string;
-    }
-
-    interface OldRecordTimeJSON {
-        date: string;
-        time: string;
-    }
-
-    interface CategoryJSON extends GameElementJSON {
-        subcategoryName: string;
-        subcategories: SubcategoryJSON[];
+        slug: string;
         displayOrder: number;
-        entryType: string;
     }
 
-    interface SubcategoryJSON extends GameElementJSON {
-        group: string;
+    export interface GameConfigJSON {
+        discordChannel: string;
+        discordChannelTest: string;
+        gameName: string;
+        gameSlug: string;
     }
 
     interface EntriesJSON {
@@ -67,18 +68,18 @@ declare module 'FirebaseTypes' {
         userId: string;
     }
 
-    interface SubcategoryGroupJSON {
-        name: string;
-        slug: string;
-        displayOrder: number;
+    interface OldRecordCategoryJSON {
+        categorySlug: string;
+        subcategoryRecords: OldRecordSubcategoryJSON[];
     }
 
-    interface UsersJSON {
-        [key: string]: UserJSON;
+    interface OldRecordSubcategoryJSON {
+        records: OldRecordTimeJSON[];
+        subcategorySlug: string;
     }
 
-    interface UserJSON {
-        created: string;
-        displayName: string;
+    interface OldRecordTimeJSON {
+        date: string;
+        time: string;
     }
 }

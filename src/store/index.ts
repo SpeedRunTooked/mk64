@@ -10,6 +10,8 @@ export default createStore({
                 config: {
                     discordChannel: '',
                     discordChannelTest: '',
+                    gameName: '',
+                    gameSlug: '',
                 },
                 gamedata: {
                     subcategoryGroups: [],

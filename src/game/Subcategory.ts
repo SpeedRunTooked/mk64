@@ -1,4 +1,3 @@
-import { GameElement } from './Game';
 import { SubcategoryJSON } from 'FirebaseTypes';
 
 // The default subcategory is just used for stricter type safety throughout
@@ -8,7 +7,7 @@ export const DEFAULT_SUBCATEGORY_JSON: SubcategoryJSON = {
     group: '',
 };
 
-export class Subcategory implements GameElement {
+export class Subcategory {
     public slug: string;
     public name: string;
     public group: string;

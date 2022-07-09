@@ -1,4 +1,3 @@
-import { GameElement } from './Game';
 import { Subcategory } from './Subcategory';
 import { CategoryJSON } from 'FirebaseTypes';
 
@@ -12,7 +11,7 @@ export const DEFAULT_CATEGORY_JSON: CategoryJSON = {
     entryType: '',
 };
 
-export class Category implements GameElement {
+export class Category {
     public subcategories: Subcategory[] = [];
     public name: string;
     public slug: string;
