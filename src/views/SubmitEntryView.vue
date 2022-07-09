@@ -75,8 +75,8 @@
                                 }}
                                 <br />
                                 <span class="small">{{
-                                    game.getUser(currentRecord?.user.id)
-                                        ?.displayName
+                                    game.getUser(currentRecord.userId)
+                                        .displayName
                                 }}</span>
                             </div>
                             <div
