@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { createStore } from 'vuex';
 import { Game } from '@/game/Game';
-import { config } from '@/config';
 
 export default createStore({
     state: {
@@ -30,8 +29,12 @@ export default createStore({
     },
     actions: {
         async getApiData({ commit }) {
-            const gameAxiosRequest = axios.get(config.ROOT_URL + '.json');
-            const usersAxiosRequest = axios.get(config.GET_USERS_URL);
+            const gameAxiosRequest = axios.get(
+                process.env.VUE_APP_ROOT_URL + '.json',
+            );
+            const usersAxiosRequest = axios.get(
+                process.env.VUE_APP_GET_USERS_URL,
+            );
 
             const [gameAxiosResponse, usersAxiosResponse] = await Promise.all([
                 gameAxiosRequest,

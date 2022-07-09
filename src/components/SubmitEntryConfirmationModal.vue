@@ -104,7 +104,6 @@
 import qs from 'qs';
 import axios from 'axios';
 import { Time } from '@/game/Time';
-import { config } from '../config';
 import { Game } from '@/game/Game';
 import { defineComponent } from '@vue/composition-api';
 
@@ -121,7 +120,6 @@ export default defineComponent({
             success: false,
             uploading: false,
             Time,
-            config,
         };
     },
 
@@ -149,7 +147,7 @@ export default defineComponent({
 
             const config = {
                 method: 'post',
-                url: this.config.ADD_URL,
+                url: process.env.VUE_APP_ADD_URL,
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },

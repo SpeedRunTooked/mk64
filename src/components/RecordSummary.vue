@@ -36,10 +36,10 @@
         >
             <div class="col">{{ summary.name }}</div>
             <div class="col">
-                {{ getRecord(summary).formattedScore }}
+                {{ getRecord(summary)?.formattedScore }}
             </div>
             <div class="col">
-                {{ game.getUser(getRecord(summary).userId).displayName }}
+                {{ game.getUser(getRecord(summary)?.userId || '').displayName }}
             </div>
         </div>
     </div>
