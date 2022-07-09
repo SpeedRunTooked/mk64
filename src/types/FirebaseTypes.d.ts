@@ -15,7 +15,6 @@ declare module 'FirebaseTypes' {
     export interface GameConfigJSON {
         discordChannel: string;
         discordChannelTest: string;
-        entryType: string;
     }
 
     interface GameDataJSON {
@@ -47,6 +46,7 @@ declare module 'FirebaseTypes' {
         subcategoryName: string;
         subcategories: SubcategoryJSON[];
         displayOrder: number;
+        entryType: string;
     }
 
     interface SubcategoryJSON extends GameElementJSON {

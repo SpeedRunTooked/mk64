@@ -95,7 +95,7 @@ export class Game {
     }
 
     private buildUsers(userJson: UsersJSON): void {
-        for (const userId in userJson.users) {
+        for (const userId in userJson) {
             const user: User = new User(userId, userJson[userId]);
             this.users.push(user);
         }
@@ -105,7 +105,9 @@ export class Game {
         for (const entryId in gameJson.entries) {
             const entryJson = gameJson.entries[entryId];
 
-            if (this.config.entryType === 'timeMs') {
+            const category = this.getCategory(entryJson.categorySlug);
+
+            if (category.entryType === 'timeMs') {
                 this.entries.push(
                     new Time(entryId, entryJson, entryJson.userId, this),
                 );

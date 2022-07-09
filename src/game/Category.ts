@@ -9,6 +9,7 @@ export const DEFAULT_CATEGORY_JSON: CategoryJSON = {
     displayOrder: 0,
     subcategories: [],
     subcategoryName: '',
+    entryType: '',
 };
 
 export class Category implements GameElement {
@@ -17,6 +18,7 @@ export class Category implements GameElement {
     public slug: string;
     public subcategoryName: string;
     public displayOrder: number;
+    public entryType: string;
 
     constructor(categoryJson: CategoryJSON) {
         this.buildSubcategories(categoryJson);
@@ -24,6 +26,7 @@ export class Category implements GameElement {
         this.name = categoryJson.name;
         this.subcategoryName = categoryJson.subcategoryName;
         this.displayOrder = categoryJson.displayOrder;
+        this.entryType = categoryJson.entryType;
     }
 
     private buildSubcategories(categoryJson: CategoryJSON): void {
@@ -45,6 +48,7 @@ export class Category implements GameElement {
             subcategoryName: this.subcategoryName,
             subcategories: this.subcategories,
             displayOrder: this.displayOrder,
+            entryType: this.entryType,
         };
     }
 }

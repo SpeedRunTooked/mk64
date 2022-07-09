@@ -39,32 +39,32 @@
         </div>
         <div
             class="row subcategory-row"
-            v-for="time in recentEntries"
-            :key="time.id"
-            :class="{ highlight: time.isCurrentRecord }"
+            v-for="entry in recentEntries"
+            :key="entry.id"
+            :class="{ highlight: entry.isCurrentRecord }"
         >
             <div class="col-3">
-                {{ moment(time.created).fromNow() }}
+                {{ moment(entry.created).fromNow() }}
             </div>
 
             <div class="col-2">
-                {{ time.category.name }}
+                {{ entry.category.name }}
             </div>
             <div class="col-3">
-                {{ time.subcategory.name }}
+                {{ entry.subcategory.name }}
             </div>
-            <div class="col-2" :title="getNote(time)">
-                <div v-if="linkPresent(time)">
-                    <a :href="time.link" target="_blank">{{
-                        time.formattedScore
+            <div class="col-2" :title="getNote(entry)">
+                <div v-if="linkPresent(entry)">
+                    <a :href="entry.link" target="_blank">{{
+                        entry.formattedScore
                     }}</a>
                 </div>
                 <div v-else>
-                    {{ time.formattedScore }}
+                    {{ entry.formattedScore }}
                 </div>
             </div>
             <div class="col-2">
-                {{ game.getUser(time.userId).displayName }}
+                {{ game.getUser(entry.userId)?.displayName }}
             </div>
         </div>
     </div>
