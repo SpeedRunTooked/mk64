@@ -74,12 +74,12 @@ declare module 'FirebaseTypes' {
     }
 
     interface OldRecordSubcategoryJSON {
-        records: OldRecordTimeJSON[];
+        records: OldRecordScoreJSON[];
         subcategorySlug: string;
     }
 
-    interface OldRecordTimeJSON {
+    interface OldRecordScoreJSON {
         date: string;
-        time: string;
+        score: string;
     }
 }

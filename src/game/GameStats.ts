@@ -118,7 +118,6 @@ export class GameStats {
             }
         }
         this.addRecordsToRuns(game);
-        // this.addOldRecordComparisons(oldRecords);
         this.oldRecords = oldRecords;
     }
 

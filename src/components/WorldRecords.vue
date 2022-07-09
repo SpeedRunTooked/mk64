@@ -61,7 +61,7 @@
         >
             <div class="col">{{ oldRecord.date }}</div>
             <div class="col">
-                {{ oldRecord.time }}
+                {{ oldRecord.score }}
             </div>
             <div class="col">
                 {{ getTimeDifference(oldRecord) }}
@@ -88,7 +88,7 @@ import TableNav from '@/components/TableNav.vue';
 import {
     OldRecordCategoryJSON,
     OldRecordSubcategoryJSON,
-    OldRecordTimeJSON,
+    OldRecordScoreJSON,
 } from 'FirebaseTypes';
 import { Entry } from '@/game/Entry';
 import { Time } from '@/game/Time';
@@ -109,7 +109,7 @@ export default defineComponent({
             return this.$store.state.game;
         },
 
-        activeRows(): OldRecordTimeJSON[] {
+        activeRows(): OldRecordScoreJSON[] {
             return this.getActiveRows();
         },
 
@@ -120,7 +120,7 @@ export default defineComponent({
             );
         },
 
-        rows(): OldRecordTimeJSON[] {
+        rows(): OldRecordScoreJSON[] {
             const oldRecordCategory = this.game?.stats?.oldRecords.find(
                 (oldRecord) =>
                     oldRecord.categorySlug === this.selectedCategorySlug,
@@ -150,15 +150,15 @@ export default defineComponent({
         getSubcategories() {
             return this.selectedCategory.subcategories;
         },
-        getOldRecordKey(oldRecord: OldRecordTimeJSON) {
-            return oldRecord.date + oldRecord.time;
+        getOldRecordKey(oldRecord: OldRecordScoreJSON) {
+            return oldRecord.date + oldRecord.score;
         },
-        oldRecordSlowerThanCurrent(oldRecord: OldRecordTimeJSON) {
-            const oldTimeMs = Time.elapsedTimeToMs(oldRecord.time);
+        oldRecordSlowerThanCurrent(oldRecord: OldRecordScoreJSON) {
+            const oldTimeMs = Time.elapsedTimeToMs(oldRecord.score);
             return oldTimeMs > this.currentRecord.score;
         },
-        getTimeDifference(oldRecord: OldRecordTimeJSON) {
-            const oldTimeMs = Time.elapsedTimeToMs(oldRecord.time);
+        getTimeDifference(oldRecord: OldRecordScoreJSON) {
+            const oldTimeMs = Time.elapsedTimeToMs(oldRecord.score);
             if (oldTimeMs > this.currentRecord.score) {
                 return (
                     '+' +

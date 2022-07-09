@@ -137,7 +137,7 @@
             </div>
             <div
                 class="col-3 clickable"
-                @click="setFilter('user', entry.user.id)"
+                @click="setFilter('user', entry.userId)"
             >
                 {{ game.getUser(entry.userId).displayName }}
             </div>
