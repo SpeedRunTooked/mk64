@@ -196,10 +196,6 @@ select {
     margin-bottom: 15px;
 }
 
-.filter-row {
-    margin-bottom: 30px;
-}
-
 .current-record {
     margin-top: 2px;
 }

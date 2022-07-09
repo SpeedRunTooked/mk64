@@ -79,7 +79,7 @@ nav {
     font-weight: bold;
     text-align: left;
     font-size: 18px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .section-container {
@@ -147,5 +147,9 @@ nav {
 
 .page-wrapper {
     margin-top: 15px;
+}
+
+.filter-row {
+    margin-bottom: 20px;
 }
 </style>

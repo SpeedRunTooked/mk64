@@ -300,10 +300,6 @@ select {
     width: 700px;
 }
 
-.filter-row {
-    margin-bottom: 20px;
-}
-
 .entry-row {
     border-bottom: 1px dashed lightgrey;
     padding: 20px 0;
