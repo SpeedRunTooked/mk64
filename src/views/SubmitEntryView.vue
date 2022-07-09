@@ -1,5 +1,5 @@
 <template>
-    <div class="section-container mx-auto">
+    <div class="section-container mx-auto page-wrapper">
         <SubmitEntryConfirmationModal
             :formData="formData"
         ></SubmitEntryConfirmationModal>

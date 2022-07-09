@@ -104,10 +104,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.cup-row {
-    margin-top: 30px;
-}
-
 .displayName {
     font-size: 14px;
 }

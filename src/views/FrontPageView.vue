@@ -1,7 +1,9 @@
 <template>
-    <div class="front-page">
+    <div class="page-wrapper">
         <recent-entries></recent-entries>
+        <div class="spacer"></div>
         <record-summary></record-summary>
+        <div class="spacer"></div>
     </div>
 </template>
 
@@ -15,10 +17,3 @@ export default defineComponent({
     components: { RecentEntries, RecordSummary },
 });
 </script>
-
-<style>
-.front-page {
-    margin-top: -20px;
-    margin-bottom: 40px;
-}
-</style>

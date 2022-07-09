@@ -52,7 +52,6 @@ export class GameStats {
                 (mostPlayed) =>
                     mostPlayed.subcategory.slug === run.subcategory.slug,
             );
-
             if (mostPlayedEntry) {
                 mostPlayedEntry.attempts += run.attempts;
             } else {
@@ -96,7 +95,6 @@ export class GameStats {
                     count++;
             }
         }
-
         return count;
     }
 

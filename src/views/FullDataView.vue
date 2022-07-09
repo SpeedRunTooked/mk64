@@ -1,6 +1,7 @@
 <template>
-    <div class="full-data-page">
+    <div class="page-wrapper">
         <main-table></main-table>
+        <div class="spacer"></div>
     </div>
 </template>
 

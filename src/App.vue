@@ -10,8 +10,8 @@
             <router-link to="/">Summary</router-link> |
             <router-link to="/leaderboard">Leaderboard</router-link> |
             <router-link to="/stats">Stats</router-link> |
-            <router-link to="/data">All Entries</router-link> |
-            <router-link to="/submit">Submit Entry</router-link>
+            <router-link to="/data">Data</router-link> |
+            <router-link to="/submit">Submit</router-link>
         </nav>
         <router-view />
     </div>
@@ -79,8 +79,7 @@ nav {
     font-weight: bold;
     text-align: left;
     font-size: 18px;
-    margin-bottom: 0px;
-    padding: 50px 0 20px 0;
+    margin-bottom: 15px;
 }
 
 .section-container {
@@ -105,7 +104,7 @@ nav {
 }
 
 .spacer {
-    margin-top: 40px;
+    margin-top: 50px;
 }
 .bold {
     /* color: rgb(158, 0, 0); */
@@ -144,5 +143,9 @@ nav {
 
 .logo-img {
     width: 100px;
+}
+
+.page-wrapper {
+    margin-top: 15px;
 }
 </style>

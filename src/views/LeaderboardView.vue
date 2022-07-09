@@ -1,5 +1,5 @@
 <template>
-    <div class="full-data-page">
+    <div class="page-wrapper">
         <record-leaders></record-leaders>
     </div>
 </template>

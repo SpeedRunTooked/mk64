@@ -72,7 +72,7 @@ export default defineComponent({
 }
 
 .user-badge {
-    margin: 30px;
+    margin: 0 30px 40px 40px;
 }
 
 .badge-row {

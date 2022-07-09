@@ -1,12 +1,14 @@
 <template>
-    <div class="stats-page-wrapper">
+    <div class="page-wrapper">
         <div class="row">
             <div class="col"><world-records></world-records></div>
         </div>
+        <div class="spacer"></div>
         <div class="row">
             <div class="col"><popular-runs></popular-runs></div>
             <div class="col"><contested-runs></contested-runs></div>
         </div>
+        <div class="spacer"></div>
     </div>
 </template>
 
@@ -23,10 +25,6 @@ export default defineComponent({
 </script>
 
 <style>
-.stats-page-wrapper {
-    margin-top: -20px;
-    margin-bottom: 40px;
-}
 .stats-table {
     padding: 0 30px;
 }

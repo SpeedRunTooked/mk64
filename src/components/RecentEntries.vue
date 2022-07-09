@@ -19,7 +19,7 @@
             </div>
 
             <div class="col align-end">
-                <div class="select-wrapper entries">
+                <div class="select-wrapper">
                     <select class="form-select" v-model="filters.rows">
                         <option value="5" selected>5</option>
                         <option value="10" selected>10</option>
@@ -126,11 +126,5 @@ export default defineComponent({
 <style scoped>
 select {
     float: right;
-}
-
-.entries {
-    width: 70px;
-    float: right;
-    height: 50px;
 }
 </style>
