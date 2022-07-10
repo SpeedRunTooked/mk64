@@ -2,7 +2,7 @@
     <div v-if="$route.params.gameId" class="container">
         <div class="row">
             <div class="col">
-                <img class="logo-img" src="assets/mario-kart-icon-25842.jpg" />
+                <img class="logo-img" :src="getLogoUrl()" />
             </div>
         </div>
         <!-- <div class="row"><div class="col page-title">MK64</div></div> -->
@@ -34,9 +34,17 @@ export default defineComponent({
             await store.dispatch('getApiData');
         });
     },
+    computed: {
+        gameId() {
+            return this.$route.params.gameId;
+        },
+    },
     methods: {
         getRoute(path: string) {
-            return `/${this.$route.params.gameId}/${path}`;
+            return `/${this.gameId}/${path}`;
+        },
+        getLogoUrl() {
+            return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/${this.gameId}%2Fgame-logo.jpg?alt=media`;
         },
     },
 });
