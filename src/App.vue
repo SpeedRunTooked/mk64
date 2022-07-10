@@ -13,7 +13,11 @@
             <router-link :to="getRoute('data')">Data</router-link> |
             <router-link :to="getRoute('submit')">Submit</router-link>
         </nav>
-        <router-view />
+        <router-view v-if="dataLoaded" />
+
+        <div v-else class="row">
+            <div class="col">Loading data...</div>
+        </div>
     </div>
     <div v-else class="container">
         <front-page-view></front-page-view>
@@ -35,8 +39,11 @@ export default defineComponent({
         });
     },
     computed: {
-        gameId() {
+        gameId(): string {
             return this.$route.params.gameId;
+        },
+        dataLoaded(): boolean {
+            return this.$store.state.dataLoaded;
         },
     },
     methods: {
