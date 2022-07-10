@@ -133,6 +133,7 @@ export default defineComponent({
         async submitForm() {
             this.uploading = true;
             const data = qs.stringify({
+                gameId: 'mk64',
                 userId: this.formData.userId,
                 subcategorySlug: this.formData.subcategorySlug,
                 score: this.Time.elapsedTimeToMs(
@@ -141,7 +142,7 @@ export default defineComponent({
                     }"${this.formData.time.ms || 0}'`,
                 ),
                 link: this.formData.link,
-                notes: this.formData.notes,
+                note: this.formData.notes,
                 categorySlug: this.formData.categorySlug,
             });
 
