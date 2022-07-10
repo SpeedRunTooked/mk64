@@ -22,11 +22,13 @@ export default createStore({
             },
             {},
         ),
+        dataLoaded: false,
     },
     getters: {},
     mutations: {
         SAVE_API_DATA(state, data): void {
             state.game = new Game(data.gameData, data.userData);
+            state.dataLoaded = true;
         },
     },
     actions: {

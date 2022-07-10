@@ -13,11 +13,15 @@
             <router-link to="/data">Data</router-link> |
             <router-link to="/submit">Submit</router-link>
         </nav>
-        <router-view />
+        <router-view v-if="dataLoaded" />
+
+        <div v-else class="row">
+            <div class="col">Loading data...</div>
+        </div>
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from '@vue/composition-api';
 import { useStore } from 'vuex';
 import { onMounted } from 'vue';
@@ -28,6 +32,11 @@ export default defineComponent({
             const store = useStore();
             await store.dispatch('getApiData');
         });
+    },
+    computed: {
+        dataLoaded(): boolean {
+            return this.$store.state.dataLoaded;
+        },
     },
 });
 </script>
