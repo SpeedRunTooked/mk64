@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import SummaryPageView from '../views/SummaryPageView.vue';
 import FrontPageView from '../views/FrontPageView.vue';
+import SubmitEntryView from '../views/SubmitEntryView.vue';
+import FullDataView from '../views/FullDataView.vue';
+import LeaderboardView from '../views/LeaderboardView.vue';
+import StatsPageView from '../views/StatsPageView.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -8,24 +13,29 @@ const routes: Array<RouteRecordRaw> = [
         component: FrontPageView,
     },
     {
-        path: '/submit',
+        path: '/:gameId/summary',
+        name: 'summary',
+        component: SummaryPageView,
+    },
+    {
+        path: '/:gameId/submit',
         name: 'submit',
-        component: () => import('../views/SubmitEntryView.vue'),
+        component: SubmitEntryView,
     },
     {
-        path: '/data',
+        path: '/:gameId/data',
         name: 'data',
-        component: () => import('../views/FullDataView.vue'),
+        component: FullDataView,
     },
     {
-        path: '/leaderboard',
+        path: '/:gameId/leaderboard',
         name: 'leaderboard',
-        component: () => import('../views/LeaderboardView.vue'),
+        component: LeaderboardView,
     },
     {
-        path: '/stats',
+        path: '/:gameId/stats',
         name: 'stats',
-        component: () => import('../views/StatsPageView.vue'),
+        component: StatsPageView,
     },
 ];
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div v-if="$route.params.gameId" class="container">
         <div class="row">
             <div class="col">
                 <img class="logo-img" src="assets/mario-kart-icon-25842.jpg" />
@@ -7,27 +7,37 @@
         </div>
         <!-- <div class="row"><div class="col page-title">MK64</div></div> -->
         <nav>
-            <router-link to="/">Summary</router-link> |
-            <router-link to="/leaderboard">Leaderboard</router-link> |
-            <router-link to="/stats">Stats</router-link> |
-            <router-link to="/data">Data</router-link> |
-            <router-link to="/submit">Submit</router-link>
+            <router-link :to="getRoute('summary')">Summary</router-link> |
+            <router-link :to="getRoute('leaderboard')">Leaderboard</router-link>
+            | <router-link :to="getRoute('stats')">Stats</router-link> |
+            <router-link :to="getRoute('data')">Data</router-link> |
+            <router-link :to="getRoute('submit')">Submit</router-link>
         </nav>
         <router-view />
     </div>
+    <div v-else class="container">
+        <front-page-view></front-page-view>
+    </div>
 </template>
 
-<script>
+<script lang="ts">
+import FrontPageView from '@/views/FrontPageView.vue';
 import { defineComponent } from '@vue/composition-api';
 import { useStore } from 'vuex';
 import { onMounted } from 'vue';
 
 export default defineComponent({
+    components: { FrontPageView },
     setup() {
         onMounted(async () => {
             const store = useStore();
             await store.dispatch('getApiData');
         });
+    },
+    methods: {
+        getRoute(path: string) {
+            return `/${this.$route.params.gameId}/${path}`;
+        },
     },
 });
 </script>
