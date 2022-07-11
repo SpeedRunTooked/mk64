@@ -157,7 +157,7 @@
                     </div>
                     <div v-if="!entry.fileAvailable" class="col-3">
                         <span
-                            class="material-symbols-outlined clickable"
+                            class="material-symbols-outlined clickable add-button"
                             data-bs-toggle="modal"
                             data-bs-target="#submit-data-modal"
                             @click="setFormData(entry)"
@@ -325,7 +325,9 @@ export default defineComponent({
         },
 
         getFileDownloadLink(entry: Entry): string {
-            return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/mk64%2Ffiles%2F${entry.id}%2FMARIOKART64_Cont_1.mpk?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
+            return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/${process.env.VUE_APP_DATABASE}%2Fmk64%2Ffiles%2F${entry.id}%2FMARIOKART64_Cont_1.mpk?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
+            https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/__test__db%2Fmk64%2Ffiles%2F-N6WBgGxMvZlM39LknAu%2FMARIOKART64_Cont_1.mpk?alt=media&token=1962d681-f6c8-4762-9511-29f4b6f51a64
+            https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/__test__db%2Fmk64%2Ffiles%2F-N6PU-Rna1a2zm_PPmZ5%2FMARIOKART64_Cont_1.mpk?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe
         },
 
         async downloadItem(url: string) {
@@ -342,6 +344,10 @@ export default defineComponent({
 <style scoped>
 select {
     float: right;
+}
+
+.add-button {
+    font-size: 22px;
 }
 
 .select-wrapper {
@@ -373,6 +379,7 @@ select {
 }
 
 .material-symbols-outlined {
+    margin: -5px 0;
 }
 
 .btn-light {
