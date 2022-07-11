@@ -179,7 +179,7 @@ import { Entry } from '@/game/Entry';
 import { Game } from '@/game/Game';
 import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from '@vue/composition-api';
-import SubmitEntryConfirmationModal from '@/components/SubmitEntryConfirmationModal.vue';
+import SubmitEntryConfirmationModal from '@/components/modals/SubmitEntryConfirmationModal.vue';
 import { Category } from '@/game/Category';
 
 export default defineComponent({

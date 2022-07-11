@@ -1,5 +1,6 @@
 <template>
     <div class="section-container mx-auto">
+        <submit-data-modal :formData="formData"></submit-data-modal>
         <div class="row filter-row">
             <div class="col">
                 <select
@@ -87,8 +88,9 @@
                     <option value="improvements">Record Improvements</option>
                 </select>
             </div>
-            <div class="col-1 red" v-if="filterOn">
+            <div class="col-1 red">
                 <span
+                    v-if="filterOn"
                     @click="resetFilters()"
                     class="material-symbols-outlined clickable"
                 >
@@ -97,11 +99,19 @@
             </div>
         </div>
         <div class="row header-row bold">
-            <div class="col-3">Recorded</div>
+            <div class="col-2">Recorded</div>
             <div class="col-2">Category</div>
             <div class="col-3">{{ subcategoryName }}</div>
             <div class="col-1">Time</div>
-            <div class="col-3">Player</div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-9">Player</div>
+                    <div class="col-3"></div>
+                </div>
+            </div>
+            <div class="col-1">
+                <span class="clickable"></span>
+            </div>
         </div>
         <div
             class="row entry-row"
@@ -110,7 +120,7 @@
             :class="{ highlight: entry.isCurrentRecord }"
             :title="getNote(entry)"
         >
-            <div class="col-3">
+            <div class="col-2">
                 {{ moment(entry.created).fromNow() }}
             </div>
             <div
@@ -135,11 +145,28 @@
                     {{ entry.formattedScore }}
                 </div>
             </div>
-            <div
-                class="col-3 clickable"
-                @click="setFilter('user', entry.userId)"
-            >
-                {{ game.getUser(entry.userId).displayName }}
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-9">
+                        <span
+                            class="clickable"
+                            @click="setFilter('user', entry.userId)"
+                        >
+                            {{ game.getUser(entry.userId).displayName }}</span
+                        >
+                    </div>
+                    <div class="col-3">
+                        <button
+                            type="button"
+                            class="btn btn-light"
+                            data-bs-toggle="modal"
+                            data-bs-target="#submit-data-modal"
+                            @click="setFormData(entry)"
+                        >
+                            File
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">
@@ -157,6 +184,7 @@ import TableNav from '@/components/TableNav.vue';
 import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from '@vue/composition-api';
 import AbstractTable from '@/components/AbstractTable.vue';
+import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
 
 interface MainTableFilters {
     subcategory: string;
@@ -168,7 +196,7 @@ interface MainTableFilters {
 
 export default defineComponent({
     extends: AbstractTable,
-    components: { TableNav },
+    components: { TableNav, SubmitDataModal },
 
     data() {
         return {
@@ -179,6 +207,7 @@ export default defineComponent({
                 user: '',
                 entryStatus: '',
             },
+            formData: {},
             moment,
         };
     },
@@ -258,6 +287,10 @@ export default defineComponent({
     },
 
     methods: {
+        setFormData(entry: Entry): void {
+            this.formData = entry;
+        },
+
         linkPresent(entry: Entry): boolean {
             return entry.link.substr(0, 4) === 'http';
         },
@@ -316,5 +349,9 @@ select {
 
 .material-symbols-outlined {
     margin-top: 3px;
+}
+
+.btn-light {
+    font-size: 12px;
 }
 </style>
