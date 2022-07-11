@@ -145,7 +145,7 @@ export default defineComponent({
 
             const config = {
                 method: 'post',
-                url: process.env.VUE_APP_ADD_URL,
+                url: process.env.VUE_APP_UPLOAD_URL,
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

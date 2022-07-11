@@ -106,7 +106,7 @@
             <div class="col-4">
                 <div class="row">
                     <div class="col-9">Player</div>
-                    <div class="col-3"></div>
+                    <div class="col-3">Ghost</div>
                 </div>
             </div>
             <div class="col-1">
@@ -155,16 +155,24 @@
                             {{ game.getUser(entry.userId).displayName }}</span
                         >
                     </div>
-                    <div class="col-3">
-                        <button
-                            type="button"
-                            class="btn btn-light"
+                    <div v-if="!entry.fileAvailable" class="col-3">
+                        <span
+                            class="material-symbols-outlined clickable"
                             data-bs-toggle="modal"
                             data-bs-target="#submit-data-modal"
                             @click="setFormData(entry)"
                         >
-                            File
-                        </button>
+                            upload_file
+                        </span>
+                    </div>
+
+                    <div v-else class="col-3">
+                        <span
+                            class="material-symbols-outlined clickable"
+                            @click="downloadFile(entry)"
+                        >
+                            file_download
+                        </span>
                     </div>
                 </div>
             </div>
@@ -177,6 +185,7 @@
 
 <script lang="ts">
 import _ from 'lodash';
+import axios from 'axios';
 import moment from 'moment';
 import { Entry } from '@/game/Entry';
 import { Game } from '@/game/Game';
@@ -309,6 +318,22 @@ export default defineComponent({
         setFilter(filter: string, filterValue: string) {
             (this.filters as MainTableFilters)[filter] = filterValue;
             this.goToFirstPage();
+        },
+
+        downloadFile(entry: Entry): void {
+            this.downloadItem(this.getFileDownloadLink(entry));
+        },
+
+        getFileDownloadLink(entry: Entry): string {
+            return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/mk64%2Ffiles%2F${entry.id}%2FMARIOKART64_Cont_1.mpk?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
+        },
+
+        async downloadItem(url: string) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'MARIOKART64_Cont_1.mpk');
+            document.body.appendChild(link);
+            link.click();
         },
     },
 });
