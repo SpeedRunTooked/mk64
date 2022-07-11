@@ -10,7 +10,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">
-                        Submit a File for This Run
+                        Submit a Ghost for This Run
                     </h5>
                     <button
                         type="button"

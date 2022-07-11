@@ -163,7 +163,7 @@ nav {
 }
 
 .material-symbols-outlined {
-    max-width: 20px;
+    max-width: 24px;
     overflow: hidden;
 }
 </style>
