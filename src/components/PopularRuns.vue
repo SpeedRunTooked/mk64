@@ -30,24 +30,30 @@
         </div>
         <div
             v-for="run in activeRows"
-            :key="run.subcategory.slug"
+            :key="run.subcategory"
             class="row subcategory-row"
         >
-            <div class="col">{{ run.subcategory.name }}</div>
+            <div class="col">{{ run.subcategory }}</div>
             <div class="col">
                 {{ run.attempts }}
             </div>
         </div>
-        <div v-for="row in emptyRows" :key="row.id" class="row subcategory-row">
-            <div class="col">-</div>
-            <div class="col">-</div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <table-nav
-                    :show-text-display="false"
-                    :show-fast-arrows="false"
-                ></table-nav>
+        <div v-if="emptyRows">
+            <div
+                v-for="index in emptyRows"
+                :key="index"
+                class="row subcategory-row"
+            >
+                <div class="col">-</div>
+                <div class="col">-</div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <table-nav
+                        :show-text-display="false"
+                        :show-fast-arrows="false"
+                    ></table-nav>
+                </div>
             </div>
         </div>
     </div>
@@ -56,7 +62,7 @@
 <script lang="ts">
 import { Game } from '@/game/Game';
 import { Category } from '@/game/Category';
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from 'vue';
 import AbstractTableVue from './AbstractTable.vue';
 import { MostPlayedSubcategory } from '@/game/GameStats';
 import TableNav from '@/components/TableNav.vue';
@@ -74,10 +80,6 @@ export default defineComponent({
     computed: {
         game(): Game {
             return this.$store.state.game;
-        },
-
-        activeRows(): MostPlayedSubcategory[] {
-            return this.getActiveRows();
         },
 
         rows(): MostPlayedSubcategory[] {

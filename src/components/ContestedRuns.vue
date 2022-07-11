@@ -37,16 +37,22 @@
                 {{ run.timesContested }}
             </div>
         </div>
-        <div v-for="row in emptyRows" :key="row.id" class="row subcategory-row">
-            <div class="col">-</div>
-            <div class="col">-</div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <table-nav
-                    :show-text-display="false"
-                    :show-fast-arrows="false"
-                ></table-nav>
+        <div v-if="emptyRows">
+            <div
+                v-for="index in emptyRows"
+                :key="index"
+                class="row subcategory-row"
+            >
+                <div class="col">-</div>
+                <div class="col">-</div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <table-nav
+                        :show-text-display="false"
+                        :show-fast-arrows="false"
+                    ></table-nav>
+                </div>
             </div>
         </div>
     </div>
@@ -55,7 +61,7 @@
 <script lang="ts">
 import { Game } from '@/game/Game';
 import { Category } from '@/game/Category';
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from 'vue';
 import AbstractTableVue from './AbstractTable.vue';
 import TableNav from '@/components/TableNav.vue';
 import { Run } from '@/game/Run';
@@ -76,7 +82,7 @@ export default defineComponent({
         },
 
         activeRows(): Run[] {
-            return this.getActiveRows();
+            return this.activeRows;
         },
 
         rows(): Run[] {

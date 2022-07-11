@@ -75,7 +75,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { Game } from '@/game/Game';
 import { Entry } from '@/game/Entry';
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
     data() {

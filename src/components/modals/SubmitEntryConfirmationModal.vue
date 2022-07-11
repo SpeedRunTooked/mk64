@@ -105,7 +105,7 @@ import qs from 'qs';
 import axios from 'axios';
 import { Time } from '@/game/Time';
 import { Game } from '@/game/Game';
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
     props: {

@@ -104,7 +104,7 @@
 import axios from 'axios';
 import { Time } from '@/game/Time';
 import { Game } from '@/game/Game';
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from 'vue';
 import { Entry } from '@/game/Entry';
 
 export default defineComponent({
@@ -134,8 +134,8 @@ export default defineComponent({
     },
 
     methods: {
-        onFileChange() {
-            this.file = this.$refs.file.files[0];
+        onFileChange(): void {
+            this.file = (this.$refs as any).file.files[0];
         },
         async submitForm() {
             this.uploading = true;

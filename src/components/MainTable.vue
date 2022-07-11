@@ -185,13 +185,12 @@
 
 <script lang="ts">
 import _ from 'lodash';
-import axios from 'axios';
 import moment from 'moment';
 import { Entry } from '@/game/Entry';
 import { Game } from '@/game/Game';
 import TableNav from '@/components/TableNav.vue';
 import { Subcategory } from '@/game/Subcategory';
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from 'vue';
 import AbstractTable from '@/components/AbstractTable.vue';
 import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
 
@@ -326,8 +325,6 @@ export default defineComponent({
 
         getFileDownloadLink(entry: Entry): string {
             return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/${process.env.VUE_APP_DATABASE}%2Fmk64%2Ffiles%2F${entry.id}%2FMARIOKART64_Cont_1.mpk?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
-            https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/__test__db%2Fmk64%2Ffiles%2F-N6WBgGxMvZlM39LknAu%2FMARIOKART64_Cont_1.mpk?alt=media&token=1962d681-f6c8-4762-9511-29f4b6f51a64
-            https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/__test__db%2Fmk64%2Ffiles%2F-N6PU-Rna1a2zm_PPmZ5%2FMARIOKART64_Cont_1.mpk?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe
         },
 
         async downloadItem(url: string) {

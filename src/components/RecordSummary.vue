@@ -51,7 +51,7 @@ import { Game } from '@/game/Game';
 import { Entry } from '@/game/Entry';
 import { Category } from '@/game/Category';
 import { Subcategory } from '@/game/Subcategory';
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from 'vue';
 
 interface RecordSummaryRow extends Subcategory {
     endOfGroup: boolean;

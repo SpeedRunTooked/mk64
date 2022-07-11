@@ -1,7 +1,7 @@
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from 'vue';
 
-interface Row {
+export interface Row {
     [key: string]: string;
 }
 
@@ -19,6 +19,7 @@ export default defineComponent({
         rows(): Row[] {
             return [];
         },
+
         totalRows(): number {
             return this.rows.length;
         },
@@ -39,19 +40,19 @@ export default defineComponent({
         },
 
         emptyRows(): number {
-            return this.rowsPerPage - this.activeRows.length;
+            return this.rowsPerPage - this.getActiveRows().length;
         },
     },
 
     methods: {
-        isEmpty(): boolean {
-            return this.rows.length === 0;
-        },
-        getActiveRows(): Row[] {
+        getActiveRows(): any[] {
             return this.rows.slice(
                 this.currentRow,
                 this.currentRow + this.rowsPerPage,
             );
+        },
+        isEmpty(): boolean {
+            return this.rows.length === 0;
         },
         previousPageExists(): boolean {
             if (this.currentRow > 0) {
