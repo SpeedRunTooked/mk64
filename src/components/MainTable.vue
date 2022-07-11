@@ -162,7 +162,7 @@
                             data-bs-target="#submit-data-modal"
                             @click="setFormData(entry)"
                         >
-                            upload_file
+                            add
                         </span>
                     </div>
 
@@ -373,7 +373,6 @@ select {
 }
 
 .material-symbols-outlined {
-    margin-top: 3px;
 }
 
 .btn-light {

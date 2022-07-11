@@ -60,6 +60,7 @@
                 </div>
                 <div class="modal-footer">
                     <button
+                        v-if="!uploading && !success"
                         type="button"
                         class="btn btn-danger"
                         data-bs-dismiss="modal"
@@ -68,6 +69,7 @@
                     </button>
 
                     <button
+                        v-if="!uploading && !success"
                         type="button"
                         class="btn btn-primary"
                         @click="submitForm"
@@ -81,7 +83,8 @@
                         class="alert alert-success"
                         role="alert"
                     >
-                        Your file has been submitted!
+                        Your file has been submitted! <br />It may take a minute
+                        for it to appear on the site.
                     </div>
                     <div
                         v-if="uploading"
@@ -98,7 +101,6 @@
 </template>
 
 <script lang="ts">
-import qs from 'qs';
 import axios from 'axios';
 import { Time } from '@/game/Time';
 import { Game } from '@/game/Game';
@@ -160,7 +162,7 @@ export default defineComponent({
 
                 setTimeout(() => {
                     window.location.reload();
-                }, 1000);
+                }, 3000);
             } catch (error) {
                 this.uploading = false;
                 console.log(error);

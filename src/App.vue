@@ -161,4 +161,9 @@ nav {
 .filter-row {
     margin-bottom: 20px;
 }
+
+.material-symbols-outlined {
+    max-width: 20px;
+    overflow: hidden;
+}
 </style>
