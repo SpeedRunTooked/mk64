@@ -21,7 +21,7 @@ module.exports = {
                 endOfLine: 'auto',
             },
         ],
-        '@typescript-eslint/explicit-function-return-type': 'on',
+        '@typescript-eslint/explicit-function-return-type': '2',
     },
     overrides: [
         {
