@@ -82,7 +82,7 @@ export default defineComponent({
         },
 
         activeRows(): Run[] {
-            return this.activeRows;
+            return this.getActiveRows();
         },
 
         rows(): Run[] {

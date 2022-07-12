@@ -117,7 +117,7 @@ export default defineComponent({
         },
 
         activeRows(): OldRecordScoreJSON[] {
-            return this.activeRows;
+            return this.getActiveRows();
         },
 
         currentRecord(): Entry {

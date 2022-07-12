@@ -30,10 +30,10 @@
         </div>
         <div
             v-for="run in activeRows"
-            :key="run.subcategory"
+            :key="run.subcategory.name"
             class="row subcategory-row"
         >
-            <div class="col">{{ run.subcategory }}</div>
+            <div class="col">{{ run.subcategory.name }}</div>
             <div class="col">
                 {{ run.attempts }}
             </div>
@@ -80,6 +80,10 @@ export default defineComponent({
     computed: {
         game(): Game {
             return this.$store.state.game;
+        },
+
+        activeRows(): MostPlayedSubcategory[] {
+            return this.getActiveRows();
         },
 
         rows(): MostPlayedSubcategory[] {
