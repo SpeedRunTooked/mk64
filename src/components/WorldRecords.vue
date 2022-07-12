@@ -80,7 +80,18 @@
 
         <div class="row">
             <div class="col">
-                <table-nav :show-text-display="false"></table-nav>
+                <table-nav
+                    :show-text-display="false"
+                    :nextPageExists="nextPageExists"
+                    :goToNextPage="goToNextPage"
+                    :previousPageExists="previousPageExists"
+                    :goToPreviousPage="goToPreviousPage"
+                    :goToLastPage="goToLastPage"
+                    :goToFirstPage="goToFirstPage"
+                    :firstRow="firstRow"
+                    :lastRow="lastRow"
+                    :totalRows="totalRows"
+                ></table-nav>
             </div>
         </div>
     </div>

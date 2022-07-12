@@ -45,6 +45,7 @@ export default defineComponent({
     },
 
     methods: {
+        // eslint-disable-next-line
         getActiveRows(): any[] {
             return this.rows.slice(
                 this.currentRow,

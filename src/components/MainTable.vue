@@ -109,9 +109,6 @@
                     <div class="col-3">Ghost</div>
                 </div>
             </div>
-            <div class="col-1">
-                <span class="clickable"></span>
-            </div>
         </div>
         <div
             class="row entry-row"
@@ -177,8 +174,32 @@
                 </div>
             </div>
         </div>
+        <div v-for="index in emptyRows" :key="index" class="row entry-row">
+            <div class="col-2">-</div>
+            <div class="col-2">-</div>
+            <div class="col-3">-</div>
+            <div class="col-1">-</div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-9">-</div>
+                    <div class="col-3">-</div>
+                </div>
+            </div>
+        </div>
         <div class="row">
-            <div class="col"><table-nav></table-nav></div>
+            <div class="col">
+                <table-nav
+                    :nextPageExists="nextPageExists"
+                    :goToNextPage="goToNextPage"
+                    :previousPageExists="previousPageExists"
+                    :goToPreviousPage="goToPreviousPage"
+                    :goToLastPage="goToLastPage"
+                    :goToFirstPage="goToFirstPage"
+                    :firstRow="firstRow"
+                    :lastRow="lastRow"
+                    :totalRows="totalRows"
+                ></table-nav>
+            </div>
         </div>
     </div>
 </template>

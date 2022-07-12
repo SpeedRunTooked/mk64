@@ -84,7 +84,7 @@
                         class="alert alert-success"
                         role="alert"
                     >
-                        Your time has been submitted!
+                        Your time has been submitted! Reloading page...
                     </div>
                     <div
                         v-if="uploading"
@@ -169,7 +169,7 @@ export default defineComponent({
 
                 setTimeout(() => {
                     window.location.reload();
-                }, 1000);
+                }, 2000);
             } catch (error) {
                 this.uploading = false;
                 console.log(error);

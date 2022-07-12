@@ -69,6 +69,7 @@
                     </button>
 
                     <button
+                        :disabled="!file"
                         v-if="!uploading && !success"
                         type="button"
                         class="btn btn-primary"
@@ -83,8 +84,7 @@
                         class="alert alert-success"
                         role="alert"
                     >
-                        Your file has been submitted! <br />It may take a minute
-                        for it to appear on the site.
+                        Your file has been submitted! Reloading page...
                     </div>
                     <div
                         v-if="uploading"
@@ -135,6 +135,7 @@ export default defineComponent({
 
     methods: {
         onFileChange(): void {
+            // eslint-disable-next-line
             this.file = (this.$refs as any).file.files[0];
         },
         async submitForm() {
@@ -162,7 +163,7 @@ export default defineComponent({
 
                 setTimeout(() => {
                     window.location.reload();
-                }, 3000);
+                }, 2000);
             } catch (error) {
                 this.uploading = false;
                 console.log(error);

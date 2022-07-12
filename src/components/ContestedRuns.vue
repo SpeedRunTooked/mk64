@@ -37,34 +37,41 @@
                 {{ run.timesContested }}
             </div>
         </div>
-        <div v-if="emptyRows">
-            <div
-                v-for="index in emptyRows"
-                :key="index"
-                class="row subcategory-row"
-            >
-                <div class="col">-</div>
-                <div class="col">-</div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <table-nav
-                        :show-text-display="false"
-                        :show-fast-arrows="false"
-                    ></table-nav>
-                </div>
+        <div
+            v-for="index in emptyRows"
+            :key="index"
+            class="row subcategory-row"
+        >
+            <div class="col">-</div>
+            <div class="col">-</div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table-nav
+                    :show-text-display="false"
+                    :show-fast-arrows="false"
+                    :nextPageExists="nextPageExists"
+                    :goToNextPage="goToNextPage"
+                    :previousPageExists="previousPageExists"
+                    :goToPreviousPage="goToPreviousPage"
+                    :goToLastPage="goToLastPage"
+                    :goToFirstPage="goToFirstPage"
+                    :firstRow="firstRow"
+                    :lastRow="lastRow"
+                    :totalRows="totalRows"
+                ></table-nav>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { Game } from '@/game/Game';
-import { Category } from '@/game/Category';
-import { defineComponent } from 'vue';
-import AbstractTableVue from './AbstractTable.vue';
-import TableNav from '@/components/TableNav.vue';
 import { Run } from '@/game/Run';
+import { Game } from '@/game/Game';
+import { defineComponent } from 'vue';
+import { Category } from '@/game/Category';
+import TableNav from '@/components/TableNav.vue';
+import AbstractTableVue from './AbstractTable.vue';
 
 export default defineComponent({
     extends: AbstractTableVue,
