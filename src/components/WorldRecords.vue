@@ -54,7 +54,7 @@
             <div class="col category-header">Time Difference</div>
         </div>
         <div
-            v-for="oldRecord in activeRows"
+            v-for="oldRecord in oldRecords"
             :key="getOldRecordKey(oldRecord)"
             class="row subcategory-row"
             :class="oldRecordSlowerThanCurrent(oldRecord) ? 'highlight' : ''"
@@ -127,8 +127,8 @@ export default defineComponent({
             return this.$store.state.game;
         },
 
-        activeRows(): OldRecordScoreJSON[] {
-            return this.getActiveRows();
+        oldRecords(): OldRecordScoreJSON[] {
+            return this.activeRows;
         },
 
         currentRecord(): Entry {

@@ -29,7 +29,7 @@
             <div class="col category-header">Uploaded Runs</div>
         </div>
         <div
-            v-for="run in activeRows"
+            v-for="run in runs"
             :key="run.subcategory.name"
             class="row subcategory-row"
         >
@@ -89,8 +89,8 @@ export default defineComponent({
             return this.$store.state.game;
         },
 
-        activeRows(): MostPlayedSubcategory[] {
-            return this.getActiveRows();
+        runs(): MostPlayedSubcategory[] {
+            return this.activeRows;
         },
 
         rows(): MostPlayedSubcategory[] {

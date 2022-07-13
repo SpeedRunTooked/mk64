@@ -112,7 +112,7 @@
         </div>
         <div
             class="row entry-row"
-            v-for="entry in activeRows"
+            v-for="entry in entries"
             :key="entry.id"
             :class="{ highlight: entry.isCurrentRecord }"
             :title="getNote(entry)"
@@ -229,7 +229,6 @@ export default defineComponent({
 
     data() {
         return {
-            entries: 5,
             filters: {
                 subcategory: '',
                 category: '',
@@ -244,6 +243,10 @@ export default defineComponent({
     computed: {
         game(): Game {
             return this.$store.state.game;
+        },
+
+        entries(): Entry[] {
+            return this.activeRows;
         },
 
         filterOn(): boolean {
@@ -271,10 +274,6 @@ export default defineComponent({
                 );
             }
             return 'Subcategory';
-        },
-
-        activeRows(): Entry[] {
-            return this.getActiveRows();
         },
 
         rows(): Entry[] {

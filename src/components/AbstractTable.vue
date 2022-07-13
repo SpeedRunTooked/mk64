@@ -1,10 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-export interface Row {
-    [key: string]: string;
-}
-
 export default defineComponent({
     data: () => ({
         showFilters: false,
@@ -16,19 +12,30 @@ export default defineComponent({
     }),
 
     computed: {
-        rows(): Row[] {
+        // eslint-disable-next-line
+        rows(): any[] {
             return [];
+        },
+
+        // eslint-disable-next-line
+        activeRows(): any[] {
+            return this.rows.slice(
+                this.currentRow,
+                this.currentRow + this.rowsPerPage,
+            );
         },
 
         totalRows(): number {
             return this.rows.length;
         },
+
         firstRow(): number {
             if (this.totalRows === 0) {
                 return 0;
             }
             return this.currentRow + 1;
         },
+
         lastRow(): number {
             if (this.totalRows === 0) {
                 return 0;
@@ -40,18 +47,9 @@ export default defineComponent({
         },
 
         emptyRows(): number {
-            return this.rowsPerPage - this.getActiveRows().length;
+            return this.rowsPerPage - this.activeRows.length;
         },
-    },
 
-    methods: {
-        // eslint-disable-next-line
-        getActiveRows(): any[] {
-            return this.rows.slice(
-                this.currentRow,
-                this.currentRow + this.rowsPerPage,
-            );
-        },
         isEmpty(): boolean {
             return this.rows.length === 0;
         },
@@ -70,6 +68,9 @@ export default defineComponent({
         rowsLargerThanLimit(): boolean {
             return this.rows.length > this.rowsPerPage;
         },
+    },
+
+    methods: {
         goToFirstPage(): void {
             this.currentRow = 0;
         },

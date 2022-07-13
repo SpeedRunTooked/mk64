@@ -28,7 +28,7 @@
             <div class="col category-header">Times Contested</div>
         </div>
         <div
-            v-for="run in activeRows"
+            v-for="run in runs"
             :key="run.subcategory.slug"
             class="row subcategory-row"
         >
@@ -88,8 +88,8 @@ export default defineComponent({
             return this.$store.state.game;
         },
 
-        activeRows(): Run[] {
-            return this.getActiveRows();
+        runs(): Run[] {
+            return this.activeRows;
         },
 
         rows(): Run[] {

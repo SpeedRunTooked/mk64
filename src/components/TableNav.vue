@@ -7,7 +7,7 @@
 
         <div class="col bold text-right" title="Go to first page">
             <span
-                v-if="previousPageExists() && showFastArrows"
+                v-if="previousPageExists && showFastArrows"
                 class="clickable noselect material-symbols-outlined"
                 @click="goToFirstPage()"
             >
@@ -16,7 +16,7 @@
         </div>
         <div class="col bold text-right" title="Go to previous page">
             <span
-                v-if="previousPageExists()"
+                v-if="previousPageExists"
                 class="clickable noselect material-symbols-outlined"
                 @click="goToPreviousPage()"
             >
@@ -26,7 +26,7 @@
         <div class="col bold text-left" title="Go to next page">
             <span
                 class="clickable material-symbols-outlined noselect"
-                v-if="nextPageExists()"
+                v-if="nextPageExists"
                 @click="goToNextPage()"
             >
                 arrow_forward
@@ -35,7 +35,7 @@
         <div class="col bold text-left" title="Go to last page">
             <span
                 class="clickable noselect material-symbols-outlined noselect"
-                v-if="nextPageExists() && showFastArrows"
+                v-if="nextPageExists && showFastArrows"
                 @click="goToLastPage()"
             >
                 fast_forward
@@ -61,7 +61,7 @@ export default defineComponent({
             type: Boolean,
         },
         nextPageExists: {
-            type: Function,
+            type: Boolean,
             required: true,
         },
         goToNextPage: {
@@ -69,7 +69,7 @@ export default defineComponent({
             required: true,
         },
         previousPageExists: {
-            type: Function,
+            type: Boolean,
             required: true,
         },
         goToPreviousPage: {
