@@ -7,7 +7,7 @@
                     <select
                         class="form-select"
                         aria-label="Default select example"
-                        v-model="entryStatus"
+                        v-model="dropdowns.entryStatus"
                     >
                         <option value="" selected>All Times</option>
                         <option value="current">Current Records</option>
@@ -20,7 +20,7 @@
 
             <div class="col align-end">
                 <div class="select-wrapper">
-                    <select class="form-select" v-model="options.rowsPerPage">
+                    <select class="form-select" v-model="dropdowns.rowsPerPage">
                         <option value="5" selected>5</option>
                         <option value="10" selected>10</option>
                         <option value="15" selected>15</option>
@@ -54,7 +54,7 @@
                 {{ entry.subcategory.name }}
             </div>
             <div class="col-2" :title="entry.note || 'Empty Note'">
-                <div v-if="linkPresent(entry)">
+                <div v-if="linkPresent(entry.link)">
                     <a :href="entry.link" target="_blank">{{
                         entry.formattedScore
                     }}</a>
@@ -70,48 +70,37 @@
     </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import moment from 'moment';
 import { Game } from '@/game/Game';
-import { Entry } from '@/game/Entry';
-import { defineComponent, reactive, ref } from 'vue';
+import { reactive } from 'vue';
 import { useStore } from 'vuex';
 import { computed } from '@vue/reactivity';
-import { useTable } from '@/composables/useTable';
+import { TableOptions, useTable } from '@/composables/useTable';
+import { useHelpers } from '@/composables/useHelpers';
 
-export default defineComponent({
-    setup() {
-        const game = computed<Game>(() => useStore().state.game);
-        const rows = game.value.getRecentEntries();
-        const entryStatus = ref('');
+const game = computed<Game>(() => useStore().state.game);
 
-        const options = reactive({
-            booleanFilters: {
-                isCurrentRecord: computed(
-                    () => entryStatus.value === 'current',
-                ),
-                isRecordImprovement: computed(
-                    () => entryStatus.value === 'improvements',
-                ),
-            },
-            rowsPerPage: 5,
-        });
-
-        return {
-            game,
-            moment,
-            options,
-            entryStatus,
-            ...useTable(rows, options),
-        };
-    },
-
-    methods: {
-        linkPresent(entry: Entry): boolean {
-            return entry.link.substr(0, 4) === 'http';
-        },
-    },
+const dropdowns = reactive({
+    entryStatus: '',
+    rowsPerPage: 5,
 });
+
+const options: TableOptions = reactive({
+    filterType: 'any',
+    filters: {
+        isCurrentRecord: computed(() => dropdowns.entryStatus === 'current'),
+        isRecordImprovement: computed(
+            () => dropdowns.entryStatus === 'improvements',
+        ),
+    },
+    rowsPerPage: computed(() => dropdowns.rowsPerPage),
+});
+
+const rows = game.value.getRecentEntries();
+
+const { activeRows } = useTable(rows, options);
+const { linkPresent } = useHelpers();
 </script>
 
 <style scoped>
