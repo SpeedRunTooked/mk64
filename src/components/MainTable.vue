@@ -112,7 +112,7 @@
         </div>
         <div
             class="row entry-row"
-            v-for="entry in entries"
+            v-for="entry in activeRows"
             :key="entry.id"
             :class="{ highlight: entry.isCurrentRecord }"
             :title="getNote(entry)"
@@ -212,8 +212,10 @@ import { Game } from '@/game/Game';
 import TableNav from '@/components/TableNav.vue';
 import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from 'vue';
-import AbstractTable from '@/components/AbstractTable.vue';
 import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
+import { useTable } from '@/composables/useTable';
+import { useStore } from 'vuex';
+import { computed } from '@vue/reactivity';
 
 interface MainTableFilters {
     subcategory: string;
@@ -224,8 +226,13 @@ interface MainTableFilters {
 }
 
 export default defineComponent({
-    extends: AbstractTable,
     components: { TableNav, SubmitDataModal },
+
+    setup() {
+        const game = computed((): Game => useStore().state.game);
+        const rows = game.value.entries;
+        return { game, ...useTable(rows, { rowsPerPage: 10 }) };
+    },
 
     data() {
         return {
@@ -241,14 +248,6 @@ export default defineComponent({
     },
 
     computed: {
-        game(): Game {
-            return this.$store.state.game;
-        },
-
-        entries(): Entry[] {
-            return this.activeRows;
-        },
-
         filterOn(): boolean {
             return (
                 (
@@ -276,42 +275,42 @@ export default defineComponent({
             return 'Subcategory';
         },
 
-        rows(): Entry[] {
-            let entries = this.game.entries;
+        // rows(): Entry[] {
+        //     let entries = this.game.entries;
 
-            if (this.filters.subcategory) {
-                entries = _.filter(entries, (entry) => {
-                    return entry.subcategory.slug === this.filters.subcategory;
-                });
-            }
+        //     if (this.filters.subcategory) {
+        //         entries = _.filter(entries, (entry) => {
+        //             return entry.subcategory.slug === this.filters.subcategory;
+        //         });
+        //     }
 
-            if (this.filters.category) {
-                entries = _.filter(entries, (entry) => {
-                    return entry.category.slug === this.filters.category;
-                });
-            }
+        //     if (this.filters.category) {
+        //         entries = _.filter(entries, (entry) => {
+        //             return entry.category.slug === this.filters.category;
+        //         });
+        //     }
 
-            if (this.filters.user) {
-                entries = _.filter(entries, (entry) => {
-                    return entry.userId === this.filters.user;
-                });
-            }
+        //     if (this.filters.user) {
+        //         entries = _.filter(entries, (entry) => {
+        //             return entry.userId === this.filters.user;
+        //         });
+        //     }
 
-            if (this.filters.entryStatus) {
-                if (this.filters.entryStatus === 'improvements') {
-                    entries = _.filter(entries, (entry) => {
-                        return entry.isRecordImprovement === true;
-                    });
-                }
-                if (this.filters.entryStatus === 'current') {
-                    entries = _.filter(entries, (entry) => {
-                        return entry.isCurrentRecord === true;
-                    });
-                }
-            }
+        //     if (this.filters.entryStatus) {
+        //         if (this.filters.entryStatus === 'improvements') {
+        //             entries = _.filter(entries, (entry) => {
+        //                 return entry.isRecordImprovement === true;
+        //             });
+        //         }
+        //         if (this.filters.entryStatus === 'current') {
+        //             entries = _.filter(entries, (entry) => {
+        //                 return entry.isCurrentRecord === true;
+        //             });
+        //         }
+        //     }
 
-            return _.orderBy(entries, ['created'], ['desc']);
-        },
+        //     return _.orderBy(entries, ['created'], ['desc']);
+        // },
     },
 
     methods: {
