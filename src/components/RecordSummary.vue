@@ -7,7 +7,7 @@
                     <select
                         class="form-select"
                         aria-label="Default select example"
-                        v-model="selectedCategorySlug"
+                        v-model="dropdowns.selectedCategorySlug"
                     >
                         <option
                             v-for="category in game.categories"
@@ -45,69 +45,58 @@
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import _ from 'lodash';
 import { Game } from '@/game/Game';
 import { Entry } from '@/game/Entry';
-import { Category } from '@/game/Category';
 import { Subcategory } from '@/game/Subcategory';
-import { defineComponent } from 'vue';
+import { computed } from '@vue/reactivity';
+import { useStore } from 'vuex';
+import { reactive } from 'vue';
 
 interface RecordSummaryRow extends Subcategory {
     endOfGroup: boolean;
 }
 
-export default defineComponent({
-    data() {
-        return {
-            selectedCategorySlug: '3lap',
-        };
-    },
+const game = computed<Game>(() => useStore().state.game);
 
-    computed: {
-        game(): Game {
-            return this.$store.state.game;
-        },
-
-        rows(): RecordSummaryRow[] {
-            const result: RecordSummaryRow[] = [];
-            const orderedJson = _.orderBy(this.selectedCategory.subcategories, [
-                'displayOrder',
-            ]);
-            for (const jsonRow of orderedJson) {
-                result.push(jsonRow as RecordSummaryRow);
-            }
-
-            for (let i = 0; i < result.length - 1; i++) {
-                if (result[i]['group'] !== result[i + 1]['group']) {
-                    result[i].endOfGroup = true;
-                }
-            }
-            return result;
-        },
-
-        selectedCategory(): Category {
-            return this.game.getCategory(this.selectedCategorySlug);
-        },
-    },
-
-    methods: {
-        getRecord(subcategory: Subcategory): Entry | undefined {
-            const record = this.game.getRecord(
-                this.selectedCategory.slug,
-                subcategory.slug,
-            );
-            return record;
-        },
-    },
+const dropdowns = reactive({
+    selectedCategorySlug: '3lap',
 });
+
+const selectedCategory = computed(() =>
+    game.value.getCategory(dropdowns.selectedCategorySlug),
+);
+
+const getRecord = (subcategory: Subcategory): Entry | undefined => {
+    const record = game.value.getRecord(
+        selectedCategory.value.slug,
+        subcategory.slug,
+    );
+    return record;
+};
+
+const buildRecordSummaryRows = (): RecordSummaryRow[] => {
+    const result: RecordSummaryRow[] = [];
+    const orderedJson = _.orderBy(selectedCategory.value.subcategories, [
+        'displayOrder',
+    ]);
+    for (const jsonRow of orderedJson) {
+        result.push(jsonRow as RecordSummaryRow);
+    }
+
+    for (let i = 0; i < result.length - 1; i++) {
+        if (result[i]['group'] !== result[i + 1]['group']) {
+            result[i].endOfGroup = true;
+        }
+    }
+    return result;
+};
+
+const rows = computed(() => buildRecordSummaryRows());
 </script>
 
 <style scoped>
-.displayName {
-    font-size: 14px;
-}
-
 select {
     float: right;
 }

@@ -1,9 +1,10 @@
 import { computed } from '@vue/reactivity';
-import _ from 'lodash';
+
+import { Filters, FilterType, filterAny } from './useFilters';
 
 export interface TableOptions {
-    filters?: { [key: string]: boolean };
-    filterType?: string;
+    filters?: Filters;
+    filterType?: FilterType;
     rowsPerPage: number;
 }
 
@@ -19,24 +20,4 @@ export function useTable<T>(rows: T[], options: TableOptions) {
     });
 
     return { activeRows };
-}
-
-function filterAny<T>(rows: T[], filters: TableOptions['filters']) {
-    return _.filter(rows, (row) => {
-        // Returns true if any of the conditions are true, or if no filter is active
-        for (const filter in filters) {
-            // eslint-disable-next-line
-            const rowValue: boolean = (row as any)[filter];
-
-            if (filters[filter]) {
-                if (filters[filter] === rowValue) {
-                    return true;
-                }
-                if (filters[filter] !== rowValue) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    });
 }
