@@ -21,7 +21,7 @@ module.exports = {
                 endOfLine: 'auto',
             },
         ],
-        '@typescript-eslint/explicit-function-return-type': 1,
+        '@typescript-eslint/explicit-function-return-type': 0,
     },
     overrides: [
         {
@@ -37,7 +37,7 @@ module.exports = {
             // enable the rule specifically for TypeScript files
             files: ['*.ts', '*.mts', '*.cts', '*.tsx'],
             rules: {
-                '@typescript-eslint/explicit-function-return-type': 1,
+                '@typescript-eslint/explicit-function-return-type': 0,
             },
         },
     ],

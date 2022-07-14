@@ -7,7 +7,7 @@
                     <select
                         class="form-select"
                         aria-label="Default select example"
-                        v-model="filters.entryStatus"
+                        v-model="entryStatus"
                     >
                         <option value="" selected>All Times</option>
                         <option value="current">Current Records</option>
@@ -20,7 +20,7 @@
 
             <div class="col align-end">
                 <div class="select-wrapper">
-                    <select class="form-select" v-model="filters.rows">
+                    <select class="form-select" v-model="options.rowsPerPage">
                         <option value="5" selected>5</option>
                         <option value="10" selected>10</option>
                         <option value="15" selected>15</option>
@@ -39,7 +39,7 @@
         </div>
         <div
             class="row subcategory-row"
-            v-for="entry in recentEntries"
+            v-for="entry in activeRows"
             :key="entry.id"
             :class="{ highlight: entry.isCurrentRecord }"
         >
@@ -53,7 +53,7 @@
             <div class="col-3">
                 {{ entry.subcategory.name }}
             </div>
-            <div class="col-2" :title="getNote(entry)">
+            <div class="col-2" :title="entry.note || 'Empty Note'">
                 <div v-if="linkPresent(entry)">
                     <a :href="entry.link" target="_blank">{{
                         entry.formattedScore
@@ -71,53 +71,44 @@
 </template>
 
 <script lang="ts">
-import _ from 'lodash';
 import moment from 'moment';
 import { Game } from '@/game/Game';
 import { Entry } from '@/game/Entry';
-import { defineComponent } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
+import { useStore } from 'vuex';
+import { computed } from '@vue/reactivity';
+import { useTable } from '@/composables/useTable';
 
 export default defineComponent({
-    data() {
-        return {
-            filters: {
-                entryStatus: '',
-                rows: 5,
+    setup() {
+        const game = computed<Game>(() => useStore().state.game);
+        const rows = game.value.getRecentEntries();
+        const entryStatus = ref('');
+
+        const options = reactive({
+            booleanFilters: {
+                isCurrentRecord: computed(
+                    () => entryStatus.value === 'current',
+                ),
+                isRecordImprovement: computed(
+                    () => entryStatus.value === 'improvements',
+                ),
             },
+            rowsPerPage: 5,
+        });
+
+        return {
+            game,
             moment,
+            options,
+            entryStatus,
+            ...useTable(rows, options),
         };
-    },
-
-    computed: {
-        game(): Game {
-            return this.$store.state.game;
-        },
-
-        recentEntries(): Entry[] {
-            let entries = this.game.getRecentEntries();
-            if (this.filters.entryStatus) {
-                if (this.filters.entryStatus === 'improvements') {
-                    entries = _.filter(entries, (entry) => {
-                        return entry.isRecordImprovement === true;
-                    });
-                }
-                if (this.filters.entryStatus === 'current') {
-                    entries = _.filter(entries, (entry) => {
-                        return entry.isCurrentRecord === true;
-                    });
-                }
-            }
-            return entries.splice(0, this.filters.rows);
-        },
     },
 
     methods: {
         linkPresent(entry: Entry): boolean {
             return entry.link.substr(0, 4) === 'http';
-        },
-
-        getNote(entry: Entry): string {
-            return entry.note || 'Empty note';
         },
     },
 });
