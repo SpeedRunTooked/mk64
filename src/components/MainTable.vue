@@ -25,8 +25,7 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="dropdowns.subcategory"
-                    @change="goToFirstPage()"
+                    @change="setFilter()"
                 >
                     <option value="">All {{ subcategoryName }}s</option>
 
