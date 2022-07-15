@@ -7,7 +7,7 @@
                     <select
                         class="form-select"
                         aria-label="Default select example"
-                        v-model="dropdowns.entryStatus"
+                        v-model="filterDropdowns.entryStatus"
                     >
                         <option value="" selected>All Times</option>
                         <option value="current">Current Records</option>
@@ -20,7 +20,7 @@
 
             <div class="col align-end">
                 <div class="select-wrapper">
-                    <select class="form-select" v-model="dropdowns.rowsPerPage">
+                    <select class="form-select" v-model="rowsPerPageDropdown">
                         <option value="5" selected>5</option>
                         <option value="10" selected>10</option>
                         <option value="15" selected>15</option>
@@ -75,38 +75,37 @@ import moment from 'moment';
 import { Game } from '@/game/Game';
 import { reactive } from 'vue';
 import { useStore } from 'vuex';
-import { computed } from '@vue/reactivity';
+import { ref, computed } from '@vue/reactivity';
 import { TableOptions, useTable } from '@/composables/useTable';
 import { useHelpers } from '@/composables/useHelpers';
 import { Entry } from '@/game/Entry';
 
 const game = computed<Game>(() => useStore().state.game);
 
-const dropdowns = reactive({
+const filterDropdowns = reactive({
     entryStatus: '',
-    rowsPerPage: 5,
 });
 
-const options: TableOptions = reactive({
-    filters: [
-        {
-            key: 'isCurrentRecord',
-            value: computed(() => dropdowns.entryStatus === 'current'),
-            getFilterValue: (entry: Entry) => entry.isCurrentRecord,
-        },
-        {
-            key: 'isRecordImprovement',
-            value: computed(() => dropdowns.entryStatus === 'improvements'),
-            getFilterValue: (entry: Entry) => entry.isRecordImprovement,
-        },
-    ],
+const rowsPerPageDropdown = ref('5');
 
-    rowsPerPage: computed(() => dropdowns.rowsPerPage),
+const filters = reactive({
+    isCurrentRecord: {
+        value: computed(() => filterDropdowns.entryStatus === 'current'),
+        getFilterValue: (entry: Entry) => entry.isCurrentRecord,
+    },
+    isRecordImprovement: {
+        value: computed(() => filterDropdowns.entryStatus === 'improvements'),
+        getFilterValue: (entry: Entry) => entry.isRecordImprovement,
+    },
 });
+
+const options: TableOptions = {
+    rowsPerPage: rowsPerPageDropdown,
+};
 
 const rows = game.value.getRecentEntries();
 
-const { activeRows } = useTable(rows, options);
+const { activeRows } = useTable(rows, options, filters, filterDropdowns);
 const { linkPresent } = useHelpers();
 </script>
 

@@ -1,26 +1,25 @@
 import _, { Many } from 'lodash';
-import { ref, computed } from '@vue/reactivity';
+import { ref, computed, Ref } from '@vue/reactivity';
 
 import { filterAny, Filters } from './useFilters';
 
 export interface TableOptions {
-    rowsPerPage: number;
+    rowsPerPage: Ref<string>;
     orderByKeyArray?: string[];
     orderByOrderArray?: Many<boolean | 'asc' | 'desc'>;
 }
 
 export interface FilterDropdowns {
-    [key: string]: string;
+    [key: string]: string | number;
 }
 
 export function useTable<T>(
     rows: T[],
+    options: TableOptions,
     filters?: Filters,
     filterDropdowns?: FilterDropdowns,
-    options?: TableOptions,
 ) {
-    const rowsPerPage = options?.rowsPerPage || 10;
-
+    const rowsPerPage = computed(() => Number(options.rowsPerPage.value));
     const activeRows = computed((): T[] => {
         let filteredRows: T[] = rows;
 
@@ -45,7 +44,7 @@ export function useTable<T>(
 
         const sliced = filteredRows.slice(
             currentRow.value,
-            currentRow.value + rowsPerPage,
+            currentRow.value + rowsPerPage.value,
         );
 
         return sliced;
@@ -68,14 +67,14 @@ export function useTable<T>(
         if (totalRows.value === 0) {
             return 0;
         }
-        const lastRow = currentRow.value + rowsPerPage;
+        const lastRow = currentRow.value + rowsPerPage.value;
         return lastRow >= totalRows.value
             ? totalRows.value - currentRow.value + firstRow.value - 1
             : lastRow;
     });
 
     const emptyRows = computed((): number => {
-        return rowsPerPage - activeRows.value.length;
+        return rowsPerPage.value - activeRows.value.length;
     });
 
     const isEmpty = computed((): boolean => {
@@ -90,14 +89,14 @@ export function useTable<T>(
     });
 
     const nextPageExists = computed((): boolean => {
-        if (currentRow.value + rowsPerPage < totalRows.value) {
+        if (currentRow.value + rowsPerPage.value < totalRows.value) {
             return true;
         }
         return false;
     });
 
     const rowsLargerThanLimit = computed((): boolean => {
-        return rows.length > rowsPerPage;
+        return rows.length > rowsPerPage.value;
     });
 
     const goToFirstPage = (): void => {
@@ -105,24 +104,24 @@ export function useTable<T>(
     };
 
     const goToLastPage = (): void => {
-        const remainder = totalRows.value % rowsPerPage;
+        const remainder = totalRows.value % rowsPerPage.value;
         if (remainder === 0) {
-            currentRow.value = totalRows.value - rowsPerPage;
+            currentRow.value = totalRows.value - rowsPerPage.value;
         } else {
             currentRow.value = totalRows.value - remainder;
         }
     };
 
     const goToPreviousPage = (): void => {
-        if (currentRow.value < rowsPerPage) {
+        if (currentRow.value < rowsPerPage.value) {
             currentRow.value = 0;
         } else {
-            currentRow.value -= rowsPerPage;
+            currentRow.value -= rowsPerPage.value;
         }
     };
 
     const goToNextPage = (): void => {
-        currentRow.value += rowsPerPage;
+        currentRow.value += rowsPerPage.value;
     };
 
     const resetFilters = (): void => {
@@ -133,6 +132,20 @@ export function useTable<T>(
         }
         goToFirstPage();
     };
+
+    const setFilter = (key: string, filterValue: string): void => {
+        if (filterDropdowns) {
+            filterDropdowns[key] = filterValue;
+        }
+        goToFirstPage();
+    };
+
+    const filterOn = computed((): boolean => {
+        for (const key in filterDropdowns) {
+            if (filterDropdowns[key]) return true;
+        }
+        return false;
+    });
 
     return {
         rows,
@@ -150,6 +163,8 @@ export function useTable<T>(
         goToLastPage,
         goToPreviousPage,
         goToNextPage,
+        setFilter,
         resetFilters,
+        filterOn,
     };
 }

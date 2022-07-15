@@ -116,7 +116,7 @@
             v-for="entry in activeRows"
             :key="entry.id"
             :class="{ highlight: entry.isCurrentRecord }"
-            :title="getNote(entry)"
+            :title="entry.note"
         >
             <div class="col-2">
                 {{ moment(entry.created).fromNow() }}
@@ -134,7 +134,7 @@
                 {{ entry.subcategory.name }}
             </div>
             <div class="col-1">
-                <div v-if="linkPresent(entry)">
+                <div v-if="linkPresent(entry.link)">
                     <a :href="entry.link" target="_blank">{{
                         entry.formattedScore
                     }}</a>
@@ -215,16 +215,9 @@ import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from 'vue';
 import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
 import { TableOptions, useTable } from '@/composables/useTable';
+import { useHelpers } from '@/composables/useHelpers';
 import { useStore } from 'vuex';
-import { computed, reactive } from '@vue/reactivity';
-
-interface MainTableFilters {
-    subcategory: string;
-    category: string;
-    user: string;
-    entryStatus: string;
-    [key: string]: string;
-}
+import { computed, reactive, ref } from '@vue/reactivity';
 
 export default defineComponent({
     components: { TableNav, SubmitDataModal },
@@ -232,6 +225,8 @@ export default defineComponent({
     setup() {
         const game = computed((): Game => useStore().state.game);
         const rows = game.value.entries;
+
+        let formData = {};
 
         const filterDropdowns = reactive({
             category: '',
@@ -267,101 +262,60 @@ export default defineComponent({
             },
         });
 
-        const tableOptions: TableOptions = reactive({
-            rowsPerPage: 10,
+        const tableOptions: TableOptions = {
+            rowsPerPage: ref('10'),
             orderByKeyArray: ['created'],
             orderByOrderArray: ['desc'],
-        });
-
-        return {
-            game,
-            dropdowns: filterDropdowns,
-            ...useTable(rows, filters, filterDropdowns, tableOptions),
         };
-    },
 
-    data() {
-        return {
-            filters: {
-                subcategory: '',
-                category: '',
-                user: '',
-                entryStatus: '',
-            },
-            formData: {},
-            moment,
-        };
-    },
-
-    computed: {
-        filterOn(): boolean {
-            return (
-                (
-                    this.dropdowns.subcategory ||
-                    this.dropdowns.category ||
-                    this.dropdowns.user ||
-                    this.dropdowns.entryStatus
-                ).length > 0
-            );
-        },
-
-        subcategoryFilterSet(): Subcategory[] {
-            const subcategorySet = this.game.getCategory(
-                this.dropdowns.category,
+        const subcategoryFilterSet = computed((): Subcategory[] => {
+            const subcategorySet = game.value.getCategory(
+                filterDropdowns.category,
             ).subcategories;
             return _.orderBy(subcategorySet, ['displayOrder']);
-        },
+        });
 
-        subcategoryName(): string {
-            if (this.dropdowns.category) {
-                return this.game.getSubcategoryDisplayName(
-                    this.dropdowns.category,
+        const subcategoryName = computed((): string => {
+            if (filterDropdowns.category) {
+                return game.value.getSubcategoryDisplayName(
+                    filterDropdowns.category,
                 );
             }
             return 'Subcategory';
-        },
-    },
+        });
 
-    methods: {
-        setFormData(entry: Entry): void {
-            this.formData = entry;
-        },
+        const setFormData = (entry: Entry): void => {
+            formData = entry;
+        };
 
-        linkPresent(entry: Entry): boolean {
-            return entry.link.substr(0, 4) === 'http';
-        },
+        const downloadFile = (entry: Entry): void => {
+            downloadItem(getFileDownloadLink(entry));
+        };
 
-        getNote(entry: Entry): string {
-            return entry.note || 'Empty note';
-        },
-
-        resetFilters(): void {
-            for (const filter in this.filters) {
-                (this.filters as MainTableFilters)[filter] = '';
-            }
-            this.goToFirstPage();
-        },
-
-        setFilter(filter: string, filterValue: string) {
-            (this.filters as MainTableFilters)[filter] = filterValue;
-            this.goToFirstPage();
-        },
-
-        downloadFile(entry: Entry): void {
-            this.downloadItem(this.getFileDownloadLink(entry));
-        },
-
-        getFileDownloadLink(entry: Entry): string {
+        const getFileDownloadLink = (entry: Entry): string => {
             return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/${process.env.VUE_APP_DATABASE}%2Fmk64%2Ffiles%2F${entry.id}%2FMARIOKART64_Cont_1.mpk?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
-        },
+        };
 
-        async downloadItem(url: string) {
+        const downloadItem = async (url: string) => {
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', 'MARIOKART64_Cont_1.mpk');
             document.body.appendChild(link);
             link.click();
-        },
+        };
+
+        return {
+            game,
+            moment,
+            formData,
+            subcategoryFilterSet,
+            subcategoryName,
+            setFormData,
+            downloadFile,
+            dropdowns: filterDropdowns,
+            ...useTable(rows, tableOptions, filters, filterDropdowns),
+            ...useHelpers(),
+        };
     },
 });
 </script>
