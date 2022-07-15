@@ -107,8 +107,18 @@ export function useTable<T>(rows: T[], options: TableOptions) {
             currentRow.value -= options.rowsPerPage;
         }
     };
+
     const goToNextPage = (): void => {
         currentRow.value += options.rowsPerPage;
+    };
+
+    const resetFilters = (): void => {
+        if (options.filters) {
+            for (const filter of options.filters) {
+                filter.value = '';
+            }
+        }
+        goToFirstPage();
     };
 
     return {
@@ -127,5 +137,6 @@ export function useTable<T>(rows: T[], options: TableOptions) {
         goToLastPage,
         goToPreviousPage,
         goToNextPage,
+        resetFilters,
     };
 }
