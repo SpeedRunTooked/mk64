@@ -88,7 +88,6 @@ const dropdowns = reactive({
 });
 
 const options: TableOptions = reactive({
-    filterType: 'any',
     filters: [
         {
             key: 'isCurrentRecord',

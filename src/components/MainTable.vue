@@ -217,7 +217,6 @@ import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
 import { TableOptions, useTable } from '@/composables/useTable';
 import { useStore } from 'vuex';
 import { computed, reactive } from '@vue/reactivity';
-import { Category } from '@/game/Category';
 
 interface MainTableFilters {
     subcategory: string;
@@ -274,8 +273,6 @@ export default defineComponent({
                     getFilterValue: (entry: Entry) => entry.isRecordImprovement,
                 },
             ],
-
-            filterType: 'any',
         });
         return { game, dropdowns, ...useTable(rows, tableOptions) };
     },
