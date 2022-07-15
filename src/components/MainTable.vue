@@ -317,43 +317,6 @@ export default defineComponent({
             }
             return 'Subcategory';
         },
-
-        // rows(): Entry[] {
-        //     let entries = this.game.entries;
-
-        //     if (this.filters.subcategory) {
-        //         entries = _.filter(entries, (entry) => {
-        //             return entry.subcategory.slug === this.filters.subcategory;
-        //         });
-        //     }
-
-        //     if (this.filters.category) {
-        //         entries = _.filter(entries, (entry) => {
-        //             return entry.category.slug === this.filters.category;
-        //         });
-        //     }
-
-        //     if (this.filters.user) {
-        //         entries = _.filter(entries, (entry) => {
-        //             return entry.userId === this.filters.user;
-        //         });
-        //     }
-
-        //     if (this.filters.entryStatus) {
-        //         if (this.filters.entryStatus === 'improvements') {
-        //             entries = _.filter(entries, (entry) => {
-        //                 return entry.isRecordImprovement === true;
-        //             });
-        //         }
-        //         if (this.filters.entryStatus === 'current') {
-        //             entries = _.filter(entries, (entry) => {
-        //                 return entry.isCurrentRecord === true;
-        //             });
-        //         }
-        //     }
-
-        //     return _.orderBy(entries, ['created'], ['desc']);
-        // },
     },
 
     methods: {
