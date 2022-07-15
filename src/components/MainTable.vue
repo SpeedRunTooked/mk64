@@ -25,7 +25,8 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    @change="setFilter()"
+                    v-model="dropdowns.subcategory"
+                    @change="goToFirstPage()"
                 >
                     <option value="">All {{ subcategoryName }}s</option>
 
@@ -232,48 +233,51 @@ export default defineComponent({
         const game = computed((): Game => useStore().state.game);
         const rows = game.value.entries;
 
-        const dropdowns = reactive({
+        const filterDropdowns = reactive({
             category: '',
             subcategory: '',
             user: '',
             entryStatus: '',
         });
 
+        const filters = reactive({
+            category: {
+                value: computed(() => filterDropdowns.category),
+                getFilterValue: (entry: Entry) => entry.category.slug,
+            },
+            subcategory: {
+                value: computed(() => filterDropdowns.subcategory),
+                getFilterValue: (entry: Entry) => entry.subcategory.slug,
+            },
+            userId: {
+                value: computed(() => filterDropdowns.user),
+                getFilterValue: (entry: Entry) => entry.userId,
+            },
+            isCurrentRecord: {
+                value: computed(
+                    () => filterDropdowns.entryStatus === 'current',
+                ),
+                getFilterValue: (entry: Entry) => entry.isCurrentRecord,
+            },
+            isRecordImprovement: {
+                value: computed(
+                    () => filterDropdowns.entryStatus === 'improvements',
+                ),
+                getFilterValue: (entry: Entry) => entry.isRecordImprovement,
+            },
+        });
+
         const tableOptions: TableOptions = reactive({
             rowsPerPage: 10,
             orderByKeyArray: ['created'],
             orderByOrderArray: ['desc'],
-            filters: [
-                {
-                    key: 'category',
-                    value: computed(() => dropdowns.category),
-                    getFilterValue: (entry: Entry) => entry.category.slug,
-                },
-                {
-                    key: 'category',
-                    value: computed(() => dropdowns.subcategory),
-                    getFilterValue: (entry: Entry) => entry.subcategory.slug,
-                },
-                {
-                    key: 'userId',
-                    value: computed(() => dropdowns.user),
-                    getFilterValue: (entry: Entry) => entry.userId,
-                },
-                {
-                    key: 'isCurrentRecord',
-                    value: computed(() => dropdowns.entryStatus === 'current'),
-                    getFilterValue: (entry: Entry) => entry.isCurrentRecord,
-                },
-                {
-                    key: 'isRecordImprovement',
-                    value: computed(
-                        () => dropdowns.entryStatus === 'improvements',
-                    ),
-                    getFilterValue: (entry: Entry) => entry.isRecordImprovement,
-                },
-            ],
         });
-        return { game, dropdowns, ...useTable(rows, tableOptions) };
+
+        return {
+            game,
+            dropdowns: filterDropdowns,
+            ...useTable(rows, filters, filterDropdowns, tableOptions),
+        };
     },
 
     data() {
