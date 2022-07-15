@@ -1,11 +1,14 @@
+import _, { Many } from 'lodash';
 import { ref, computed } from '@vue/reactivity';
 
-import { Filters, FilterType, filterAny } from './useFilters';
+import { FilterType, filterAny, Filter } from './useFilters';
 
 export interface TableOptions {
-    filters?: Filters;
+    filters?: Filter[];
     filterType?: FilterType;
     rowsPerPage: number;
+    orderByKeyArray?: string[];
+    orderByOrderArray?: Many<boolean | 'asc' | 'desc'>;
 }
 
 export function useTable<T>(rows: T[], options: TableOptions) {
@@ -15,12 +18,29 @@ export function useTable<T>(rows: T[], options: TableOptions) {
         if (options?.filters && options?.filterType === 'any') {
             filteredRows = filterAny(rows, options.filters);
         }
+        // else if (options?.filters && options?.filterType === 'all') {
+        //     filteredRows = filterAll(rows, options.filters);
+        // }
+
+        if (options.orderByKeyArray) {
+            if (options.orderByOrderArray) {
+                filteredRows = _.orderBy(
+                    filteredRows,
+                    options.orderByKeyArray,
+                    options.orderByOrderArray,
+                );
+            } else {
+                filteredRows = _.orderBy(filteredRows, options.orderByKeyArray);
+            }
+        }
 
         // filteredRows = filteredRows.splice(0, options.rowsPerPage);
-        return filteredRows.slice(
+        const sliced = filteredRows.slice(
             currentRow.value,
             currentRow.value + options.rowsPerPage,
         );
+
+        return sliced;
     });
 
     const currentRow = ref(0);

@@ -6,7 +6,7 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="filters.category"
+                    v-model="dropdowns.category"
                     @change="goToFirstPage()"
                 >
                     <option value="">All Categories</option>
@@ -21,11 +21,11 @@
                 </select>
             </div>
 
-            <div v-if="filters.category" class="col-3">
+            <div v-if="dropdowns.category" class="col-3">
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="filters.subcategory"
+                    v-model="dropdowns.subcategory"
                     @change="goToFirstPage()"
                 >
                     <option value="">All {{ subcategoryName }}s</option>
@@ -40,7 +40,7 @@
                 </select>
             </div>
 
-            <div v-if="!filters.category" class="col-3">
+            <div v-if="!dropdowns.category" class="col-3">
                 <select
                     class="form-select"
                     aria-label="Default select example"
@@ -48,8 +48,9 @@
                 >
                     <option value="">
                         {{
-                            filters.subcategory
-                                ? game.getSubcategory(filters.subcategory)?.name
+                            dropdowns.subcategory
+                                ? game.getSubcategory(dropdowns.subcategory)
+                                      ?.name
                                 : ''
                         }}
                     </option>
@@ -60,7 +61,7 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="filters.user"
+                    v-model="dropdowns.user"
                     @change="goToFirstPage()"
                     v-if="game.users.length > 0"
                 >
@@ -80,7 +81,7 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="filters.entryStatus"
+                    v-model="dropdowns.entryStatus"
                     @change="goToFirstPage()"
                 >
                     <option value="" selected>All Times</option>
@@ -213,9 +214,10 @@ import TableNav from '@/components/TableNav.vue';
 import { Subcategory } from '@/game/Subcategory';
 import { defineComponent } from 'vue';
 import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
-import { useTable } from '@/composables/useTable';
+import { TableOptions, useTable } from '@/composables/useTable';
 import { useStore } from 'vuex';
-import { computed } from '@vue/reactivity';
+import { computed, reactive } from '@vue/reactivity';
+import { Category } from '@/game/Category';
 
 interface MainTableFilters {
     subcategory: string;
@@ -231,7 +233,51 @@ export default defineComponent({
     setup() {
         const game = computed((): Game => useStore().state.game);
         const rows = game.value.entries;
-        return { game, ...useTable(rows, { rowsPerPage: 10 }) };
+
+        const dropdowns = reactive({
+            category: '',
+            subcategory: '',
+            user: '',
+            entryStatus: '',
+        });
+
+        const tableOptions: TableOptions = reactive({
+            rowsPerPage: 10,
+            orderByKeyArray: ['created'],
+            orderByOrderArray: ['desc'],
+            filters: [
+                {
+                    key: 'category',
+                    value: computed(() => dropdowns.category),
+                    getFilterValue: (entry: Entry) => entry.category.slug,
+                },
+                {
+                    key: 'category',
+                    value: computed(() => dropdowns.subcategory),
+                    getFilterValue: (entry: Entry) => entry.subcategory.slug,
+                },
+                {
+                    key: 'userId',
+                    value: computed(() => dropdowns.user),
+                    getFilterValue: (entry: Entry) => entry.userId,
+                },
+                {
+                    key: 'isCurrentRecord',
+                    value: computed(() => dropdowns.entryStatus === 'current'),
+                    getFilterValue: (entry: Entry) => entry.isCurrentRecord,
+                },
+                {
+                    key: 'isRecordImprovement',
+                    value: computed(
+                        () => dropdowns.entryStatus === 'improvements',
+                    ),
+                    getFilterValue: (entry: Entry) => entry.isRecordImprovement,
+                },
+            ],
+
+            filterType: 'any',
+        });
+        return { game, dropdowns, ...useTable(rows, tableOptions) };
     },
 
     data() {
@@ -251,25 +297,25 @@ export default defineComponent({
         filterOn(): boolean {
             return (
                 (
-                    this.filters.subcategory ||
-                    this.filters.category ||
-                    this.filters.user ||
-                    this.filters.entryStatus
+                    this.dropdowns.subcategory ||
+                    this.dropdowns.category ||
+                    this.dropdowns.user ||
+                    this.dropdowns.entryStatus
                 ).length > 0
             );
         },
 
         subcategoryFilterSet(): Subcategory[] {
             const subcategorySet = this.game.getCategory(
-                this.filters.category,
+                this.dropdowns.category,
             ).subcategories;
             return _.orderBy(subcategorySet, ['displayOrder']);
         },
 
         subcategoryName(): string {
-            if (this.filters.category) {
+            if (this.dropdowns.category) {
                 return this.game.getSubcategoryDisplayName(
-                    this.filters.category,
+                    this.dropdowns.category,
                 );
             }
             return 'Subcategory';

@@ -78,6 +78,7 @@ import { useStore } from 'vuex';
 import { computed } from '@vue/reactivity';
 import { TableOptions, useTable } from '@/composables/useTable';
 import { useHelpers } from '@/composables/useHelpers';
+import { Entry } from '@/game/Entry';
 
 const game = computed<Game>(() => useStore().state.game);
 
@@ -88,12 +89,19 @@ const dropdowns = reactive({
 
 const options: TableOptions = reactive({
     filterType: 'any',
-    filters: {
-        isCurrentRecord: computed(() => dropdowns.entryStatus === 'current'),
-        isRecordImprovement: computed(
-            () => dropdowns.entryStatus === 'improvements',
-        ),
-    },
+    filters: [
+        {
+            key: 'isCurrentRecord',
+            value: computed(() => dropdowns.entryStatus === 'current'),
+            getFilterValue: (entry: Entry) => entry.isCurrentRecord,
+        },
+        {
+            key: 'isRecordImprovement',
+            value: computed(() => dropdowns.entryStatus === 'improvements'),
+            getFilterValue: (entry: Entry) => entry.isRecordImprovement,
+        },
+    ],
+
     rowsPerPage: computed(() => dropdowns.rowsPerPage),
 });
 
