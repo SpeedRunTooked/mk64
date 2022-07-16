@@ -7,8 +7,8 @@
                     <select
                         class="form-select"
                         aria-label="Default select example"
-                        v-model="selectedCategorySlug"
-                        @change="goToFirstPage()"
+                        v-model="filterDropdowns.categorySlug"
+                        @change="table.goToFirstPage()"
                     >
                         <option
                             v-for="category in game.categories"
@@ -28,7 +28,7 @@
             <div class="col category-header">Times Contested</div>
         </div>
         <div
-            v-for="run in runs"
+            v-for="run in table.activeRows.value"
             :key="run.subcategory.slug"
             class="row subcategory-row"
         >
@@ -38,7 +38,7 @@
             </div>
         </div>
         <div
-            v-for="index in emptyRows"
+            v-for="index in table.emptyRows.value"
             :key="index"
             class="row subcategory-row"
         >
@@ -50,63 +50,54 @@
                 <table-nav
                     :show-text-display="false"
                     :show-fast-arrows="false"
-                    :nextPageExists="nextPageExists"
-                    :goToNextPage="goToNextPage"
-                    :previousPageExists="previousPageExists"
-                    :goToPreviousPage="goToPreviousPage"
-                    :goToLastPage="goToLastPage"
-                    :goToFirstPage="goToFirstPage"
-                    :firstRow="firstRow"
-                    :lastRow="lastRow"
-                    :totalRows="totalRows"
+                    :nextPageExists="table.nextPageExists.value"
+                    :goToNextPage="table.goToNextPage"
+                    :previousPageExists="table.previousPageExists.value"
+                    :goToPreviousPage="table.goToPreviousPage"
+                    :goToLastPage="table.goToLastPage"
+                    :goToFirstPage="table.goToFirstPage"
+                    :firstRow="table.firstRow.value"
+                    :lastRow="table.lastRow.value"
+                    :totalRows="table.totalRows.value"
                 ></table-nav>
             </div>
         </div>
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { useStore } from 'vuex';
 import { Run } from '@/game/Run';
 import { Game } from '@/game/Game';
-import { defineComponent } from 'vue';
 import { Category } from '@/game/Category';
 import TableNav from '@/components/TableNav.vue';
-import AbstractTableVue from './AbstractTable.vue';
+import { ref, computed, reactive } from '@vue/reactivity';
+import { TableOptions, useTable } from '@/composables/useTable';
 
-export default defineComponent({
-    extends: AbstractTableVue,
-    components: { TableNav },
-    data() {
-        return {
-            selectedCategorySlug: '3lap',
-            rowsPerPage: 8,
-        };
-    },
+const game = computed<Game>(() => useStore().state.game);
 
-    computed: {
-        game(): Game {
-            return this.$store.state.game;
-        },
-
-        runs(): Run[] {
-            return this.activeRows;
-        },
-
-        rows(): Run[] {
-            return this.game.stats
-                .getMostContested()
-                .filter(
-                    (run) => run.category.slug === this.selectedCategorySlug,
-                );
-        },
-
-        selectedCategory(): Category {
-            return this.game.getCategory(this.selectedCategorySlug);
-        },
-    },
-
-    methods: {},
+const filterDropdowns = reactive({
+    categorySlug: '3lap',
 });
+
+const filters = reactive({
+    category: {
+        value: computed(() => filterDropdowns.categorySlug),
+        getFilterValue: (run: Run) => run.category.slug,
+    },
+});
+
+const rows: Run[] = game.value.stats.getMostContested();
+
+const options: TableOptions = {
+    rowsPerPage: ref('8'),
+};
+
+const selectedCategory = computed((): Category => {
+    return game.value.getCategory(filterDropdowns.categorySlug);
+});
+
+const table = useTable(rows, options, filters, filterDropdowns);
 </script>
 
 <style scoped>
