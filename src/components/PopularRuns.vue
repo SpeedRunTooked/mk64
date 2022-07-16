@@ -10,7 +10,6 @@
                         v-model="filterDropdowns.categorySlug"
                         @change="table.goToFirstPage()"
                     >
-                        <option value="" selected>All Categories</option>
                         <option
                             v-for="category in game.categories"
                             :key="category.slug"
@@ -78,7 +77,7 @@ import { TableOptions, useTable } from '@/composables/useTable';
 const game = computed<Game>(() => useStore().state.game);
 
 const filterDropdowns = reactive({
-    categorySlug: '',
+    categorySlug: '3lap',
 });
 
 const filters = reactive({

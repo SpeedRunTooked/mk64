@@ -19,30 +19,35 @@ export function useTable<T>(
     filters?: Filters,
     filterDropdowns?: FilterDropdowns,
 ) {
+    const currentRow = ref(0);
     const rowsPerPage = computed(() => Number(options.rowsPerPage.value));
-    const activeRows = computed((): T[] => {
-        let filteredRows: T[] = rows;
 
+    const filteredRows = computed(() => {
         if (filters) {
-            filteredRows = filterAny(rows, filters);
+            return filterAny(rows, filters);
         }
+        return rows;
+    });
+
+    const activeRows = computed((): T[] => {
+        let tempRows: T[] = filteredRows.value;
 
         if (options?.orderByKeyArray) {
             if (options?.orderByOrderArray) {
-                filteredRows = _.orderBy(
-                    filteredRows,
+                tempRows = _.orderBy(
+                    filteredRows.value,
                     options?.orderByKeyArray,
                     options?.orderByOrderArray,
                 );
             } else {
-                filteredRows = _.orderBy(
-                    filteredRows,
+                tempRows = _.orderBy(
+                    filteredRows.value,
                     options?.orderByKeyArray,
                 );
             }
         }
 
-        const sliced = filteredRows.slice(
+        const sliced = tempRows.slice(
             currentRow.value,
             currentRow.value + rowsPerPage.value,
         );
@@ -50,10 +55,8 @@ export function useTable<T>(
         return sliced;
     });
 
-    const currentRow = ref(0);
-
     const totalRows = computed((): number => {
-        return rows.length;
+        return filteredRows.value.length;
     });
 
     const firstRow = computed((): number => {
@@ -166,5 +169,7 @@ export function useTable<T>(
         setFilter,
         resetFilters,
         filterOn,
+        currentRow,
+        filteredRows,
     };
 }
