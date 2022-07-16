@@ -1,11 +1,13 @@
 import { OldRecordCategoryJSON } from 'FirebaseTypes';
 import _ from 'lodash';
+import { Category } from './Category';
 import { Entry } from './Entry';
 import { Game } from './Game';
 import { Run } from './Run';
 import { Subcategory } from './Subcategory';
 
 export interface MostPlayedSubcategory {
+    category: Category;
     subcategory: Subcategory;
     attempts: number;
 }
@@ -35,27 +37,20 @@ export class GameStats {
         );
     }
 
-    public getMostPlayedSubcategories(
-        categorySlug?: string,
-    ): MostPlayedSubcategory[] {
-        let runs = this.runs;
+    public getMostPlayedSubcategories(): MostPlayedSubcategory[] {
         const mostPlayedSubcategories: MostPlayedSubcategory[] = [];
 
-        if (categorySlug) {
-            runs = this.runs.filter(
-                (run) => run.category.slug === categorySlug,
-            );
-        }
-
-        for (const run of runs) {
+        for (const run of this.runs) {
             const mostPlayedEntry = mostPlayedSubcategories.find(
                 (mostPlayed) =>
-                    mostPlayed.subcategory.slug === run.subcategory.slug,
+                    mostPlayed.subcategory.slug === run.subcategory.slug &&
+                    mostPlayed.category.slug === run.category.slug,
             );
             if (mostPlayedEntry) {
                 mostPlayedEntry.attempts += run.attempts;
             } else {
                 mostPlayedSubcategories.push({
+                    category: run.category,
                     subcategory: run.subcategory,
                     attempts: run.attempts,
                 });
