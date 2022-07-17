@@ -31,7 +31,7 @@
                         @change="table.goToFirstPage()"
                     >
                         <option
-                            v-for="subcategory in getSubcategories()"
+                            v-for="subcategory in subcategories"
                             :key="subcategory.slug"
                             :value="subcategory.slug"
                         >
@@ -79,35 +79,24 @@
 
         <div class="row">
             <div class="col">
-                <table-nav
-                    :show-text-display="false"
-                    :nextPageExists="table.nextPageExists.value"
-                    :goToNextPage="table.goToNextPage"
-                    :previousPageExists="table.previousPageExists.value"
-                    :goToPreviousPage="table.goToPreviousPage"
-                    :goToLastPage="table.goToLastPage"
-                    :goToFirstPage="table.goToFirstPage"
-                    :firstRow="table.firstRow.value"
-                    :lastRow="table.lastRow.value"
-                    :totalRows="table.totalRows.value"
-                ></table-nav>
+                <table-nav :table="table" :hide-text-display="true"></table-nav>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import _ from 'lodash';
+import { useStore } from 'vuex';
 import { Game } from '@/game/Game';
+import { Time } from '@/game/Time';
+import { Entry } from '@/game/Entry';
 import { Category } from '@/game/Category';
 import { ref, reactive, computed } from 'vue';
+import { Subcategory } from '@/game/Subcategory';
 import TableNav from '@/components/TableNav.vue';
 import { OldRecordScoreJSON } from 'FirebaseTypes';
-import { Entry } from '@/game/Entry';
-import { Time } from '@/game/Time';
 import { TableOptions, useTable } from '@/composables/useTable';
-import { useStore } from 'vuex';
-import { Subcategory } from '@/game/Subcategory';
-import _ from 'lodash';
 
 export interface OldRecordRow {
     categorySlug: string;
@@ -153,26 +142,9 @@ const categories = computed(() =>
     _.orderBy(game.value.stats.getOldRecordCategories(), ['name']),
 );
 
-const buildOldRecordRows = (): OldRecordRow[] => {
-    const result: OldRecordRow[] = [];
-    for (const run of game.value.stats.runs) {
-        if (run.oldRecords) {
-            for (const oldRecord of run.oldRecords) {
-                result.push({
-                    categorySlug: run.category.slug,
-                    subcategorySlug: run.subcategory.slug,
-                    score: oldRecord.score,
-                    date: oldRecord.date,
-                });
-            }
-        }
-    }
-    return result;
-};
-
-const getSubcategories = (): Subcategory[] => {
+const subcategories = computed((): Subcategory[] => {
     return selectedCategory.value.subcategories;
-};
+});
 
 const rows = buildOldRecordRows();
 
@@ -199,6 +171,25 @@ const getTimeDifference = (oldRecord: OldRecordScoreJSON) => {
 };
 
 const table = useTable(rows, options, filters, filterDropdowns);
+
+// - - - Private functions - - - //
+
+function buildOldRecordRows(): OldRecordRow[] {
+    const result: OldRecordRow[] = [];
+    for (const run of game.value.stats.runs) {
+        if (run.oldRecords) {
+            for (const oldRecord of run.oldRecords) {
+                result.push({
+                    categorySlug: run.category.slug,
+                    subcategorySlug: run.subcategory.slug,
+                    score: oldRecord.score,
+                    date: oldRecord.date,
+                });
+            }
+        }
+    }
+    return result;
+}
 </script>
 
 <style scoped>

@@ -1,12 +1,11 @@
-import { useHelpers } from '@/composables/useHelpers';
+import _ from 'lodash';
+import { Run } from './Run';
+import { Game } from './Game';
+import { Entry } from './Entry';
+import { Category } from './Category';
+import { Subcategory } from './Subcategory';
 import { createArrayFromSet } from '@/helpers';
 import { OldRecordCategoryJSON } from 'FirebaseTypes';
-import _ from 'lodash';
-import { Category } from './Category';
-import { Entry } from './Entry';
-import { Game } from './Game';
-import { Run } from './Run';
-import { Subcategory } from './Subcategory';
 
 export interface MostPlayedSubcategory {
     category: Category;

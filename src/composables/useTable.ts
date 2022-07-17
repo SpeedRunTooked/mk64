@@ -143,12 +143,13 @@ export function useTable<T>(
         goToFirstPage();
     };
 
-    const filterOn = computed((): boolean => {
+    // TODO - Why does this not work as computed()?
+    const filterOn = (): boolean => {
         for (const key in filterDropdowns) {
-            if (filterDropdowns[key]) return true;
+            if (filterDropdowns[key] !== '') return true;
         }
         return false;
-    });
+    };
 
     return {
         rows,

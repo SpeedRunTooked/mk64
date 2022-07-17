@@ -6,8 +6,8 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="dropdowns.category"
-                    @change="goToFirstPage()"
+                    v-model="filterDropdowns.category"
+                    @change="table.goToFirstPage()"
                 >
                     <option value="">All Categories</option>
 
@@ -21,12 +21,12 @@
                 </select>
             </div>
 
-            <div v-if="dropdowns.category" class="col-3">
+            <div v-if="filterDropdowns.category" class="col-3">
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="dropdowns.subcategory"
-                    @change="goToFirstPage()"
+                    v-model="filterDropdowns.subcategory"
+                    @change="table.goToFirstPage()"
                 >
                     <option value="">All {{ subcategoryName }}s</option>
 
@@ -40,7 +40,7 @@
                 </select>
             </div>
 
-            <div v-if="!dropdowns.category" class="col-3">
+            <div v-if="!filterDropdowns.category" class="col-3">
                 <select
                     class="form-select"
                     aria-label="Default select example"
@@ -48,9 +48,10 @@
                 >
                     <option value="">
                         {{
-                            dropdowns.subcategory
-                                ? game.getSubcategory(dropdowns.subcategory)
-                                      ?.name
+                            filterDropdowns.subcategory
+                                ? game.getSubcategory(
+                                      filterDropdowns.subcategory,
+                                  )?.name
                                 : ''
                         }}
                     </option>
@@ -61,8 +62,8 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="dropdowns.user"
-                    @change="goToFirstPage()"
+                    v-model="filterDropdowns.user"
+                    @change="table.goToFirstPage()"
                     v-if="game.users.length > 0"
                 >
                     <option value="">All Players</option>
@@ -81,8 +82,8 @@
                 <select
                     class="form-select"
                     aria-label="Default select example"
-                    v-model="dropdowns.entryStatus"
-                    @change="goToFirstPage()"
+                    v-model="filterDropdowns.entryStatus"
+                    @change="table.goToFirstPage()"
                 >
                     <option value="" selected>All Times</option>
                     <option value="current">Current Records</option>
@@ -91,9 +92,9 @@
             </div>
             <div class="col-1 red">
                 <span
-                    v-if="filterOn"
-                    @click="resetFilters()"
-                    class="material-symbols-outlined clickable"
+                    v-if="table.filterOn()"
+                    @click="table.resetFilters()"
+                    class="material-symbols-outlined clickable filter-icon"
                 >
                     filter_list_off
                 </span>
@@ -113,7 +114,7 @@
         </div>
         <div
             class="row entry-row"
-            v-for="entry in activeRows"
+            v-for="entry in table.activeRows.value"
             :key="entry.id"
             :class="{ highlight: entry.isCurrentRecord }"
             :title="entry.note"
@@ -123,18 +124,18 @@
             </div>
             <div
                 class="col-2 clickable"
-                @click="setFilter('category', entry.category.slug)"
+                @click="table.setFilter('category', entry.category.slug)"
             >
                 {{ entry.category.name }}
             </div>
             <div
                 class="col-3 clickable"
-                @click="setFilter('subcategory', entry.subcategory.slug)"
+                @click="table.setFilter('subcategory', entry.subcategory.slug)"
             >
                 {{ entry.subcategory.name }}
             </div>
             <div class="col-1">
-                <div v-if="linkPresent(entry.link)">
+                <div v-if="helpers.linkPresent(entry.link)">
                     <a :href="entry.link" target="_blank">{{
                         entry.formattedScore
                     }}</a>
@@ -148,7 +149,7 @@
                     <div class="col-9">
                         <span
                             class="clickable"
-                            @click="setFilter('user', entry.userId)"
+                            @click="table.setFilter('user', entry.userId)"
                         >
                             {{ game.getUser(entry.userId).displayName }}</span
                         >
@@ -175,7 +176,11 @@
                 </div>
             </div>
         </div>
-        <div v-for="index in emptyRows" :key="index" class="row entry-row">
+        <div
+            v-for="index in table.emptyRows.value"
+            :key="index"
+            class="row entry-row"
+        >
             <div class="col-2">-</div>
             <div class="col-2">-</div>
             <div class="col-3">-</div>
@@ -189,135 +194,102 @@
         </div>
         <div class="row">
             <div class="col">
-                <table-nav
-                    :nextPageExists="nextPageExists"
-                    :goToNextPage="goToNextPage"
-                    :previousPageExists="previousPageExists"
-                    :goToPreviousPage="goToPreviousPage"
-                    :goToLastPage="goToLastPage"
-                    :goToFirstPage="goToFirstPage"
-                    :firstRow="firstRow"
-                    :lastRow="lastRow"
-                    :totalRows="totalRows"
-                ></table-nav>
+                <table-nav :table="table"></table-nav>
             </div>
         </div>
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import _ from 'lodash';
 import moment from 'moment';
-import { Entry } from '@/game/Entry';
+import { useStore } from 'vuex';
 import { Game } from '@/game/Game';
+import { Entry } from '@/game/Entry';
 import TableNav from '@/components/TableNav.vue';
 import { Subcategory } from '@/game/Subcategory';
-import { defineComponent } from 'vue';
-import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
-import { TableOptions, useTable } from '@/composables/useTable';
 import { useHelpers } from '@/composables/useHelpers';
-import { useStore } from 'vuex';
 import { computed, reactive, ref } from '@vue/reactivity';
+import { TableOptions, useTable } from '@/composables/useTable';
+import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
 
-export default defineComponent({
-    components: { TableNav, SubmitDataModal },
+const game = computed((): Game => useStore().state.game);
+const rows = game.value.entries;
 
-    setup() {
-        const game = computed((): Game => useStore().state.game);
-        const rows = game.value.entries;
+let formData = {};
 
-        let formData = {};
+const filterDropdowns = reactive({
+    category: '',
+    subcategory: '',
+    user: '',
+    entryStatus: '',
+});
 
-        const filterDropdowns = reactive({
-            category: '',
-            subcategory: '',
-            user: '',
-            entryStatus: '',
-        });
-
-        const filters = reactive({
-            category: {
-                value: computed(() => filterDropdowns.category),
-                getFilterValue: (entry: Entry) => entry.category.slug,
-            },
-            subcategory: {
-                value: computed(() => filterDropdowns.subcategory),
-                getFilterValue: (entry: Entry) => entry.subcategory.slug,
-            },
-            userId: {
-                value: computed(() => filterDropdowns.user),
-                getFilterValue: (entry: Entry) => entry.userId,
-            },
-            isCurrentRecord: {
-                value: computed(
-                    () => filterDropdowns.entryStatus === 'current',
-                ),
-                getFilterValue: (entry: Entry) => entry.isCurrentRecord,
-            },
-            isRecordImprovement: {
-                value: computed(
-                    () => filterDropdowns.entryStatus === 'improvements',
-                ),
-                getFilterValue: (entry: Entry) => entry.isRecordImprovement,
-            },
-        });
-
-        const tableOptions: TableOptions = {
-            rowsPerPage: ref('10'),
-            orderByKeyArray: ['created'],
-            orderByOrderArray: ['desc'],
-        };
-
-        const subcategoryFilterSet = computed((): Subcategory[] => {
-            const subcategorySet = game.value.getCategory(
-                filterDropdowns.category,
-            ).subcategories;
-            return _.orderBy(subcategorySet, ['displayOrder']);
-        });
-
-        const subcategoryName = computed((): string => {
-            if (filterDropdowns.category) {
-                return game.value.getSubcategoryDisplayName(
-                    filterDropdowns.category,
-                );
-            }
-            return 'Subcategory';
-        });
-
-        const setFormData = (entry: Entry): void => {
-            formData = entry;
-        };
-
-        const downloadFile = (entry: Entry): void => {
-            downloadItem(getFileDownloadLink(entry));
-        };
-
-        const getFileDownloadLink = (entry: Entry): string => {
-            return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/${process.env.VUE_APP_DATABASE}%2Fmk64%2Ffiles%2F${entry.id}%2FMARIOKART64_Cont_1.mpk?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
-        };
-
-        const downloadItem = async (url: string) => {
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'MARIOKART64_Cont_1.mpk');
-            document.body.appendChild(link);
-            link.click();
-        };
-
-        return {
-            game,
-            moment,
-            formData,
-            subcategoryFilterSet,
-            subcategoryName,
-            setFormData,
-            downloadFile,
-            dropdowns: filterDropdowns,
-            ...useTable(rows, tableOptions, filters, filterDropdowns),
-            ...useHelpers(),
-        };
+const filters = reactive({
+    category: {
+        value: computed(() => filterDropdowns.category),
+        getFilterValue: (entry: Entry) => entry.category.slug,
+    },
+    subcategory: {
+        value: computed(() => filterDropdowns.subcategory),
+        getFilterValue: (entry: Entry) => entry.subcategory.slug,
+    },
+    userId: {
+        value: computed(() => filterDropdowns.user),
+        getFilterValue: (entry: Entry) => entry.userId,
+    },
+    isCurrentRecord: {
+        value: computed(() => filterDropdowns.entryStatus === 'current'),
+        getFilterValue: (entry: Entry) => entry.isCurrentRecord,
+    },
+    isRecordImprovement: {
+        value: computed(() => filterDropdowns.entryStatus === 'improvements'),
+        getFilterValue: (entry: Entry) => entry.isRecordImprovement,
     },
 });
+
+const tableOptions: TableOptions = {
+    rowsPerPage: ref('10'),
+    orderByKeyArray: ['created'],
+    orderByOrderArray: ['desc'],
+};
+
+const subcategoryFilterSet = computed((): Subcategory[] => {
+    const subcategorySet = game.value.getCategory(
+        filterDropdowns.category,
+    ).subcategories;
+    return _.orderBy(subcategorySet, ['displayOrder']);
+});
+
+const subcategoryName = computed((): string => {
+    if (filterDropdowns.category) {
+        return game.value.getSubcategoryDisplayName(filterDropdowns.category);
+    }
+    return 'Subcategory';
+});
+
+const setFormData = (entry: Entry): void => {
+    formData = entry;
+};
+
+const downloadFile = (entry: Entry): void => {
+    downloadItem(getFileDownloadLink(entry));
+};
+
+const getFileDownloadLink = (entry: Entry): string => {
+    return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/${process.env.VUE_APP_DATABASE}%2Fmk64%2Ffiles%2F${entry.id}%2FMARIOKART64_Cont_1.mpk?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
+};
+
+const downloadItem = async (url: string) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'MARIOKART64_Cont_1.mpk');
+    document.body.appendChild(link);
+    link.click();
+};
+
+const table = useTable(rows, tableOptions, filters, filterDropdowns);
+const helpers = useHelpers();
 </script>
 
 <style scoped>
@@ -359,6 +331,10 @@ select {
 
 .material-symbols-outlined {
     margin: -5px 0;
+}
+
+.filter-icon {
+    margin: 3px 0 0 0;
 }
 
 .btn-light {

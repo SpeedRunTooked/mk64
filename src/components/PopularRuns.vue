@@ -48,17 +48,9 @@
         <div class="row">
             <div class="col">
                 <table-nav
-                    :show-text-display="false"
-                    :show-fast-arrows="false"
-                    :nextPageExists="table.nextPageExists.value"
-                    :goToNextPage="table.goToNextPage"
-                    :previousPageExists="table.previousPageExists.value"
-                    :goToPreviousPage="table.goToPreviousPage"
-                    :goToLastPage="table.goToLastPage"
-                    :goToFirstPage="table.goToFirstPage"
-                    :firstRow="table.firstRow.value"
-                    :lastRow="table.lastRow.value"
-                    :totalRows="table.totalRows.value"
+                    :table="table"
+                    :hide-text-display="true"
+                    :hide-fast-arrows="true"
                 ></table-nav>
             </div>
         </div>
