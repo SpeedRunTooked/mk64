@@ -1,3 +1,5 @@
+import { useHelpers } from '@/composables/useHelpers';
+import { createArrayFromSet } from '@/helpers';
 import { OldRecordCategoryJSON } from 'FirebaseTypes';
 import _ from 'lodash';
 import { Category } from './Category';
@@ -14,7 +16,6 @@ export interface MostPlayedSubcategory {
 
 export class GameStats {
     public runs: Run[] = [];
-    public oldRecords: OldRecordCategoryJSON[] = [];
 
     constructor(
         game: Game,
@@ -111,7 +112,7 @@ export class GameStats {
             }
         }
         this.addRecordsToRuns(game);
-        this.oldRecords = oldRecords;
+        this.addOldRecordToRuns(oldRecords);
     }
 
     private addRecordsToRuns(game: Game): void {
@@ -121,5 +122,29 @@ export class GameStats {
                 run.subcategory.slug,
             );
         }
+    }
+
+    private addOldRecordToRuns(oldRecords: OldRecordCategoryJSON[]): void {
+        for (const run of this.runs) {
+            const oldRecordCategory = oldRecords.find(
+                (oldRecord) => oldRecord.categorySlug === run.category.slug,
+            );
+            const oldRecordSubcategory =
+                oldRecordCategory?.subcategoryRecords.find(
+                    (oldRecord) =>
+                        oldRecord.subcategorySlug === run.subcategory.slug,
+                );
+            run.oldRecords = oldRecordSubcategory?.records;
+        }
+    }
+
+    public getOldRecordCategories(): Category[] {
+        const categoriesSet = new Set<Category>();
+        for (const run of this.runs) {
+            if (run.oldRecords) {
+                categoriesSet.add(run.category);
+            }
+        }
+        return createArrayFromSet(categoriesSet);
     }
 }

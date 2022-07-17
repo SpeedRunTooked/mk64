@@ -1,3 +1,4 @@
+import { OldRecordScoreJSON } from 'FirebaseTypes';
 import { Category } from './Category';
 import { Entry } from './Entry';
 import { Subcategory } from './Subcategory';
@@ -8,6 +9,7 @@ export class Run {
     public attempts = 1;
     public timesContested = 0;
     public record: Entry | null = null;
+    public oldRecords: OldRecordScoreJSON[] | undefined;
 
     constructor(public category: Category, public subcategory: Subcategory) {}
 
