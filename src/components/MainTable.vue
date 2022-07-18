@@ -216,7 +216,7 @@ import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
 const game = computed((): Game => useStore().state.game);
 const rows = game.value.entries;
 
-let formData = {};
+let formData = ref({});
 
 const filterDropdowns = reactive({
     category: '',
@@ -269,7 +269,7 @@ const subcategoryName = computed((): string => {
 });
 
 const setFormData = (entry: Entry): void => {
-    formData = entry;
+    formData.value = entry;
 };
 
 const downloadFile = (entry: Entry): void => {

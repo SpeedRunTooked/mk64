@@ -52,11 +52,15 @@
                     <div class="spacer"></div>
                     <div class="row">
                         <div class="col-4 left-col">Link:</div>
-                        <div class="col-8 right-col">{{ formData.link }}</div>
+                        <div class="col-8 right-col">
+                            {{ formData.link }}
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-4 left-col">Notes:</div>
-                        <div class="col-8 right-col">{{ formData.notes }}</div>
+                        <div class="col-8 right-col">
+                            {{ formData.notes }}
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -100,83 +104,74 @@
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import qs from 'qs';
 import axios from 'axios';
+import { useStore } from 'vuex';
+import { defineProps } from 'vue';
 import { Time } from '@/game/Time';
 import { Game } from '@/game/Game';
-import { defineComponent } from 'vue';
+import { toRefs, ref, computed } from '@vue/reactivity';
+import { useCookies } from '@vueuse/integrations/useCookies';
 
-export default defineComponent({
-    props: {
-        formData: {
-            type: Object,
-            required: true,
-        },
-    },
-
-    data() {
-        return {
-            success: false,
-            uploading: false,
-            Time,
-        };
-    },
-
-    computed: {
-        game(): Game {
-            return this.$store.state.game;
-        },
-    },
-
-    methods: {
-        async submitForm() {
-            this.uploading = true;
-            const data = qs.stringify({
-                gameId: 'mk64',
-                userId: this.formData.userId,
-                subcategorySlug: this.formData.subcategorySlug,
-                score: this.Time.elapsedTimeToMs(
-                    `${this.formData.time.min || 0}'${
-                        this.formData.time.sec || 0
-                    }"${this.formData.time.ms || 0}'`,
-                ),
-                link: this.formData.link,
-                note: this.formData.notes,
-                categorySlug: this.formData.categorySlug,
-            });
-
-            const config = {
-                method: 'post',
-                url: process.env.VUE_APP_ADD_URL,
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                data: data,
-            };
-
-            try {
-                await axios(config as Record<string, unknown>);
-                console.log('Time submitted successfully!');
-                this.uploading = false;
-                this.success = true;
-                this.$cookies.set('userId', this.formData.userId);
-                this.$cookies.set(
-                    'subcategorySlug',
-                    this.formData.subcategorySlug,
-                );
-                this.$cookies.set('categorySlug', this.formData.categorySlug);
-
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            } catch (error) {
-                this.uploading = false;
-                console.log(error);
-            }
-        },
+const props = defineProps({
+    formData: {
+        required: true,
+        type: Object,
     },
 });
+
+const { formData } = toRefs(props);
+
+const success = ref(false);
+const uploading = ref(false);
+
+const game = computed<Game>(() => useStore().state.game);
+
+const cookies = useCookies();
+
+const submitForm = async () => {
+    uploading.value = true;
+    const data = qs.stringify({
+        gameId: 'mk64',
+        userId: formData.value.userId,
+        subcategorySlug: formData.value.subcategorySlug,
+        score: Time.elapsedTimeToMs(
+            `${formData.value.time.min || 0}'${formData.value.time.sec || 0}"${
+                formData.value.time.ms || 0
+            }'`,
+        ),
+        link: formData.value.link,
+        note: formData.value.notes,
+        categorySlug: formData.value.categorySlug,
+    });
+
+    const config = {
+        method: 'post',
+        url: process.env.VUE_APP_ADD_URL,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        data: data,
+    };
+
+    try {
+        await axios(config as Record<string, unknown>);
+        console.log('Time submitted successfully!');
+        uploading.value = false;
+        success.value = true;
+        cookies.set('userId', formData.value.userId);
+        cookies.set('subcategorySlug', formData.value.subcategorySlug);
+        cookies.set('categorySlug', formData.value.categorySlug);
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+    } catch (error) {
+        uploading.value = false;
+        console.log(error);
+    }
+};
 </script>
 
 <style scoped>

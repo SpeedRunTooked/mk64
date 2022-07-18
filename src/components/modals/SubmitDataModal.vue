@@ -19,29 +19,31 @@
                         aria-label="Close"
                     ></button>
                 </div>
-                <div class="modal-body" v-if="data">
+                <div class="modal-body" v-if="formData">
                     <div class="row mb-2">
                         <div class="col-4 left-col">Player:</div>
                         <div class="col-8 right-col">
-                            {{ game.getUser(data.userId)?.displayName || '' }}
+                            {{
+                                game.getUser(formData.userId)?.displayName || ''
+                            }}
                         </div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-4 left-col">Category:</div>
                         <div class="col-8 right-col">
-                            {{ data.category?.name || '' }}
+                            {{ formData.category?.name || '' }}
                         </div>
                     </div>
                     <div class="row mb-2">
                         <div class="col-4 left-col">Subcategory:</div>
                         <div class="col-8 right-col">
-                            {{ data.subcategory?.name || '' }}
+                            {{ formData.subcategory?.name || '' }}
                         </div>
                     </div>
                     <div class="row mb-4">
                         <div class="col-4 left-col">Time:</div>
                         <div class="col-8 right-col">
-                            {{ data.formattedScore || '' }}
+                            {{ formData.formattedScore || '' }}
                         </div>
                     </div>
                     <div class="row">
@@ -52,7 +54,6 @@
                                 type="file"
                                 ref="file"
                                 id="formFile"
-                                @change="onFileChange"
                             />
                         </div>
                         <div class="col-2"></div>
@@ -100,77 +101,61 @@
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import axios from 'axios';
-import { Time } from '@/game/Time';
+import { useStore } from 'vuex';
+import { ref, toRefs } from 'vue';
+import { defineProps } from 'vue';
 import { Game } from '@/game/Game';
-import { defineComponent } from 'vue';
-import { Entry } from '@/game/Entry';
+import { computed } from '@vue/reactivity';
 
-export default defineComponent({
-    props: {
-        formData: {
-            type: Object,
-            required: true,
-        },
-    },
-
-    data() {
-        return {
-            success: false,
-            uploading: false,
-            Time,
-            file: '',
-        };
-    },
-
-    computed: {
-        game(): Game {
-            return this.$store.state.game;
-        },
-        data(): Entry {
-            return this.formData as Entry;
-        },
-    },
-
-    methods: {
-        onFileChange(): void {
-            // eslint-disable-next-line
-            this.file = (this.$refs as any).file.files[0];
-        },
-        async submitForm() {
-            this.uploading = true;
-            const formData = new FormData();
-
-            formData.append('file', this.file);
-            formData.append('entryId', this.data.id);
-            formData.append('gameId', 'mk64');
-
-            const config = {
-                method: 'post',
-                url: process.env.VUE_APP_UPLOAD_URL,
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                data: formData,
-            };
-
-            try {
-                await axios(config as Record<string, unknown>);
-                console.log('File submitted successfully!');
-                this.uploading = false;
-                this.success = true;
-
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            } catch (error) {
-                this.uploading = false;
-                console.log(error);
-            }
-        },
+const props = defineProps({
+    formData: {
+        required: true,
+        type: Object,
     },
 });
+
+const { formData } = toRefs(props);
+
+const success = ref(false);
+const uploading = ref(false);
+const file = ref(null);
+
+const game = computed<Game>(() => useStore().state.game);
+
+const submitForm = async () => {
+    uploading.value = true;
+    const formDataSubmit = new FormData();
+
+    // eslint-disable-next-line
+    formDataSubmit.append('file', (file?.value as any).files[0]);
+    formDataSubmit.append('entryId', formData.value.id);
+    formDataSubmit.append('gameId', 'mk64');
+
+    const config = {
+        method: 'post',
+        url: process.env.VUE_APP_UPLOAD_URL,
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+        data: formDataSubmit,
+    };
+
+    try {
+        await axios(config as Record<string, unknown>);
+        console.log('File submitted successfully!');
+        uploading.value = false;
+        success.value = true;
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+    } catch (error) {
+        uploading.value = false;
+        console.log(error);
+    }
+};
 </script>
 
 <style scoped>
