@@ -33,21 +33,11 @@ export default createStore({
     },
     actions: {
         async getApiData({ commit }) {
-            const gameAxiosRequest = axios.get(
-                process.env.VUE_APP_ROOT_URL + '.json',
-            );
-            const usersAxiosRequest = axios.get(
-                process.env.VUE_APP_GET_USERS_URL,
-            );
-
-            const [gameAxiosResponse, usersAxiosResponse] = await Promise.all([
-                gameAxiosRequest,
-                usersAxiosRequest,
-            ]);
+            const response = await axios.get(process.env.VUE_APP_ROOT_URL);
 
             commit('SAVE_API_DATA', {
-                gameData: gameAxiosResponse.data,
-                userData: usersAxiosResponse.data,
+                gameData: response.data.game,
+                userData: response.data.users,
             });
         },
     },
