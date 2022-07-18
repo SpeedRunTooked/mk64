@@ -10,7 +10,6 @@
         "deploy": "npm run build && firebase deploy"
     },
     "dependencies": {
-        "@vueuse/core": "^8.9.4",
         "@vueuse/integrations": "^8.9.4",
         "axios": "^0.27.2",
         "core-js": "^3.8.3",
@@ -18,7 +17,6 @@
         "moment": "^2.29.3",
         "universal-cookie": "^4.0.4",
         "vue": "^3.2.13",
-        "vue-axios": "^3.4.1",
         "vue-router": "^4.0.3",
         "vuex": "^4.0.0"
     },

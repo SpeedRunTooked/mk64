@@ -182,16 +182,18 @@ const formData = reactive({
 });
 
 const categoryAndSubcategorySelected = computed((): boolean => {
-    return formData.subcategorySlug && formData.categorySlug;
+    return formData.subcategorySlug !== '' && formData.categorySlug !== '';
 });
 
 const categoryAndSubcategoryAndUserSelected = computed((): boolean => {
-    return categoryAndSubcategorySelected && formData.userId;
+    return (
+        categoryAndSubcategorySelected.value === true && formData.userId !== ''
+    );
 });
 
 const ready = computed((): boolean => {
     return (
-        categoryAndSubcategoryAndUserSelected &&
+        categoryAndSubcategoryAndUserSelected.value === true &&
         formData.time.sec !== '' &&
         String(formData.time.ms).length === 2 &&
         formData.link !== ''
