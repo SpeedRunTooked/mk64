@@ -7,10 +7,9 @@
                     <select
                         class="form-select"
                         aria-label="Default select example"
-                        v-model="selectedCategorySlug"
-                        @change="goToFirstPage()"
+                        v-model="filterDropdowns.categorySlug"
+                        @change="table.goToFirstPage()"
                     >
-                        <option value="" selected>All Categories</option>
                         <option
                             v-for="category in game.categories"
                             :key="category.slug"
@@ -29,8 +28,8 @@
             <div class="col category-header">Uploaded Runs</div>
         </div>
         <div
-            v-for="run in activeRows"
-            :key="run.subcategory.slug"
+            v-for="run in table.activeRows.value"
+            :key="run.category.slug + ':' + run.subcategory.slug"
             class="row subcategory-row"
         >
             <div class="col">{{ run.subcategory.name }}</div>
@@ -38,61 +37,61 @@
                 {{ run.attempts }}
             </div>
         </div>
-        <div v-for="row in emptyRows" :key="row.id" class="row subcategory-row">
+        <div
+            v-for="index in table.emptyRows.value"
+            :key="index"
+            class="row subcategory-row"
+        >
             <div class="col">-</div>
             <div class="col">-</div>
         </div>
         <div class="row">
             <div class="col">
                 <table-nav
-                    :show-text-display="false"
-                    :show-fast-arrows="false"
+                    :table="table"
+                    :hide-text-display="true"
+                    :hide-fast-arrows="true"
                 ></table-nav>
             </div>
         </div>
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { useStore } from 'vuex';
 import { Game } from '@/game/Game';
 import { Category } from '@/game/Category';
-import { defineComponent } from '@vue/composition-api';
-import AbstractTableVue from './AbstractTable.vue';
-import { MostPlayedSubcategory } from '@/game/GameStats';
 import TableNav from '@/components/TableNav.vue';
+import { MostPlayedSubcategory } from '@/game/GameStats';
+import { reactive, ref, computed } from '@vue/reactivity';
+import { TableOptions, useTable } from '@/composables/useTable';
 
-export default defineComponent({
-    extends: AbstractTableVue,
-    components: { TableNav },
-    data() {
-        return {
-            selectedCategorySlug: '',
-            rowsPerPage: 8,
-        };
-    },
+const game = computed<Game>(() => useStore().state.game);
 
-    computed: {
-        game(): Game {
-            return this.$store.state.game;
-        },
-
-        activeRows(): MostPlayedSubcategory[] {
-            return this.getActiveRows();
-        },
-
-        rows(): MostPlayedSubcategory[] {
-            return this.game.stats.getMostPlayedSubcategories(
-                this.selectedCategorySlug,
-            );
-        },
-
-        selectedCategory(): Category {
-            return this.game.getCategory(this.selectedCategorySlug);
-        },
-    },
-
-    methods: {},
+const filterDropdowns = reactive({
+    categorySlug: '3lap',
 });
+
+const filters = reactive({
+    category: {
+        value: computed(() => filterDropdowns.categorySlug),
+        getFilterValue: (mostPlayed: MostPlayedSubcategory) =>
+            mostPlayed.category.slug,
+    },
+});
+
+const rows: MostPlayedSubcategory[] =
+    game.value.stats.getMostPlayedSubcategories();
+
+const options: TableOptions = {
+    rowsPerPage: ref('8'),
+};
+
+const selectedCategory = computed((): Category => {
+    return game.value.getCategory(filterDropdowns.categorySlug);
+});
+
+const table = useTable(rows, options, filters, filterDropdowns);
 </script>
 
 <style scoped>

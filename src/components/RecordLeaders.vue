@@ -33,32 +33,19 @@
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import _ from 'lodash';
 import { User } from '@/game/User';
 import { Game } from '@/game/Game';
-import { defineComponent } from '@vue/runtime-core';
+import { useStore } from 'vuex';
+import { computed } from '@vue/reactivity';
 
-export default defineComponent({
-    computed: {
-        game(): Game {
-            return this.$store.state.game;
-        },
+const game = computed<Game>(() => useStore().state.game);
 
-        users(): User[] {
-            const first = _.orderBy(
-                this.game.users,
-                ['currentRecordTotal'],
-                ['desc'],
-            );
-            const second = _.orderBy(
-                first,
-                ['recordImprovementTotal'],
-                ['desc'],
-            );
-            return second;
-        },
-    },
+const users = computed((): User[] => {
+    const first = _.orderBy(game.value.users, ['currentRecordTotal'], ['desc']);
+    const second = _.orderBy(first, ['recordImprovementTotal'], ['desc']);
+    return second;
 });
 </script>
 

@@ -1,18 +1,20 @@
-import { OldRecordCategoryJSON } from 'FirebaseTypes';
 import _ from 'lodash';
-import { Entry } from './Entry';
-import { Game } from './Game';
 import { Run } from './Run';
+import { Game } from './Game';
+import { Entry } from './Entry';
+import { Category } from './Category';
 import { Subcategory } from './Subcategory';
+import { createArrayFromSet } from '@/helpers';
+import { OldRecordCategoryJSON } from 'FirebaseTypes';
 
 export interface MostPlayedSubcategory {
+    category: Category;
     subcategory: Subcategory;
     attempts: number;
 }
 
 export class GameStats {
     public runs: Run[] = [];
-    public oldRecords: OldRecordCategoryJSON[] = [];
 
     constructor(
         game: Game,
@@ -35,27 +37,20 @@ export class GameStats {
         );
     }
 
-    public getMostPlayedSubcategories(
-        categorySlug?: string,
-    ): MostPlayedSubcategory[] {
-        let runs = this.runs;
+    public getMostPlayedSubcategories(): MostPlayedSubcategory[] {
         const mostPlayedSubcategories: MostPlayedSubcategory[] = [];
 
-        if (categorySlug) {
-            runs = this.runs.filter(
-                (run) => run.category.slug === categorySlug,
-            );
-        }
-
-        for (const run of runs) {
+        for (const run of this.runs) {
             const mostPlayedEntry = mostPlayedSubcategories.find(
                 (mostPlayed) =>
-                    mostPlayed.subcategory.slug === run.subcategory.slug,
+                    mostPlayed.subcategory.slug === run.subcategory.slug &&
+                    mostPlayed.category.slug === run.category.slug,
             );
             if (mostPlayedEntry) {
                 mostPlayedEntry.attempts += run.attempts;
             } else {
                 mostPlayedSubcategories.push({
+                    category: run.category,
                     subcategory: run.subcategory,
                     attempts: run.attempts,
                 });
@@ -116,7 +111,7 @@ export class GameStats {
             }
         }
         this.addRecordsToRuns(game);
-        this.oldRecords = oldRecords;
+        this.addOldRecordToRuns(oldRecords);
     }
 
     private addRecordsToRuns(game: Game): void {
@@ -126,5 +121,29 @@ export class GameStats {
                 run.subcategory.slug,
             );
         }
+    }
+
+    private addOldRecordToRuns(oldRecords: OldRecordCategoryJSON[]): void {
+        for (const run of this.runs) {
+            const oldRecordCategory = oldRecords.find(
+                (oldRecord) => oldRecord.categorySlug === run.category.slug,
+            );
+            const oldRecordSubcategory =
+                oldRecordCategory?.subcategoryRecords.find(
+                    (oldRecord) =>
+                        oldRecord.subcategorySlug === run.subcategory.slug,
+                );
+            run.oldRecords = oldRecordSubcategory?.records;
+        }
+    }
+
+    public getOldRecordCategories(): Category[] {
+        const categoriesSet = new Set<Category>();
+        for (const run of this.runs) {
+            if (run.oldRecords) {
+                categoriesSet.add(run.category);
+            }
+        }
+        return createArrayFromSet(categoriesSet);
     }
 }

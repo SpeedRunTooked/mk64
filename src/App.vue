@@ -25,10 +25,12 @@
 </template>
 
 <script lang="ts">
-import FrontPageView from '@/views/FrontPageView.vue';
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent } from 'vue';
 import { useStore } from 'vuex';
 import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { computed } from '@vue/reactivity';
+import FrontPageView from './views/FrontPageView.vue';
 
 export default defineComponent({
     components: { FrontPageView },
@@ -37,11 +39,11 @@ export default defineComponent({
             const store = useStore();
             await store.dispatch('getApiData');
         });
+        const route = useRoute();
+        const gameId = computed(() => route.params.gameId);
+        return { route, gameId };
     },
     computed: {
-        gameId(): string {
-            return this.$route.params.gameId;
-        },
         dataLoaded(): boolean {
             return this.$store.state.dataLoaded;
         },
@@ -176,5 +178,10 @@ nav {
 
 .filter-row {
     margin-bottom: 20px;
+}
+
+.material-symbols-outlined {
+    max-width: 24px;
+    overflow: hidden;
 }
 </style>
