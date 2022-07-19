@@ -154,7 +154,7 @@
                             {{ game.getUser(entry.userId).displayName }}</span
                         >
                     </div>
-                    <div v-if="!entry.fileAvailable" class="col-3">
+                    <div v-if="!entry.fileName" class="col-3">
                         <span
                             class="material-symbols-outlined clickable add-button"
                             data-bs-toggle="modal"
@@ -206,6 +206,7 @@ import moment from 'moment';
 import { useStore } from 'vuex';
 import { Game } from '@/game/Game';
 import { Entry } from '@/game/Entry';
+import { useRoute } from 'vue-router';
 import TableNav from '@/components/TableNav.vue';
 import { Subcategory } from '@/game/Subcategory';
 import { useHelpers } from '@/composables/useHelpers';
@@ -215,6 +216,9 @@ import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
 
 const game = computed((): Game => useStore().state.game);
 const rows = game.value.entries;
+
+const route = useRoute();
+const gameId = route.params.gameId;
 
 let formData = ref({});
 
@@ -277,10 +281,11 @@ const downloadFile = (entry: Entry): void => {
 };
 
 const getFileDownloadLink = (entry: Entry): string => {
-    return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/${process.env.VUE_APP_DATABASE}%2Fmk64%2Ffiles%2F${entry.id}%2FMARIOKART64_Cont_1.mpk?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
+    return `${process.env.VUE_STORAGE_URL}/${process.env.VUE_APP_DATABASE}%2F${gameId}%2Ffiles%2F${entry.id}%2F${entry.fileName}?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
 };
 
 const downloadItem = async (url: string) => {
+    console.log(url);
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', 'MARIOKART64_Cont_1.mpk');

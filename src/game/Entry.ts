@@ -13,7 +13,7 @@ export abstract class Entry {
     public isRecordImprovement: boolean;
     public score: number;
     public formattedScore: string;
-    public fileAvailable: boolean;
+    public fileName: string | undefined;
 
     constructor(
         public id: string,
@@ -37,7 +37,7 @@ export abstract class Entry {
 
         this.note = entryJson.note;
 
-        this.fileAvailable = entryJson.fileAvailable || false;
+        this.fileName = entryJson.fileName || undefined;
 
         this.score = Number(entryJson.score);
 

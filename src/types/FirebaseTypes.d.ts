@@ -66,7 +66,7 @@ declare module 'FirebaseTypes' {
         subcategorySlug: string;
         categorySlug: string;
         userId: string;
-        fileAvailable?: boolean;
+        fileName?: string;
     }
 
     interface OldRecordCategoryJSON {
