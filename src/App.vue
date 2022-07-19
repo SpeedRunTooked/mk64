@@ -1,62 +1,18 @@
 <template>
-    <div v-if="$route.params.gameId" class="container">
-        <div class="row">
-            <div class="col">
-                <img class="logo-img" :src="getLogoUrl()" />
-            </div>
-        </div>
-        <!-- <div class="row"><div class="col page-title">MK64</div></div> -->
-        <nav>
-            <router-link :to="getRoute('summary')">Summary</router-link> |
-            <router-link :to="getRoute('leaderboard')">Leaderboard</router-link>
-            | <router-link :to="getRoute('stats')">Stats</router-link> |
-            <router-link :to="getRoute('data')">Data</router-link> |
-            <router-link :to="getRoute('submit')">Submit</router-link>
-        </nav>
-        <router-view v-if="dataLoaded" />
-
-        <div v-else class="row">
-            <div class="col">Loading data...</div>
-        </div>
+    <div v-if="route.params.gameId" class="container">
+        <game-loader :gameId="route.params.gameId"></game-loader>
     </div>
     <div v-else class="container">
         <front-page-view></front-page-view>
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { useStore } from 'vuex';
-import { onMounted } from 'vue';
+<script setup lang="ts">
 import { useRoute } from 'vue-router';
-import { computed } from '@vue/reactivity';
 import FrontPageView from './views/FrontPageView.vue';
+import GameLoader from './components/GameLoader.vue';
 
-export default defineComponent({
-    components: { FrontPageView },
-    setup() {
-        onMounted(async () => {
-            const store = useStore();
-            await store.dispatch('getApiData');
-        });
-        const route = useRoute();
-        const gameId = computed(() => route.params.gameId);
-        return { route, gameId };
-    },
-    computed: {
-        dataLoaded(): boolean {
-            return this.$store.state.dataLoaded;
-        },
-    },
-    methods: {
-        getRoute(path: string) {
-            return `/${this.gameId}/${path}`;
-        },
-        getLogoUrl() {
-            return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/${this.gameId}%2Fgame-logo.jpg?alt=media`;
-        },
-    },
-});
+const route = useRoute();
 </script>
 
 <style lang="scss">

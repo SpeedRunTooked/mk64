@@ -206,7 +206,6 @@ import moment from 'moment';
 import { useStore } from 'vuex';
 import { Game } from '@/game/Game';
 import { Entry } from '@/game/Entry';
-import { useRoute } from 'vue-router';
 import TableNav from '@/components/TableNav.vue';
 import { Subcategory } from '@/game/Subcategory';
 import { useHelpers } from '@/composables/useHelpers';
@@ -215,10 +214,8 @@ import { TableOptions, useTable } from '@/composables/useTable';
 import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
 
 const game = computed((): Game => useStore().state.game);
+const gameId = computed((): string => useStore().state.gameId);
 const rows = game.value.entries;
-
-const route = useRoute();
-const gameId = route.params.gameId;
 
 let formData = ref({});
 
@@ -285,7 +282,6 @@ const getFileDownloadLink = (entry: Entry): string => {
 };
 
 const downloadItem = async (url: string) => {
-    console.log(url);
     const link = document.createElement('a');
     link.href = url;
     link.setAttribute('download', 'MARIOKART64_Cont_1.mpk');
