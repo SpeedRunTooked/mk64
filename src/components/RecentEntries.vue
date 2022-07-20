@@ -69,6 +69,11 @@
                 </div>
             </div>
         </div>
+        <div v-else>
+            <div class="row subcategory-row">
+                <div class="col">None yet!</div>
+            </div>
+        </div>
     </div>
 </template>
 

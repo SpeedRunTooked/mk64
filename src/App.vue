@@ -125,7 +125,8 @@ nav {
 }
 
 .logo-img {
-    width: 100px;
+    max-height: 100px;
+    margin-top: 10px;
 }
 
 .page-wrapper {
