@@ -13,6 +13,8 @@ export default createStore({
                     discordChannelTest: '',
                     gameName: '',
                     gameSlug: '',
+                    allowFileUploads: false,
+                    showOldRecords: false,
                 },
                 gamedata: {
                     subcategoryGroups: [],

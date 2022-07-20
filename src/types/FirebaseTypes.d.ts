@@ -52,6 +52,8 @@ declare module 'FirebaseTypes' {
         discordChannelTest: string;
         gameName: string;
         gameSlug: string;
+        showOldRecords: boolean;
+        allowFileUploads: boolean;
     }
 
     interface EntriesJSON {

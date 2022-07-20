@@ -1,6 +1,6 @@
 <template>
     <div class="page-wrapper">
-        <div class="row">
+        <div class="row" v-if="game.config.showOldRecords">
             <div class="col"><world-records></world-records></div>
         </div>
         <div class="spacer"></div>
@@ -12,16 +12,15 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import PopularRuns from '@/components/PopularRuns.vue';
 import ContestedRuns from '@/components/ContestedRuns.vue';
 import WorldRecords from '@/components/WorldRecords.vue';
+import { useStore } from 'vuex';
+import { Game } from '@/game/Game';
+import { computed } from '@vue/reactivity';
 
-export default defineComponent({
-    name: 'StatsPageView',
-    components: { PopularRuns, ContestedRuns, WorldRecords },
-});
+const game = computed((): Game => useStore().state.game);
 </script>
 
 <style>

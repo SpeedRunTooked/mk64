@@ -37,42 +37,47 @@
             <div class="col-2 category-header">Time</div>
             <div class="col-2 category-header">Player</div>
         </div>
-        <div v-if="activeRows.length > 0">
-            <div
-                class="row subcategory-row"
-                v-for="entry in activeRows"
-                :key="entry.id"
-                :class="{ highlight: entry.isCurrentRecord }"
-            >
-                <div class="col-3">
-                    {{ moment(entry.created).fromNow() }}
-                </div>
 
-                <div class="col-2">
-                    {{ entry.category.name }}
+        <div
+            class="row subcategory-row"
+            v-for="entry in activeRows"
+            :key="entry.id"
+            :class="{ highlight: entry.isCurrentRecord }"
+        >
+            <div class="col-3">
+                {{ moment(entry.created).fromNow() }}
+            </div>
+
+            <div class="col-2">
+                {{ entry.category.name }}
+            </div>
+            <div class="col-3">
+                {{ entry.subcategory.name }}
+            </div>
+            <div class="col-2" :title="entry.note || 'Empty Note'">
+                <div v-if="linkPresent(entry.link)">
+                    <a :href="entry.link" target="_blank">{{
+                        entry.formattedScore
+                    }}</a>
                 </div>
-                <div class="col-3">
-                    {{ entry.subcategory.name }}
+                <div v-else>
+                    {{ entry.formattedScore }}
                 </div>
-                <div class="col-2" :title="entry.note || 'Empty Note'">
-                    <div v-if="linkPresent(entry.link)">
-                        <a :href="entry.link" target="_blank">{{
-                            entry.formattedScore
-                        }}</a>
-                    </div>
-                    <div v-else>
-                        {{ entry.formattedScore }}
-                    </div>
-                </div>
-                <div class="col-2">
-                    {{ game.getUser(entry.userId)?.displayName }}
-                </div>
+            </div>
+            <div class="col-2">
+                {{ game.getUser(entry.userId)?.displayName }}
             </div>
         </div>
-        <div v-else>
-            <div class="row subcategory-row">
-                <div class="col">None yet!</div>
-            </div>
+        <div
+            v-for="index in emptyRows"
+            :key="index"
+            class="row subcategory-row"
+        >
+            <div class="col-3">-</div>
+            <div class="col-2">-</div>
+            <div class="col-3">-</div>
+            <div class="col-2">-</div>
+            <div class="col-2">-</div>
         </div>
     </div>
 </template>
@@ -112,7 +117,12 @@ const options: TableOptions = {
 
 const rows = game.value.getRecentEntries();
 
-const { activeRows } = useTable(rows, options, filters, filterDropdowns);
+const { activeRows, emptyRows } = useTable(
+    rows,
+    options,
+    filters,
+    filterDropdowns,
+);
 const { linkPresent } = useHelpers();
 </script>
 
