@@ -37,34 +37,36 @@
             <div class="col-2 category-header">Time</div>
             <div class="col-2 category-header">Player</div>
         </div>
-        <div
-            class="row subcategory-row"
-            v-for="entry in activeRows"
-            :key="entry.id"
-            :class="{ highlight: entry.isCurrentRecord }"
-        >
-            <div class="col-3">
-                {{ moment(entry.created).fromNow() }}
-            </div>
+        <div v-if="activeRows.length > 0">
+            <div
+                class="row subcategory-row"
+                v-for="entry in activeRows"
+                :key="entry.id"
+                :class="{ highlight: entry.isCurrentRecord }"
+            >
+                <div class="col-3">
+                    {{ moment(entry.created).fromNow() }}
+                </div>
 
-            <div class="col-2">
-                {{ entry.category.name }}
-            </div>
-            <div class="col-3">
-                {{ entry.subcategory.name }}
-            </div>
-            <div class="col-2" :title="entry.note || 'Empty Note'">
-                <div v-if="linkPresent(entry.link)">
-                    <a :href="entry.link" target="_blank">{{
-                        entry.formattedScore
-                    }}</a>
+                <div class="col-2">
+                    {{ entry.category.name }}
                 </div>
-                <div v-else>
-                    {{ entry.formattedScore }}
+                <div class="col-3">
+                    {{ entry.subcategory.name }}
                 </div>
-            </div>
-            <div class="col-2">
-                {{ game.getUser(entry.userId)?.displayName }}
+                <div class="col-2" :title="entry.note || 'Empty Note'">
+                    <div v-if="linkPresent(entry.link)">
+                        <a :href="entry.link" target="_blank">{{
+                            entry.formattedScore
+                        }}</a>
+                    </div>
+                    <div v-else>
+                        {{ entry.formattedScore }}
+                    </div>
+                </div>
+                <div class="col-2">
+                    {{ game.getUser(entry.userId)?.displayName }}
+                </div>
             </div>
         </div>
     </div>

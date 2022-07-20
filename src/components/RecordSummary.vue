@@ -1,5 +1,5 @@
 <template>
-    <div v-if="selectedCategory" class="section-container mx-auto">
+    <div v-if="game.categories.length > 0" class="section-container mx-auto">
         <div class="row section-header">
             <div class="col">Record Summary</div>
             <div class="col">
@@ -27,19 +27,20 @@
             <div class="col category-header">Time</div>
             <div class="col category-header">Player</div>
         </div>
-        <div
-            v-for="summary in rows"
-            :key="summary.slug"
-            class="row subcategory-row"
-            :class="summary.endOfGroup ? 'end-row' : ''"
-            :v-if="summary"
-        >
-            <div class="col">{{ summary.name }}</div>
-            <div class="col">
-                {{ getRecord(summary)?.formattedScore }}
-            </div>
-            <div class="col">
-                {{ game.getUser(getRecord(summary)?.userId || '').displayName }}
+        <div v-if="rows.length > 0">
+            <div
+                v-for="summary in rows"
+                :key="summary.slug"
+                class="row subcategory-row"
+                :class="summary.endOfGroup ? 'end-row' : ''"
+            >
+                <div class="col">{{ summary.name }}</div>
+                <div class="col">
+                    {{ getRecord(summary)?.formattedScore || 'None yet!' }}
+                </div>
+                <div class="col">
+                    {{ getRecordHolder(summary)?.displayName || 'None yet!' }}
+                </div>
             </div>
         </div>
     </div>
@@ -53,6 +54,7 @@ import { Subcategory } from '@/game/Subcategory';
 import { computed } from '@vue/reactivity';
 import { useStore } from 'vuex';
 import { reactive } from 'vue';
+import { User } from '@/game/User';
 
 interface RecordSummaryRow extends Subcategory {
     endOfGroup: boolean;
@@ -61,7 +63,7 @@ interface RecordSummaryRow extends Subcategory {
 const game = computed<Game>(() => useStore().state.game);
 
 const dropdowns = reactive({
-    selectedCategorySlug: '3lap',
+    selectedCategorySlug: game.value.categories[0].slug,
 });
 
 const selectedCategory = computed(() =>
@@ -76,11 +78,23 @@ const getRecord = (subcategory: Subcategory): Entry | undefined => {
     return record;
 };
 
+const getRecordHolder = (summary: RecordSummaryRow): User | undefined => {
+    const record = getRecord(summary);
+    if (!record) return undefined;
+    return game.value.getUser(record.userId);
+};
+
 const buildRecordSummaryRows = (): RecordSummaryRow[] => {
     const result: RecordSummaryRow[] = [];
-    const orderedJson = _.orderBy(selectedCategory.value.subcategories, [
-        'displayOrder',
-    ]);
+    let orderedJson: Subcategory[] = [];
+    if (selectedCategory.value.displayOrder) {
+        orderedJson = _.orderBy(selectedCategory.value.subcategories, [
+            'displayOrder',
+        ]);
+    } else {
+        orderedJson = _.orderBy(selectedCategory.value.subcategories, ['name']);
+    }
+
     for (const jsonRow of orderedJson) {
         result.push(jsonRow as RecordSummaryRow);
     }

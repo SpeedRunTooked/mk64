@@ -42,7 +42,7 @@ const dataLoaded = computed((): boolean => {
 });
 
 const getLogoUrl = () => {
-    return `${process.env.VUE_APP_STORAGE_URL}/${props.gameId}%2Fgame-logo.jpg?alt=media`;
+    return `${process.env.VUE_APP_STORAGE_URL}/${process.env.VUE_APP_DATABASE}%2F${props.gameId}%2Fgame-logo.png?alt=media`;
 };
 </script>
 
