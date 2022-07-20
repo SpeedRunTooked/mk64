@@ -41,7 +41,7 @@ export default createStore({
         },
         async getApiData({ commit }) {
             const response = await axios.get(
-                `${process.env.VUE_APP_ROOT_URL}?gameId=${this.state.gameId}`,
+                `${process.env.VUE_APP_ROOT_URL}/gameData?gameId=${this.state.gameId}`,
             );
 
             commit('SAVE_API_DATA', {

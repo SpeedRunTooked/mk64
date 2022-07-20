@@ -13,7 +13,7 @@ const routes: Array<RouteRecordRaw> = [
         component: FrontPageView,
     },
     {
-        path: '/:gameId/summary',
+        path: '/:gameId',
         name: 'summary',
         component: SummaryPageView,
     },

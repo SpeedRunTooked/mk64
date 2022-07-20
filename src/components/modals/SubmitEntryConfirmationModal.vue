@@ -126,6 +126,7 @@ const { formData } = toRefs(props);
 const success = ref(false);
 const uploading = ref(false);
 
+const gameId = computed<string>(() => useStore().state.gameId);
 const game = computed<Game>(() => useStore().state.game);
 
 const cookies = useCookies();
@@ -133,7 +134,7 @@ const cookies = useCookies();
 const submitForm = async () => {
     uploading.value = true;
     const data = qs.stringify({
-        gameId: 'mk64',
+        gameId: gameId.value,
         userId: formData.value.userId,
         subcategorySlug: formData.value.subcategorySlug,
         score: Time.elapsedTimeToMs(
@@ -148,7 +149,7 @@ const submitForm = async () => {
 
     const config = {
         method: 'post',
-        url: process.env.VUE_APP_ADD_URL,
+        url: process.env.VUE_APP_ROOT_URL + '/addEntry',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },

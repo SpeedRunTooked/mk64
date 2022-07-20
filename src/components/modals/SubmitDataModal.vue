@@ -122,6 +122,7 @@ const success = ref(false);
 const uploading = ref(false);
 const file = ref(null);
 
+const gameId = computed<string>(() => useStore().state.gameId);
 const game = computed<Game>(() => useStore().state.game);
 
 const submitForm = async () => {
@@ -131,11 +132,11 @@ const submitForm = async () => {
     // eslint-disable-next-line
     formDataSubmit.append('file', (file?.value as any).files[0]);
     formDataSubmit.append('entryId', formData.value.id);
-    formDataSubmit.append('gameId', 'mk64');
+    formDataSubmit.append('gameId', gameId.value);
 
     const config = {
         method: 'post',
-        url: process.env.VUE_APP_UPLOAD_URL,
+        url: process.env.VUE_APP_ROOT_URL + '/addFile',
         headers: {
             'Content-Type': 'multipart/form-data',
         },

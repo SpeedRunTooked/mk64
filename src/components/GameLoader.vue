@@ -7,7 +7,7 @@
         </div>
 
         <nav>
-            <router-link :to="getRoute('summary')">Summary</router-link> |
+            <router-link :to="getRoute('')">Summary</router-link> |
             <router-link :to="getRoute('leaderboard')">Leaderboard</router-link>
             | <router-link :to="getRoute('stats')">Stats</router-link> |
             <router-link :to="getRoute('data')">Data</router-link> |
@@ -42,7 +42,7 @@ const dataLoaded = computed((): boolean => {
 });
 
 const getLogoUrl = () => {
-    return `https://firebasestorage.googleapis.com/v0/b/mk64-ad77f.appspot.com/o/${props.gameId}%2Fgame-logo.jpg?alt=media`;
+    return `${process.env.VUE_APP_STORAGE_URL}/${props.gameId}%2Fgame-logo.jpg?alt=media`;
 };
 </script>
 
