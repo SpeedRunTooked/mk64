@@ -66,7 +66,8 @@
             <div v-if="showRecordTimes" class="mb-4">
                 <div class="row reference-row">
                     <div class="col">
-                        Record Time:<br />
+                        Record
+                        {{ helpers.getEntryTypeText(selectedCategory) }}:<br />
                         {{ currentRecord?.formattedScore || 'None yet!' }}
                         <br />
                         <span class="small">{{
@@ -79,7 +80,9 @@
                         v-if="categoryAndSubcategoryAndUserSelected"
                         class="col"
                     >
-                        Your Best Time: {{ userRecord }}
+                        Your Best
+                        {{ helpers.getEntryTypeText(selectedCategory) }}:
+                        {{ userRecord }}
                     </div>
                 </div>
             </div>
@@ -177,10 +180,12 @@ import { Subcategory } from '@/game/Subcategory';
 import { reactive, computed } from '@vue/reactivity';
 import { useCookies } from '@vueuse/integrations/useCookies';
 import SubmitEntryConfirmationModal from '../modals/SubmitEntryConfirmationModal.vue';
+import { useHelpers } from '@/composables/useHelpers';
 
 const game = computed<Game>(() => useStore().state.game);
 
 const cookies = useCookies();
+const helpers = useHelpers();
 
 const formData = reactive({
     userId: cookies.get('userId') || '',

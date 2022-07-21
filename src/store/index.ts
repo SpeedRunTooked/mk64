@@ -15,6 +15,7 @@ export default createStore({
                     gameSlug: '',
                     allowFileUploads: false,
                     showOldRecords: false,
+                    defaultEntryType: 'score',
                 },
                 gamedata: {
                     subcategoryGroups: [],

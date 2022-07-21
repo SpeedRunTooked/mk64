@@ -9,7 +9,7 @@
                         aria-label="Default select example"
                         v-model="filterDropdowns.entryStatus"
                     >
-                        <option value="" selected>All Times</option>
+                        <option value="" selected>All Entries</option>
                         <option value="current">Current Records</option>
                         <option value="improvements">
                             Record Improvements
@@ -34,7 +34,9 @@
             <div class="col-3 category-header">Date</div>
             <div class="col-2 category-header">Category</div>
             <div class="col-3 category-header">Subcategory</div>
-            <div class="col-2 category-header">Time</div>
+            <div class="col-2 category-header">
+                {{ helpers.getGameDefaultEntryTypeText(game) }}
+            </div>
             <div class="col-2 category-header">Player</div>
         </div>
 
@@ -93,6 +95,8 @@ import { useHelpers } from '@/composables/useHelpers';
 import { Entry } from '@/game/Entry';
 
 const game = computed<Game>(() => useStore().state.game);
+
+const helpers = useHelpers();
 
 const filterDropdowns = reactive({
     entryStatus: '',

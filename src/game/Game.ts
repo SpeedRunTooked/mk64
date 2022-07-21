@@ -24,7 +24,7 @@ export class Game {
         this.buildUsers(usersJson);
         this.buildEntries(gameJson);
 
-        this.buildCurrentRecords();
+        this.assignRecords();
         this.buildUserStats();
         this.stats = new GameStats(
             this,
@@ -112,7 +112,7 @@ export class Game {
         }
     }
 
-    private buildCurrentRecords(): void {
+    private assignRecords(): void {
         for (const category of this.categories) {
             for (const subcategory of category.subcategories) {
                 let filteredEntries = this.entries.filter(

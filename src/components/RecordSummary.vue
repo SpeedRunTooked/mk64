@@ -24,7 +24,9 @@
             <div class="col category-header">
                 {{ selectedCategory.subcategoryName }}
             </div>
-            <div class="col category-header">Time</div>
+            <div class="col category-header">
+                {{ helpers.getEntryTypeText(selectedCategory) }}
+            </div>
             <div class="col category-header">Player</div>
         </div>
         <div v-if="rows.length > 0">
@@ -55,12 +57,15 @@ import { computed } from '@vue/reactivity';
 import { useStore } from 'vuex';
 import { reactive } from 'vue';
 import { User } from '@/game/User';
+import { useHelpers } from '@/composables/useHelpers';
 
 interface RecordSummaryRow extends Subcategory {
     endOfGroup: boolean;
 }
 
 const game = computed<Game>(() => useStore().state.game);
+
+const helpers = useHelpers();
 
 const dropdowns = reactive({
     selectedCategorySlug: game.value.categories[0].slug,

@@ -54,6 +54,7 @@ declare module 'FirebaseTypes' {
         gameSlug: string;
         showOldRecords: boolean;
         allowFileUploads: boolean;
+        defaultEntryType: string;
     }
 
     interface EntriesJSON {

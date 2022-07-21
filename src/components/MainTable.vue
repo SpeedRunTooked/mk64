@@ -85,7 +85,7 @@
                     v-model="filterDropdowns.entryStatus"
                     @change="table.goToFirstPage()"
                 >
-                    <option value="" selected>All Times</option>
+                    <option value="" selected>All Entries</option>
                     <option value="current">Current Records</option>
                     <option value="improvements">Record Improvements</option>
                 </select>
@@ -104,7 +104,9 @@
             <div class="col-2">Recorded</div>
             <div class="col-2">Category</div>
             <div class="col-3">{{ subcategoryName }}</div>
-            <div class="col">Time</div>
+            <div class="col">
+                {{ helpers.getGameDefaultEntryTypeText(game) }}
+            </div>
 
             <div class="col">Player</div>
 
