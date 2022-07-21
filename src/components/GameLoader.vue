@@ -26,13 +26,16 @@
 import { computed } from '@vue/reactivity';
 import { onMounted, defineProps } from 'vue';
 import { useStore } from 'vuex';
+import { useTitle } from '@vueuse/core';
 
 const store = useStore();
 const props = defineProps(['gameId']);
+const game = computed(() => store.state.game);
 
 onMounted(async () => {
     await store.dispatch('updateGameId', { gameId: props.gameId });
     await store.dispatch('getApiData');
+    useTitle(game.value.config.gameName);
 });
 
 const getRoute = (path: string) => {
