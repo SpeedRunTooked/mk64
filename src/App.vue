@@ -26,7 +26,6 @@ const route = useRoute();
 }
 
 a {
-    font-weight: bold;
     color: #2c3e50;
 
     &.router-link-exact-active {
@@ -37,25 +36,28 @@ a {
 }
 
 nav {
+    a {
+        font-weight: bold;
+    }
     padding: 30px;
 
-    a:link {
-        text-decoration: none;
-    }
-
-    a:visited {
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-
-    a:active {
-        text-decoration: none;
-    }
-
     font-size: 18px;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:active {
+    text-decoration: none;
 }
 
 .section-header {

@@ -41,12 +41,18 @@
                             }}
                         </div>
                     </div>
-                    <div class="row">
+                    <div v-if="entryType === 'timeMs'" class="row">
                         <div class="col-4 left-col">Time:</div>
                         <div class="col-8 right-col">
                             {{ formData.time.min || '0' }}'{{
                                 Time.zeroPad(formData.time.sec, 2) || '00'
                             }}"{{ formData.time.ms || '00' }}
+                        </div>
+                    </div>
+                    <div v-if="entryType === 'score'" class="row">
+                        <div class="col-4 left-col">Score:</div>
+                        <div class="col-8 right-col">
+                            {{ Score.addCommas(formData.score) }}
                         </div>
                     </div>
                     <div class="spacer"></div>
@@ -113,11 +119,16 @@ import { Time } from '@/game/Time';
 import { Game } from '@/game/Game';
 import { toRefs, ref, computed } from '@vue/reactivity';
 import { useCookies } from '@vueuse/integrations/useCookies';
+import { Score } from '@/game/Score';
 
 const props = defineProps({
     formData: {
         required: true,
         type: Object,
+    },
+    entryType: {
+        required: true,
+        type: String,
     },
 });
 
@@ -125,27 +136,41 @@ const { formData } = toRefs(props);
 
 const success = ref(false);
 const uploading = ref(false);
+const store = useStore();
 
-const gameId = computed<string>(() => useStore().state.gameId);
-const game = computed<Game>(() => useStore().state.game);
+const gameId = computed<string>(() => store.state.gameId);
+const game = computed<Game>(() => store.state.game);
 
 const cookies = useCookies();
 
+const selectedCategory = computed(() =>
+    game.value.getCategory(formData.value.categorySlug),
+);
+
+const score = computed(() => {
+    return selectedCategory.value.entryType === 'timeMs'
+        ? Time.elapsedTimeToMs(
+              `${formData.value.time.min || 0}'${
+                  formData.value.time.sec || 0
+              }"${formData.value.time.ms || 0}'`,
+          )
+        : formData.value.score;
+});
+
 const submitForm = async () => {
+    console.log(score.value);
     uploading.value = true;
     const data = qs.stringify({
         gameId: gameId.value,
         userId: formData.value.userId,
         subcategorySlug: formData.value.subcategorySlug,
-        score: Time.elapsedTimeToMs(
-            `${formData.value.time.min || 0}'${formData.value.time.sec || 0}"${
-                formData.value.time.ms || 0
-            }'`,
-        ),
+        score: score.value,
         link: formData.value.link,
         note: formData.value.notes,
         categorySlug: formData.value.categorySlug,
     });
+
+    console.log(data);
 
     const config = {
         method: 'post',

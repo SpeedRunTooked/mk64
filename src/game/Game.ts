@@ -6,6 +6,7 @@ import { DEFAULT_SUBCATEGORY_JSON, Subcategory } from './Subcategory';
 import { GameStats } from './GameStats';
 import { Entry } from './Entry';
 import { Time } from './Time';
+import { Score } from './Score';
 
 export class Game {
     public entries: Entry[] = [];
@@ -24,7 +25,6 @@ export class Game {
         this.buildEntries(gameJson);
 
         this.buildCurrentRecords();
-        this.buildRecordImprovements();
         this.buildUserStats();
         this.stats = new GameStats(
             this,
@@ -60,6 +60,9 @@ export class Game {
 
     public getRecord(categorySlug: string, subcategorySlug: string): Entry {
         const entries = this.getEntries(categorySlug, subcategorySlug);
+        if (this.getCategory(categorySlug).entryType === 'score') {
+            return _.orderBy(entries, ['score'], ['desc'])[0];
+        }
         return _.orderBy(entries, ['score'], ['asc'])[0];
     }
 
@@ -101,34 +104,67 @@ export class Game {
                     new Time(entryId, entryJson, entryJson.userId, this),
                 );
             }
-        }
-    }
-
-    private buildCurrentRecords(): void {
-        const sortedEntries = _.orderBy(this.entries, ['score'], ['asc']);
-        const recordArr: string[] = [];
-        for (const entry of sortedEntries) {
-            if (recordArr.indexOf(entry.runSlug) === -1) {
-                entry.isCurrentRecord = true;
-                recordArr.push(entry.runSlug);
+            if (category.entryType === 'score') {
+                this.entries.push(
+                    new Score(entryId, entryJson, entryJson.userId, this),
+                );
             }
         }
     }
 
-    private buildRecordImprovements(): void {
-        const sortedEntries = _.orderBy(this.entries, ['created'], ['asc']);
+    private buildCurrentRecords(): void {
+        for (const category of this.categories) {
+            for (const subcategory of category.subcategories) {
+                let filteredEntries = this.entries.filter(
+                    (entry) =>
+                        entry.category.slug === category.slug &&
+                        entry.subcategory.slug === subcategory.slug,
+                );
+                if (category.entryType === 'score') {
+                    filteredEntries = _.orderBy(
+                        filteredEntries,
+                        ['score'],
+                        ['desc'],
+                    );
+                } else {
+                    filteredEntries = _.orderBy(
+                        filteredEntries,
+                        ['score'],
+                        ['asc'],
+                    );
+                }
+                filteredEntries[0].isCurrentRecord = true;
+                this.buildRecordImprovements(
+                    filteredEntries,
+                    category.entryType,
+                );
+            }
+        }
+    }
 
-        // Build a record map that keeps track of each category-subcategory combination
-        const recordMap: { [key: string]: number } = {};
+    private buildRecordImprovements(
+        filteredEntryList: Entry[],
+        entryType: string,
+    ): void {
+        const sortedEntryList = _.orderBy(
+            filteredEntryList,
+            ['created'],
+            ['asc'],
+        );
 
-        for (const time of sortedEntries) {
-            if (!recordMap[time.runSlug]) {
-                time.isRecordImprovement = true;
-                recordMap[time.runSlug] = time.score;
-            } else {
-                if (recordMap[time.runSlug] > time.score) {
+        let bestScore = 0;
+        let bestTime = 999999999999999;
+
+        for (const time of sortedEntryList) {
+            if (entryType === 'score') {
+                if (time.score > bestScore) {
                     time.isRecordImprovement = true;
-                    recordMap[time.runSlug] = time.score;
+                    bestScore = time.score;
+                }
+            } else {
+                if (time.score < bestTime) {
+                    time.isRecordImprovement = true;
+                    bestTime = time.score;
                 }
             }
         }

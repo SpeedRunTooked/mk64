@@ -1,7 +1,8 @@
 <template>
     <div>
         <SubmitEntryConfirmationModal
-            :formData="formData"
+            :form-data="formData"
+            :entry-type="entryType"
         ></SubmitEntryConfirmationModal>
         <form>
             <div class="mb-4">
@@ -69,8 +70,9 @@
                         {{ currentRecord?.formattedScore || 'None yet!' }}
                         <br />
                         <span class="small">{{
-                            game.getUser(currentRecord?.userId || '')
-                                .displayName
+                            currentRecord
+                                ? game.getUser(currentRecord.userId).displayName
+                                : ''
                         }}</span>
                     </div>
                     <div
@@ -82,11 +84,23 @@
                 </div>
             </div>
             <div class="mb-5">
-                <div class="row">
+                <div v-show="entryType === 'score'" class="row">
+                    <div class="col">
+                        <label for="score" class="form-label">Score</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="score"
+                            v-model="formData.score"
+                            placeholder="0"
+                        />
+                    </div>
+                </div>
+                <div v-show="entryType === 'timeMs'" class="row">
                     <div class="col">
                         <label for="link" class="form-label">Minutes</label>
                         <input
-                            type="text"
+                            type="number"
                             class="form-control"
                             id="mins"
                             v-model="formData.time.min"
@@ -96,7 +110,7 @@
                     <div class="col">
                         <label for="secs" class="form-label">Seconds</label>
                         <input
-                            type="text"
+                            type="number"
                             class="form-control"
                             id="secs"
                             v-model="formData.time.sec"
@@ -106,7 +120,7 @@
                     <div class="col">
                         <label for="ms" class="form-label">Centiseconds</label>
                         <input
-                            type="text"
+                            type="number"
                             class="form-control"
                             id="ms"
                             v-model="formData.time.ms"
@@ -179,7 +193,14 @@ const formData = reactive({
     },
     link: '',
     notes: '',
+    score: '',
 });
+
+const selectedCategory = computed((): Category => {
+    return game.value.getCategory(formData.categorySlug);
+});
+
+const entryType = computed(() => selectedCategory.value.entryType);
 
 const categoryAndSubcategorySelected = computed((): boolean => {
     return formData.subcategorySlug !== '' && formData.categorySlug !== '';
@@ -191,12 +212,23 @@ const categoryAndSubcategoryAndUserSelected = computed((): boolean => {
     );
 });
 
+const scoreValid = computed((): boolean => {
+    if (entryType.value === 'timeMs') {
+        return (
+            formData.time.sec !== '' && String(formData.time.ms).length === 2
+        );
+    }
+
+    if (entryType.value === 'score') {
+        return formData.score !== '';
+    }
+    return false;
+});
+
 const ready = computed((): boolean => {
     return (
         categoryAndSubcategoryAndUserSelected.value === true &&
-        formData.time.sec !== '' &&
-        String(formData.time.ms).length === 2 &&
-        formData.link !== ''
+        scoreValid.value === true
     );
 });
 
@@ -204,10 +236,6 @@ const showSubcategories = computed((): boolean => {
     return formData.categorySlug && game.value.categories.length > 0
         ? true
         : false;
-});
-
-const selectedCategory = computed((): Category => {
-    return game.value.getCategory(formData.categorySlug);
 });
 
 const subcategoryList = computed((): Subcategory[] => {

@@ -104,13 +104,11 @@
             <div class="col-2">Recorded</div>
             <div class="col-2">Category</div>
             <div class="col-3">{{ subcategoryName }}</div>
-            <div class="col-1">Time</div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-9">Player</div>
-                    <div class="col-3">Ghost</div>
-                </div>
-            </div>
+            <div class="col">Time</div>
+
+            <div class="col">Player</div>
+
+            <div v-if="game.config.allowFileUploads" class="col">Ghost</div>
         </div>
         <div
             class="row entry-row"
@@ -134,7 +132,7 @@
             >
                 {{ entry.subcategory.name }}
             </div>
-            <div class="col-1">
+            <div class="col">
                 <div v-if="helpers.linkPresent(entry.link)">
                     <a :href="entry.link" target="_blank">{{
                         entry.formattedScore
@@ -144,36 +142,40 @@
                     {{ entry.formattedScore }}
                 </div>
             </div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-9">
-                        <span
-                            class="clickable"
-                            @click="table.setFilter('user', entry.userId)"
-                        >
-                            {{ game.getUser(entry.userId).displayName }}</span
-                        >
-                    </div>
-                    <div v-if="!entry.fileName" class="col-3">
-                        <span
-                            class="material-symbols-outlined clickable add-button"
-                            data-bs-toggle="modal"
-                            data-bs-target="#submit-data-modal"
-                            @click="setFormData(entry)"
-                        >
-                            add
-                        </span>
-                    </div>
 
-                    <div v-else class="col-3">
-                        <span
-                            class="material-symbols-outlined clickable"
-                            @click="downloadFile(entry)"
-                        >
-                            file_download
-                        </span>
-                    </div>
-                </div>
+            <div class="col">
+                <span
+                    class="clickable"
+                    @click="table.setFilter('user', entry.userId)"
+                >
+                    {{ game.getUser(entry.userId).displayName }}</span
+                >
+            </div>
+
+            <div
+                v-if="!entry.fileName && game.config.allowFileUploads"
+                class="col"
+            >
+                <span
+                    class="material-symbols-outlined clickable add-button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#submit-data-modal"
+                    @click="setFormData(entry)"
+                >
+                    add
+                </span>
+            </div>
+
+            <div
+                v-if="entry.fileName && game.config.allowFileUploads"
+                class="col"
+            >
+                <span
+                    class="material-symbols-outlined clickable"
+                    @click="downloadFile(entry)"
+                >
+                    file_download
+                </span>
             </div>
         </div>
         <div
@@ -184,13 +186,9 @@
             <div class="col-2">-</div>
             <div class="col-2">-</div>
             <div class="col-3">-</div>
-            <div class="col-1">-</div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-9">-</div>
-                    <div class="col-3">-</div>
-                </div>
-            </div>
+            <div class="col">-</div>
+            <div class="col">-</div>
+            <div v-if="game.config.allowFileUploads" class="col">-</div>
         </div>
         <div class="row">
             <div class="col">

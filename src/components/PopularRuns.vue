@@ -69,7 +69,7 @@ import { TableOptions, useTable } from '@/composables/useTable';
 const game = computed<Game>(() => useStore().state.game);
 
 const filterDropdowns = reactive({
-    categorySlug: '3lap',
+    categorySlug: game.value.categories[0].slug,
 });
 
 const filters = reactive({

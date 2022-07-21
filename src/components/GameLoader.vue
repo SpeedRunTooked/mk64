@@ -2,7 +2,9 @@
     <div>
         <div class="row">
             <div class="col">
-                <img class="logo-img" :src="getLogoUrl()" />
+                <a href="/">
+                    <img class="logo-img" :src="getLogoUrl()" />
+                </a>
             </div>
         </div>
 
