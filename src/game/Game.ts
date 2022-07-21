@@ -133,11 +133,13 @@ export class Game {
                         ['asc'],
                     );
                 }
-                filteredEntries[0].isCurrentRecord = true;
-                this.buildRecordImprovements(
-                    filteredEntries,
-                    category.entryType,
-                );
+                if (filteredEntries.length > 0) {
+                    filteredEntries[0].isCurrentRecord = true;
+                    this.buildRecordImprovements(
+                        filteredEntries,
+                        category.entryType,
+                    );
+                }
             }
         }
     }
