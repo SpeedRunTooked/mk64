@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import moment from 'moment';
-import { Game } from '@/game/Game';
 import { reactive } from 'vue';
 import { useStore } from 'vuex';
-import { ref, computed } from '@vue/reactivity';
-import { TableOptions, useTable } from '@/composables/useTable';
-import { useHelpers } from '@/composables/useHelpers';
+import { Game } from '@/game/Game';
 import { Entry } from '@/game/Entry';
+import { ref, computed } from '@vue/reactivity';
+import { useHelpers } from '@/composables/useHelpers';
+import { TableOptions, useTable } from '@/composables/useTable';
 
 const game = computed<Game>(() => useStore().state.game);
 

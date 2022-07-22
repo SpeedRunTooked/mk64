@@ -6,9 +6,9 @@ import { Entry } from '@/game/Entry';
 import { Category } from '@/game/Category';
 import { Subcategory } from '@/game/Subcategory';
 import { reactive, computed } from '@vue/reactivity';
+import { useHelpers } from '@/composables/useHelpers';
 import { useCookies } from '@vueuse/integrations/useCookies';
 import SubmitEntryConfirmationModal from '../modals/SubmitEntryConfirmationModal.vue';
-import { useHelpers } from '@/composables/useHelpers';
 
 const game = computed<Game>(() => useStore().state.game);
 

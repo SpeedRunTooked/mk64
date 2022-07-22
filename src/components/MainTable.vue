@@ -1,3 +1,103 @@
+<script setup lang="ts">
+import _ from 'lodash';
+import moment from 'moment';
+import { useStore } from 'vuex';
+import { Game } from '@/game/Game';
+import { Entry } from '@/game/Entry';
+import TableNav from '@/components/TableNav.vue';
+import { Subcategory } from '@/game/Subcategory';
+import { useHelpers } from '@/composables/useHelpers';
+import { computed, reactive, ref } from '@vue/reactivity';
+import { TableOptions, useTable } from '@/composables/useTable';
+import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
+
+const game = computed((): Game => useStore().state.game);
+const gameId = computed((): string => useStore().state.gameId);
+const rows = game.value.entries;
+
+let formData = ref({});
+
+const filterDropdowns = reactive({
+    category: '',
+    subcategory: '',
+    user: '',
+    entryStatus: '',
+});
+
+const filters = reactive({
+    category: {
+        value: computed(() => filterDropdowns.category),
+        getFilterValue: (entry: Entry) => entry.category.slug,
+    },
+    subcategory: {
+        value: computed(() => filterDropdowns.subcategory),
+        getFilterValue: (entry: Entry) => entry.subcategory.slug,
+    },
+    userId: {
+        value: computed(() => filterDropdowns.user),
+        getFilterValue: (entry: Entry) => entry.userId,
+    },
+    isCurrentRecord: {
+        value: computed(() => filterDropdowns.entryStatus === 'current'),
+        getFilterValue: (entry: Entry) => entry.isCurrentRecord,
+    },
+    isRecordImprovement: {
+        value: computed(() => filterDropdowns.entryStatus === 'improvements'),
+        getFilterValue: (entry: Entry) => entry.isRecordImprovement,
+    },
+});
+
+const tableOptions: TableOptions = {
+    rowsPerPage: ref('10'),
+    orderByKeyArray: ['created'],
+    orderByOrderArray: ['desc'],
+};
+
+const subcategoryFilterSet = computed((): Subcategory[] => {
+    let subcategorySet: Subcategory[] = [];
+
+    if (filterDropdowns.category) {
+        subcategorySet = game.value.getCategory(
+            filterDropdowns.category,
+        ).subcategories;
+    } else {
+        subcategorySet = helpers.createArrayFromSet(game.value.subcategorySet);
+    }
+
+    return _.orderBy(subcategorySet, ['displayOrder']);
+});
+
+const subcategoryName = computed((): string => {
+    if (filterDropdowns.category) {
+        return game.value.getSubcategoryDisplayName(filterDropdowns.category);
+    }
+    return 'Subcategory';
+});
+
+const setFormData = (entry: Entry): void => {
+    formData.value = entry;
+};
+
+const downloadFile = (entry: Entry): void => {
+    downloadItem(getFileDownloadLink(entry));
+};
+
+const getFileDownloadLink = (entry: Entry): string => {
+    return `${process.env.VUE_APP_STORAGE_URL}/${process.env.VUE_APP_DATABASE}%2F${gameId}%2Ffiles%2F${entry.id}%2F${entry.fileName}?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
+};
+
+const downloadItem = async (url: string) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'MARIOKART64_Cont_1.mpk');
+    document.body.appendChild(link);
+    link.click();
+};
+
+const table = useTable(rows, tableOptions, filters, filterDropdowns);
+const helpers = useHelpers();
+</script>
+
 <template>
     <div class="section-container mx-auto">
         <submit-data-modal :formData="formData"></submit-data-modal>
@@ -9,7 +109,9 @@
                     v-model="filterDropdowns.category"
                     @change="table.goToFirstPage()"
                 >
-                    <option value="">All Categories</option>
+                    <option value="">
+                        {{ filterDropdowns.category ? 'All' : 'Category' }}
+                    </option>
 
                     <option
                         v-for="(category, key) in game.categories"
@@ -21,14 +123,20 @@
                 </select>
             </div>
 
-            <div v-if="filterDropdowns.category" class="col-3">
+            <div class="col-3">
                 <select
                     class="form-select"
                     aria-label="Default select example"
                     v-model="filterDropdowns.subcategory"
                     @change="table.goToFirstPage()"
                 >
-                    <option value="">All {{ subcategoryName }}s</option>
+                    <option value="">
+                        {{
+                            filterDropdowns.subcategory
+                                ? 'All'
+                                : subcategoryName
+                        }}
+                    </option>
 
                     <option
                         v-for="subcategory in subcategoryFilterSet"
@@ -36,24 +144,6 @@
                         :value="subcategory.slug"
                     >
                         {{ subcategory.name }}
-                    </option>
-                </select>
-            </div>
-
-            <div v-if="!filterDropdowns.category" class="col-3">
-                <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    disabled
-                >
-                    <option value="">
-                        {{
-                            filterDropdowns.subcategory
-                                ? game.getSubcategory(
-                                      filterDropdowns.subcategory,
-                                  )?.name
-                                : ''
-                        }}
                     </option>
                 </select>
             </div>
@@ -66,7 +156,9 @@
                     @change="table.goToFirstPage()"
                     v-if="game.users.length > 0"
                 >
-                    <option value="">All Players</option>
+                    <option value="">
+                        {{ filterDropdowns.user ? 'All' : 'Player' }}
+                    </option>
 
                     <option
                         v-for="(user, key) in game.users"
@@ -85,7 +177,9 @@
                     v-model="filterDropdowns.entryStatus"
                     @change="table.goToFirstPage()"
                 >
-                    <option value="" selected>All Entries</option>
+                    <option value="" selected>
+                        {{ filterDropdowns.entryStatus ? 'All' : 'Entry Type' }}
+                    </option>
                     <option value="current">Current Records</option>
                     <option value="improvements">Record Improvements</option>
                 </select>
@@ -199,99 +293,6 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-import _ from 'lodash';
-import moment from 'moment';
-import { useStore } from 'vuex';
-import { Game } from '@/game/Game';
-import { Entry } from '@/game/Entry';
-import TableNav from '@/components/TableNav.vue';
-import { Subcategory } from '@/game/Subcategory';
-import { useHelpers } from '@/composables/useHelpers';
-import { computed, reactive, ref } from '@vue/reactivity';
-import { TableOptions, useTable } from '@/composables/useTable';
-import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
-
-const game = computed((): Game => useStore().state.game);
-const gameId = computed((): string => useStore().state.gameId);
-const rows = game.value.entries;
-
-let formData = ref({});
-
-const filterDropdowns = reactive({
-    category: '',
-    subcategory: '',
-    user: '',
-    entryStatus: '',
-});
-
-const filters = reactive({
-    category: {
-        value: computed(() => filterDropdowns.category),
-        getFilterValue: (entry: Entry) => entry.category.slug,
-    },
-    subcategory: {
-        value: computed(() => filterDropdowns.subcategory),
-        getFilterValue: (entry: Entry) => entry.subcategory.slug,
-    },
-    userId: {
-        value: computed(() => filterDropdowns.user),
-        getFilterValue: (entry: Entry) => entry.userId,
-    },
-    isCurrentRecord: {
-        value: computed(() => filterDropdowns.entryStatus === 'current'),
-        getFilterValue: (entry: Entry) => entry.isCurrentRecord,
-    },
-    isRecordImprovement: {
-        value: computed(() => filterDropdowns.entryStatus === 'improvements'),
-        getFilterValue: (entry: Entry) => entry.isRecordImprovement,
-    },
-});
-
-const tableOptions: TableOptions = {
-    rowsPerPage: ref('10'),
-    orderByKeyArray: ['created'],
-    orderByOrderArray: ['desc'],
-};
-
-const subcategoryFilterSet = computed((): Subcategory[] => {
-    const subcategorySet = game.value.getCategory(
-        filterDropdowns.category,
-    ).subcategories;
-    return _.orderBy(subcategorySet, ['displayOrder']);
-});
-
-const subcategoryName = computed((): string => {
-    if (filterDropdowns.category) {
-        return game.value.getSubcategoryDisplayName(filterDropdowns.category);
-    }
-    return 'Subcategory';
-});
-
-const setFormData = (entry: Entry): void => {
-    formData.value = entry;
-};
-
-const downloadFile = (entry: Entry): void => {
-    downloadItem(getFileDownloadLink(entry));
-};
-
-const getFileDownloadLink = (entry: Entry): string => {
-    return `${process.env.VUE_APP_STORAGE_URL}/${process.env.VUE_APP_DATABASE}%2F${gameId}%2Ffiles%2F${entry.id}%2F${entry.fileName}?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
-};
-
-const downloadItem = async (url: string) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'MARIOKART64_Cont_1.mpk');
-    document.body.appendChild(link);
-    link.click();
-};
-
-const table = useTable(rows, tableOptions, filters, filterDropdowns);
-const helpers = useHelpers();
-</script>
 
 <style scoped>
 select {

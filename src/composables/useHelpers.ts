@@ -1,5 +1,6 @@
 import { Category } from '@/game/Category';
 import { Game } from '@/game/Game';
+import { createSetFromArray, createArrayFromSet } from '@/helpers';
 
 export function useHelpers() {
     function linkPresent(text: string) {
@@ -16,5 +17,13 @@ export function useHelpers() {
         return 'Score';
     }
 
-    return { linkPresent, getEntryTypeText, getGameDefaultEntryTypeText };
+    createSetFromArray;
+
+    return {
+        linkPresent,
+        getEntryTypeText,
+        getGameDefaultEntryTypeText,
+        createSetFromArray,
+        createArrayFromSet,
+    };
 }
