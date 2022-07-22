@@ -1,7 +1,9 @@
 <template>
-    <div v-if="selectedCategory" class="stats-table mx-auto">
+    <div v-if="selectedCategory" class="stats-table">
         <div class="row section-header">
-            <div class="col title">Most Popular</div>
+            <div class="col title">Most Popular Runs</div>
+        </div>
+        <div class="row">
             <div class="col">
                 <div class="select-wrapper status">
                     <select
@@ -95,6 +97,13 @@ const table = useTable(rows, options, filters, filterDropdowns);
 </script>
 
 <style scoped>
+.section-header {
+    margin-bottom: 0;
+}
+
+.category-header {
+    margin-top: 20px;
+}
 .cup-row {
     margin-top: 30px;
 }

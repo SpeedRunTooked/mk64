@@ -1,53 +1,3 @@
-<template>
-    <div v-if="game.categories.length > 0" class="section-container mx-auto">
-        <div class="row section-header">
-            <div class="col">Record Summary</div>
-            <div class="col">
-                <div class="select-wrapper status">
-                    <select
-                        class="form-select"
-                        aria-label="Default select example"
-                        v-model="dropdowns.selectedCategorySlug"
-                    >
-                        <option
-                            v-for="category in game.categories"
-                            :key="category.slug"
-                            :value="category.slug"
-                        >
-                            {{ category.name }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col category-header">
-                {{ selectedCategory.subcategoryName }}
-            </div>
-            <div class="col category-header">
-                {{ helpers.getEntryTypeText(selectedCategory) }}
-            </div>
-            <div class="col category-header">Player</div>
-        </div>
-        <div v-if="rows.length > 0">
-            <div
-                v-for="summary in rows"
-                :key="summary.slug"
-                class="row subcategory-row"
-                :class="summary.endOfGroup ? 'end-row' : ''"
-            >
-                <div class="col">{{ summary.name }}</div>
-                <div class="col">
-                    {{ getRecord(summary)?.formattedScore || 'None yet!' }}
-                </div>
-                <div class="col">
-                    {{ getRecordHolder(summary)?.displayName || 'None yet!' }}
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
-
 <script setup lang="ts">
 import _ from 'lodash';
 import { Game } from '@/game/Game';
@@ -114,6 +64,56 @@ const buildRecordSummaryRows = (): RecordSummaryRow[] => {
 
 const rows = computed(() => buildRecordSummaryRows());
 </script>
+
+<template>
+    <div v-if="game.categories.length > 0" class="section-container mx-auto">
+        <div class="row section-header">
+            <div class="col">Record Summary</div>
+            <div class="col">
+                <div class="select-wrapper status">
+                    <select
+                        class="form-select"
+                        aria-label="Default select example"
+                        v-model="dropdowns.selectedCategorySlug"
+                    >
+                        <option
+                            v-for="category in game.categories"
+                            :key="category.slug"
+                            :value="category.slug"
+                        >
+                            {{ category.name }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col category-header">
+                {{ selectedCategory.subcategoryName }}
+            </div>
+            <div class="col category-header">
+                {{ helpers.getEntryTypeText(selectedCategory) }}
+            </div>
+            <div class="col category-header">Player</div>
+        </div>
+        <div v-if="rows.length > 0">
+            <div
+                v-for="summary in rows"
+                :key="summary.slug"
+                class="row subcategory-row"
+                :class="summary.endOfGroup ? 'end-row' : ''"
+            >
+                <div class="col">{{ summary.name }}</div>
+                <div class="col">
+                    {{ getRecord(summary)?.formattedScore || 'None yet!' }}
+                </div>
+                <div class="col">
+                    {{ getRecordHolder(summary)?.displayName || 'None yet!' }}
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
 
 <style scoped>
 select {

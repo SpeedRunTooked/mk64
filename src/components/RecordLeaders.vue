@@ -43,9 +43,11 @@ import { computed } from '@vue/reactivity';
 const game = computed<Game>(() => useStore().state.game);
 
 const users = computed((): User[] => {
-    const first = _.orderBy(game.value.users, ['currentRecordTotal'], ['desc']);
-    const second = _.orderBy(first, ['recordImprovementTotal'], ['desc']);
-    return second;
+    return _.orderBy(
+        game.value.users,
+        ['currentRecordTotal', 'recordImprovementTotal'],
+        ['desc', 'desc'],
+    );
 });
 </script>
 

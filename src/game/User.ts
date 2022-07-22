@@ -17,16 +17,21 @@ export class User {
     constructor(public id: string, public json: UserJSON) {}
 
     public getRecord(
-        categorySlug: string,
+        category: Category,
         subcategorySlug: string,
     ): Entry | undefined {
         const filtered = this.entries.filter((entry) => {
             return (
                 entry.subcategory.slug === subcategorySlug &&
-                entry.category.slug === categorySlug
+                entry.category.slug === category.slug
             );
         });
-        return _.minBy(filtered, 'score');
+
+        if (category.entryType === 'timeMs') {
+            return _.minBy(filtered, 'score');
+        } else {
+            return _.maxBy(filtered, 'score');
+        }
     }
 
     public appendEntries(entries: Entry[]): void {

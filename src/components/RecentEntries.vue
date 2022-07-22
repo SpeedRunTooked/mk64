@@ -1,3 +1,49 @@
+<script lang="ts" setup>
+import moment from 'moment';
+import { Game } from '@/game/Game';
+import { reactive } from 'vue';
+import { useStore } from 'vuex';
+import { ref, computed } from '@vue/reactivity';
+import { TableOptions, useTable } from '@/composables/useTable';
+import { useHelpers } from '@/composables/useHelpers';
+import { Entry } from '@/game/Entry';
+
+const game = computed<Game>(() => useStore().state.game);
+
+const helpers = useHelpers();
+
+const filterDropdowns = reactive({
+    entryStatus: '',
+});
+
+const rowsPerPageDropdown = ref('5');
+
+const filters = reactive({
+    isCurrentRecord: {
+        value: computed(() => filterDropdowns.entryStatus === 'current'),
+        getFilterValue: (entry: Entry) => entry.isCurrentRecord,
+    },
+    isRecordImprovement: {
+        value: computed(() => filterDropdowns.entryStatus === 'improvements'),
+        getFilterValue: (entry: Entry) => entry.isRecordImprovement,
+    },
+});
+
+const options: TableOptions = {
+    rowsPerPage: rowsPerPageDropdown,
+};
+
+const rows = game.value.getRecentEntries();
+
+const { activeRows, emptyRows } = useTable(
+    rows,
+    options,
+    filters,
+    filterDropdowns,
+);
+const { linkPresent } = useHelpers();
+</script>
+
 <template>
     <div class="section-container mx-auto">
         <div class="row section-header">
@@ -84,54 +130,13 @@
     </div>
 </template>
 
-<script lang="ts" setup>
-import moment from 'moment';
-import { Game } from '@/game/Game';
-import { reactive } from 'vue';
-import { useStore } from 'vuex';
-import { ref, computed } from '@vue/reactivity';
-import { TableOptions, useTable } from '@/composables/useTable';
-import { useHelpers } from '@/composables/useHelpers';
-import { Entry } from '@/game/Entry';
-
-const game = computed<Game>(() => useStore().state.game);
-
-const helpers = useHelpers();
-
-const filterDropdowns = reactive({
-    entryStatus: '',
-});
-
-const rowsPerPageDropdown = ref('5');
-
-const filters = reactive({
-    isCurrentRecord: {
-        value: computed(() => filterDropdowns.entryStatus === 'current'),
-        getFilterValue: (entry: Entry) => entry.isCurrentRecord,
-    },
-    isRecordImprovement: {
-        value: computed(() => filterDropdowns.entryStatus === 'improvements'),
-        getFilterValue: (entry: Entry) => entry.isRecordImprovement,
-    },
-});
-
-const options: TableOptions = {
-    rowsPerPage: rowsPerPageDropdown,
-};
-
-const rows = game.value.getRecentEntries();
-
-const { activeRows, emptyRows } = useTable(
-    rows,
-    options,
-    filters,
-    filterDropdowns,
-);
-const { linkPresent } = useHelpers();
-</script>
-
 <style scoped>
 select {
     float: right;
+}
+
+.subcategory-row {
+    border-bottom: 1px dashed lightgrey;
+    padding: 10px 0;
 }
 </style>
