@@ -10,6 +10,7 @@ import { useHelpers } from '@/composables/useHelpers';
 import { computed, reactive, ref } from '@vue/reactivity';
 import { TableOptions, useTable } from '@/composables/useTable';
 import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
+import { Category } from '@/game/Category';
 
 const game = computed((): Game => useStore().state.game);
 const gameId = computed((): string => useStore().state.gameId);
@@ -53,6 +54,30 @@ const tableOptions: TableOptions = {
     orderByOrderArray: ['desc'],
 };
 
+const categoryFilterSet = computed((): Category[] => {
+    let categorySet: Category[] = [];
+
+    if (filterDropdowns.subcategory) {
+        for (const cat of game.value.categories) {
+            if (
+                cat.subcategories.find(
+                    (sub) => sub.slug === filterDropdowns.subcategory,
+                )
+            ) {
+                categorySet.push(cat);
+            }
+        }
+    } else {
+        categorySet = game.value.categories;
+    }
+
+    if (game.value.config.sortAlphabetically) {
+        return _.sortBy(categorySet, ['name'], ['asc']);
+    } else {
+        return _.orderBy(categorySet, ['displayOrder'], ['asc']);
+    }
+});
+
 const subcategoryFilterSet = computed((): Subcategory[] => {
     let subcategorySet: Subcategory[] = [];
 
@@ -61,10 +86,14 @@ const subcategoryFilterSet = computed((): Subcategory[] => {
             filterDropdowns.category,
         ).subcategories;
     } else {
-        subcategorySet = helpers.createArrayFromSet(game.value.subcategorySet);
+        subcategorySet = game.value.subcategorySet;
     }
 
-    return _.orderBy(subcategorySet, ['displayOrder']);
+    if (game.value.config.sortAlphabetically) {
+        return _.sortBy(subcategorySet, ['name'], ['asc']);
+    } else {
+        return _.orderBy(subcategorySet, ['displayOrder']);
+    }
 });
 
 const subcategoryName = computed((): string => {
@@ -114,7 +143,7 @@ const helpers = useHelpers();
                     </option>
 
                     <option
-                        v-for="(category, key) in game.categories"
+                        v-for="(category, key) in categoryFilterSet"
                         :value="category.slug"
                         :key="key"
                     >

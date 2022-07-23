@@ -159,7 +159,7 @@ const resetSubcategory = (): void => {
                     <option value="" disabled selected>Category</option>
 
                     <option
-                        v-for="(category, key) in game.categories"
+                        v-for="(category, key) in game.getCategories()"
                         :value="category.slug"
                         :key="key"
                     >

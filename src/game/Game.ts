@@ -12,7 +12,7 @@ export class Game {
     public entries: Entry[] = [];
     public users: User[] = [];
     public categories: Category[] = [];
-    public subcategorySet: Set<Subcategory>;
+    public subcategorySet: Subcategory[];
     public stats: GameStats = new GameStats(this, [], []);
     public config: GameConfigJSON;
 
@@ -179,13 +179,23 @@ export class Game {
         }
     }
 
-    private buildSubcategorySet(): Set<Subcategory> {
-        const set: Set<Subcategory> = new Set();
+    private buildSubcategorySet(): Subcategory[] {
+        const set: Subcategory[] = [];
         for (const category of this.categories) {
             for (const subcategory of category.subcategories) {
-                set.add(subcategory);
+                const exists = set.find((s) => s.slug === subcategory.slug);
+                if (!exists) {
+                    set.push(subcategory);
+                }
             }
         }
         return set;
+    }
+
+    public getCategories(): Category[] {
+        if (this.config.sortAlphabetically) {
+            return _.sortBy(this.categories, ['name'], ['asc']);
+        }
+        return this.categories;
     }
 }

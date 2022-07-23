@@ -77,7 +77,7 @@ const rows = computed(() => buildRecordSummaryRows());
                         v-model="dropdowns.selectedCategorySlug"
                     >
                         <option
-                            v-for="category in game.categories"
+                            v-for="category in game.getCategories()"
                             :key="category.slug"
                             :value="category.slug"
                         >

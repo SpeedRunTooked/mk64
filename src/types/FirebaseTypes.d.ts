@@ -55,6 +55,7 @@ declare module 'FirebaseTypes' {
         showOldRecords: boolean;
         allowFileUploads: boolean;
         defaultEntryType: string;
+        sortAlphabetically: boolean;
     }
 
     interface EntriesJSON {
