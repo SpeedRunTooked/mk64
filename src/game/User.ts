@@ -4,17 +4,20 @@ import { Category } from './Category';
 import { UserJSON } from 'FirebaseTypes';
 import { Subcategory } from './Subcategory';
 import { Entry } from './Entry';
+import { Game } from './Game';
 
 export class User {
     public runs: Run[] = [];
     public entries: Entry[] = [];
     public currentRecordTotal = 0;
     public recordImprovementTotal = 0;
+    public totalScore = 0;
     public currentRecords: Entry[] = [];
+    public bestPerCategory: Entry[] = [];
     public favoriteRun: Run | undefined;
     public recordImprovements: Entry[] = [];
 
-    constructor(public id: string, public json: UserJSON) {}
+    constructor(public id: string, public json: UserJSON, public game: Game) {}
 
     public getRecord(
         category: Category,
@@ -41,6 +44,7 @@ export class User {
     public generateStats(): void {
         this.buildRecords();
         this.buildRuns();
+        this.buildScore();
         this.setFavoriteRun();
     }
 
@@ -71,6 +75,22 @@ export class User {
                         new Subcategory(time.subcategory.json),
                     ),
                 );
+            }
+        }
+    }
+
+    private buildScore(): void {
+        for (const category of this.game.categories) {
+            for (const subcategory of category.subcategories) {
+                const best = this.getRecord(category, subcategory.slug);
+                if (best) {
+                    this.bestPerCategory.push(best);
+                }
+            }
+        }
+        for (const entry of this.bestPerCategory) {
+            if (entry.category.entryType === 'score') {
+                this.totalScore += entry.score;
             }
         }
     }

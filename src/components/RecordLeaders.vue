@@ -1,3 +1,22 @@
+<script setup lang="ts">
+import _ from 'lodash';
+import { User } from '@/game/User';
+import { Game } from '@/game/Game';
+import { useStore } from 'vuex';
+import { computed } from '@vue/reactivity';
+import { Score } from '@/game/Score';
+
+const game = computed<Game>(() => useStore().state.game);
+
+const users = computed((): User[] => {
+    return _.orderBy(
+        game.value.users,
+        ['currentRecordTotal', 'recordImprovementTotal'],
+        ['desc', 'desc'],
+    );
+});
+</script>
+
 <template>
     <div class="section-container mx-auto">
         <div
@@ -23,7 +42,12 @@
                         {{ user.recordImprovementTotal }} <br />
                         Total Submissions: {{ user.entries.length }}
                     </div>
+
                     <div v-if="user.favoriteRun" class="col-5">
+                        <div v-if="user.totalScore > 0">
+                            Total Score:
+                            {{ Score.addCommas(String(user.totalScore)) }}
+                        </div>
                         Favorite Run: <br />
                         {{ user.favoriteRun.displayName }}
                     </div>
@@ -32,24 +56,6 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-import _ from 'lodash';
-import { User } from '@/game/User';
-import { Game } from '@/game/Game';
-import { useStore } from 'vuex';
-import { computed } from '@vue/reactivity';
-
-const game = computed<Game>(() => useStore().state.game);
-
-const users = computed((): User[] => {
-    return _.orderBy(
-        game.value.users,
-        ['currentRecordTotal', 'recordImprovementTotal'],
-        ['desc', 'desc'],
-    );
-});
-</script>
 
 <style scoped>
 .leaderboard-header {

@@ -88,7 +88,7 @@ export class Game {
 
     private buildUsers(userJson: UsersJSON): void {
         for (const userId in userJson) {
-            const user: User = new User(userId, userJson[userId]);
+            const user: User = new User(userId, userJson[userId], this);
             this.users.push(user);
         }
     }
