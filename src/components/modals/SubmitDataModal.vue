@@ -122,8 +122,10 @@ const success = ref(false);
 const uploading = ref(false);
 const file = ref(null);
 
-const gameId = computed<string>(() => useStore().state.gameId);
-const game = computed<Game>(() => useStore().state.game);
+const store = useStore();
+
+const gameId = computed<string>(() => store.state.gameId);
+const game = computed<Game>(() => store.state.game);
 
 const submitForm = async () => {
     uploading.value = true;

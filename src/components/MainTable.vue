@@ -12,8 +12,10 @@ import { TableOptions, useTable } from '@/composables/useTable';
 import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
 import { Category } from '@/game/Category';
 
-const game = computed((): Game => useStore().state.game);
-const gameId = computed((): string => useStore().state.gameId);
+const store = useStore();
+
+const game = computed((): Game => store.state.game);
+const gameId = computed((): string => store.state.gameId);
 const rows = game.value.entries;
 
 let formData = ref({});
@@ -112,7 +114,7 @@ const downloadFile = (entry: Entry): void => {
 };
 
 const getFileDownloadLink = (entry: Entry): string => {
-    return `${process.env.VUE_APP_STORAGE_URL}/${process.env.VUE_APP_DATABASE}%2F${gameId}%2Ffiles%2F${entry.id}%2F${entry.fileName}?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
+    return `${process.env.VUE_APP_STORAGE_URL}/${process.env.VUE_APP_DATABASE}%2F${gameId.value}%2Ffiles%2F${entry.id}%2F${entry.fileName}?alt=media&token=6557a94f-4fcf-428c-894d-525eb940f2fe`;
 };
 
 const downloadItem = async (url: string) => {
