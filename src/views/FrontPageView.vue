@@ -32,23 +32,25 @@
 
 <script setup lang="ts">
 import axios from 'axios';
-import { onMounted, Ref, ref } from 'vue';
+import { Ref, ref } from 'vue';
 
 interface GamesInfo {
     gameId: string;
     gameName: string;
 }
 
-let gamesInfo: Ref<GamesInfo[]> = ref([]);
+let gamesInfo: Ref<GamesInfo[]> = ref([
+    {
+        gameId: 'mk64',
+        gameName: 'Mario Kart 64',
+    },
+    {
+        gameId: 'msfs',
+        gameName: 'Landing Challenges',
+    },
+]);
 
-onMounted(async () => {
-    const gamesInfoResponse = await axios.get(
-        `${process.env.VUE_APP_ROOT_URL}/gamesInfo`,
-    );
-
-    gamesInfo.value = gamesInfoResponse.data;
-    console.log(gamesInfo);
-});
+axios.get(`${process.env.VUE_APP_ROOT_URL}/ping`);
 
 const getLogoUrl = (gameId: string) => {
     return `${process.env.VUE_APP_STORAGE_URL}/${process.env.VUE_APP_DATABASE}%2F${gameId}%2Fgame-logo.png?alt=media`;
