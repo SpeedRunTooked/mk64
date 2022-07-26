@@ -97,6 +97,9 @@ a:active {
 }
 .highlight {
     color: #42b983;
+    a {
+        color: #42b983;
+    }
 }
 .clickable {
     cursor: pointer;
