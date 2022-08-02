@@ -7,7 +7,7 @@ declare module 'FirebaseTypes' {
     export interface GameJSON {
         categories: CategoryJSON[];
         config: GameConfigJSON;
-        gamedata: GameDataJSON;
+        gameData: GameDataJSON;
         entries: EntriesJSON;
         userList: string[];
         subcategories: SubcategoryJSON[];
@@ -56,7 +56,6 @@ declare module 'FirebaseTypes' {
         showOldRecords: boolean;
         allowFileUploads: boolean;
         defaultEntryType: string;
-        sortAlphabetically: boolean;
     }
 
     interface EntriesJSON {

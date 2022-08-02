@@ -1,7 +1,13 @@
 import _ from 'lodash';
 import { User } from './User';
 import { Category, DEFAULT_CATEGORY_JSON } from './Category';
-import { GameConfigJSON, GameJSON, UsersJSON } from 'FirebaseTypes';
+import {
+    GameConfigJSON,
+    GameDataJSON,
+    GameJSON,
+    SubcategoryGroupJSON,
+    UsersJSON,
+} from 'FirebaseTypes';
 import { DEFAULT_SUBCATEGORY_JSON, Subcategory } from './Subcategory';
 import { GameStats } from './GameStats';
 import { Entry } from './Entry';
@@ -15,9 +21,11 @@ export class Game {
     public subcategories: Subcategory[] = [];
     public stats: GameStats = new GameStats(this, [], []);
     public config: GameConfigJSON;
+    public gameData: GameDataJSON;
 
     constructor(gameJson: GameJSON, usersJson: UsersJSON) {
         this.config = gameJson.config;
+        this.gameData = gameJson.gameData;
         this.buildCategories(gameJson);
         this.buildSubcategories(gameJson);
 
@@ -29,7 +37,7 @@ export class Game {
         this.stats = new GameStats(
             this,
             this.entries,
-            gameJson.gamedata?.oldRecords || [],
+            this.gameData?.oldRecords || [],
         );
     }
 
@@ -42,10 +50,7 @@ export class Game {
     }
 
     public getCategories(): Category[] {
-        if (this.config.sortAlphabetically) {
-            return _.sortBy(this.categories, ['name'], ['asc']);
-        }
-        return this.categories;
+        return _.orderBy(this.categories, ['displayOrder'], ['asc']);
     }
 
     public getSubcategory(subcategorySlug: string): Subcategory {
@@ -56,7 +61,10 @@ export class Game {
         );
     }
 
-    public getSubcategories(categorySlug?: string): Subcategory[] {
+    public getSubcategories(
+        categorySlug?: string,
+        sortByDisplayOrder?: boolean,
+    ): Subcategory[] {
         let subcategories: Subcategory[] = [];
 
         if (categorySlug) {
@@ -69,10 +77,26 @@ export class Game {
             subcategories = this.subcategories;
         }
 
-        if (this.config.sortAlphabetically) {
-            return _.sortBy(subcategories, ['name'], ['asc']);
+        if (sortByDisplayOrder) {
+            return subcategories.sort((a, b) => {
+                const aOrder = this.getSubcategoryGroup(a.slug)?.displayOrder;
+                const bOrder = this.getSubcategoryGroup(b.slug)?.displayOrder;
+                if (aOrder && bOrder) {
+                    return aOrder > bOrder ? 1 : -1;
+                }
+                return 0;
+            });
         }
-        return subcategories;
+
+        return _.orderBy(subcategories, ['name'], ['asc']);
+    }
+
+    public getSubcategoryGroup(
+        subcategoryGroupSlug: string,
+    ): SubcategoryGroupJSON | undefined {
+        return this.gameData.subcategoryGroups.find(
+            (group) => group.slug === subcategoryGroupSlug,
+        );
     }
 
     public getRecentEntries(): Entry[] {

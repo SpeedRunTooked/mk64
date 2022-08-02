@@ -44,6 +44,7 @@ const buildRecordSummaryRows = (): RecordSummaryRow[] => {
     let orderedJson: Subcategory[] = [];
     const subcategories = game.value.getSubcategories(
         selectedCategory.value.slug,
+        true,
     );
     if (selectedCategory.value.displayOrder) {
         orderedJson = _.orderBy(subcategories, ['displayOrder']);

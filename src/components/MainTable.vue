@@ -75,27 +75,22 @@ const categoryFilterSet = computed((): Category[] => {
         categorySet = game.value.categories;
     }
 
-    if (game.value.config.sortAlphabetically) {
-        return _.sortBy(categorySet, ['name'], ['asc']);
-    } else {
-        return _.orderBy(categorySet, ['displayOrder'], ['asc']);
-    }
+    return _.orderBy(categorySet, ['displayOrder'], ['asc']);
 });
 
 const subcategoryFilterSet = computed((): Subcategory[] => {
     let subcategorySet: Subcategory[] = [];
 
     if (filterDropdowns.category) {
-        subcategorySet = game.value.getSubcategories(filterDropdowns.category);
+        subcategorySet = game.value.getSubcategories(
+            filterDropdowns.category,
+            true,
+        );
     } else {
-        subcategorySet = game.value.subcategories;
+        subcategorySet = game.value.getSubcategories();
     }
 
-    if (game.value.config.sortAlphabetically) {
-        return _.sortBy(subcategorySet, ['name'], ['asc']);
-    } else {
-        return _.orderBy(subcategorySet, ['displayOrder']);
-    }
+    return subcategorySet;
 });
 
 const subcategoryName = computed((): string => {

@@ -143,7 +143,7 @@ const categories = computed(() =>
 );
 
 const subcategories = computed((): Subcategory[] => {
-    return game.value.getSubcategories(selectedCategory.value.slug);
+    return game.value.getSubcategories(selectedCategory.value.slug, true);
 });
 
 const rows = buildOldRecordRows();
