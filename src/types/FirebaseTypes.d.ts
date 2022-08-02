@@ -10,6 +10,7 @@ declare module 'FirebaseTypes' {
         gamedata: GameDataJSON;
         entries: EntriesJSON;
         userList: string[];
+        subcategories: SubcategoryJSON[];
     }
 
     interface UsersJSON {
@@ -23,11 +24,11 @@ declare module 'FirebaseTypes' {
 
     interface CategoryJSON {
         subcategoryName: string;
-        subcategories: SubcategoryJSON[];
         displayOrder: number;
         entryType: string;
         name: string;
         slug: string;
+        subcategoryList: string[];
     }
 
     interface SubcategoryJSON {

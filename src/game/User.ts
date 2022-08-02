@@ -81,7 +81,8 @@ export class User {
 
     private buildScore(): void {
         for (const category of this.game.categories) {
-            for (const subcategory of category.subcategories) {
+            const subcategories = this.game.getSubcategories(category.slug);
+            for (const subcategory of subcategories) {
                 const best = this.getRecord(category, subcategory.slug);
                 if (best) {
                     this.bestPerCategory.push(best);

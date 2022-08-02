@@ -12,14 +12,14 @@ export class Game {
     public entries: Entry[] = [];
     public users: User[] = [];
     public categories: Category[] = [];
-    public subcategorySet: Subcategory[];
+    public subcategories: Subcategory[] = [];
     public stats: GameStats = new GameStats(this, [], []);
     public config: GameConfigJSON;
 
     constructor(gameJson: GameJSON, usersJson: UsersJSON) {
         this.config = gameJson.config;
         this.buildCategories(gameJson);
-        this.subcategorySet = this.buildSubcategorySet();
+        this.buildSubcategories(gameJson);
 
         this.buildUsers(usersJson);
         this.buildEntries(gameJson);
@@ -39,6 +39,40 @@ export class Game {
                 (category) => category.slug === categorySlug,
             ) || new Category(DEFAULT_CATEGORY_JSON)
         );
+    }
+
+    public getCategories(): Category[] {
+        if (this.config.sortAlphabetically) {
+            return _.sortBy(this.categories, ['name'], ['asc']);
+        }
+        return this.categories;
+    }
+
+    public getSubcategory(subcategorySlug: string): Subcategory {
+        return (
+            this.subcategories.find(
+                (subcategory) => subcategory.slug === subcategorySlug,
+            ) || new Subcategory(DEFAULT_SUBCATEGORY_JSON)
+        );
+    }
+
+    public getSubcategories(categorySlug?: string): Subcategory[] {
+        let subcategories: Subcategory[] = [];
+
+        if (categorySlug) {
+            const category = this.getCategory(categorySlug);
+
+            for (const subcategorySlug of category.subcategoryList) {
+                subcategories.push(this.getSubcategory(subcategorySlug));
+            }
+        } else {
+            subcategories = this.subcategories;
+        }
+
+        if (this.config.sortAlphabetically) {
+            return _.sortBy(subcategories, ['name'], ['asc']);
+        }
+        return subcategories;
     }
 
     public getRecentEntries(): Entry[] {
@@ -66,13 +100,6 @@ export class Game {
         return _.orderBy(entries, ['score'], ['asc'])[0];
     }
 
-    public getSubcategory(subcategorySlug: string): Subcategory {
-        for (const subcategory of this.subcategorySet.values()) {
-            if (subcategory.slug === subcategorySlug) return subcategory;
-        }
-        return new Subcategory(DEFAULT_SUBCATEGORY_JSON);
-    }
-
     public getSubcategoryDisplayName(categorySlug: string): string {
         return (
             this.categories.find((category) => category.slug === categorySlug)
@@ -83,6 +110,12 @@ export class Game {
     private buildCategories(gameJson: GameJSON): void {
         for (const categoryJson of gameJson.categories) {
             this.categories.push(new Category(categoryJson));
+        }
+    }
+
+    private buildSubcategories(gameJson: GameJSON): void {
+        for (const subcategoryJson of gameJson.subcategories) {
+            this.subcategories.push(new Subcategory(subcategoryJson));
         }
     }
 
@@ -114,7 +147,8 @@ export class Game {
 
     private assignRecords(): void {
         for (const category of this.categories) {
-            for (const subcategory of category.subcategories) {
+            const subcategories = this.getSubcategories(category.slug);
+            for (const subcategory of subcategories) {
                 let filteredEntries = this.entries.filter(
                     (entry) =>
                         entry.category.slug === category.slug &&
@@ -177,25 +211,5 @@ export class Game {
             user.appendEntries(this.entries);
             user.generateStats();
         }
-    }
-
-    private buildSubcategorySet(): Subcategory[] {
-        const set: Subcategory[] = [];
-        for (const category of this.categories) {
-            for (const subcategory of category.subcategories) {
-                const exists = set.find((s) => s.slug === subcategory.slug);
-                if (!exists) {
-                    set.push(subcategory);
-                }
-            }
-        }
-        return set;
-    }
-
-    public getCategories(): Category[] {
-        if (this.config.sortAlphabetically) {
-            return _.sortBy(this.categories, ['name'], ['asc']);
-        }
-        return this.categories;
     }
 }

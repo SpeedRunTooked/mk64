@@ -42,12 +42,13 @@ const getRecordHolder = (summary: RecordSummaryRow): User | undefined => {
 const buildRecordSummaryRows = (): RecordSummaryRow[] => {
     const result: RecordSummaryRow[] = [];
     let orderedJson: Subcategory[] = [];
+    const subcategories = game.value.getSubcategories(
+        selectedCategory.value.slug,
+    );
     if (selectedCategory.value.displayOrder) {
-        orderedJson = _.orderBy(selectedCategory.value.subcategories, [
-            'displayOrder',
-        ]);
+        orderedJson = _.orderBy(subcategories, ['displayOrder']);
     } else {
-        orderedJson = _.orderBy(selectedCategory.value.subcategories, ['name']);
+        orderedJson = _.orderBy(subcategories, ['name']);
     }
 
     for (const jsonRow of orderedJson) {

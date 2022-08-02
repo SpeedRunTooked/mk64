@@ -4,13 +4,13 @@ import moment from 'moment';
 import { useStore } from 'vuex';
 import { Game } from '@/game/Game';
 import { Entry } from '@/game/Entry';
+import { Category } from '@/game/Category';
 import TableNav from '@/components/TableNav.vue';
 import { Subcategory } from '@/game/Subcategory';
 import { useHelpers } from '@/composables/useHelpers';
 import { computed, reactive, ref } from '@vue/reactivity';
 import { TableOptions, useTable } from '@/composables/useTable';
 import SubmitDataModal from '@/components/modals/SubmitDataModal.vue';
-import { Category } from '@/game/Category';
 
 const store = useStore();
 
@@ -60,13 +60,15 @@ const categoryFilterSet = computed((): Category[] => {
     let categorySet: Category[] = [];
 
     if (filterDropdowns.subcategory) {
-        for (const cat of game.value.categories) {
+        for (const category of game.value.categories) {
+            const subcategories = game.value.getSubcategories(category.slug);
             if (
-                cat.subcategories.find(
-                    (sub) => sub.slug === filterDropdowns.subcategory,
+                subcategories.find(
+                    (subcategory) =>
+                        subcategory.slug === filterDropdowns.subcategory,
                 )
             ) {
-                categorySet.push(cat);
+                categorySet.push(category);
             }
         }
     } else {
@@ -84,11 +86,9 @@ const subcategoryFilterSet = computed((): Subcategory[] => {
     let subcategorySet: Subcategory[] = [];
 
     if (filterDropdowns.category) {
-        subcategorySet = game.value.getCategory(
-            filterDropdowns.category,
-        ).subcategories;
+        subcategorySet = game.value.getSubcategories(filterDropdowns.category);
     } else {
-        subcategorySet = game.value.subcategorySet;
+        subcategorySet = game.value.subcategories;
     }
 
     if (game.value.config.sortAlphabetically) {

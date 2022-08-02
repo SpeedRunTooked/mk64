@@ -8,6 +8,7 @@ export default createStore({
         game: new Game(
             {
                 categories: [],
+                subcategories: [],
                 config: {
                     discordChannel: '',
                     discordChannelTest: '',

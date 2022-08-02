@@ -72,7 +72,8 @@ const showSubcategories = computed((): boolean => {
 });
 
 const subcategoryList = computed((): Subcategory[] => {
-    const list: Subcategory[] = selectedCategory?.value.subcategories || [];
+    const list: Subcategory[] =
+        game.value.getSubcategories(selectedCategory.value.slug) || [];
     return _.orderBy(list, ['displayOrder']);
 });
 
@@ -114,9 +115,8 @@ const showRecordTimes = computed((): boolean => {
 
 const resetSubcategory = (): void => {
     if (
-        formData.subcategorySlug &&
         formData.subcategorySlug !== '' &&
-        !selectedCategory.value.getSubcategory(formData.subcategorySlug)
+        !game.value.getSubcategory(formData.subcategorySlug)
     ) {
         formData.subcategorySlug = '';
     }
