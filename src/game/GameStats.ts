@@ -21,7 +21,9 @@ export class GameStats {
         entries: Entry[],
         oldRecords: OldRecordCategoryJSON[],
     ) {
-        this.buildRunList(game, entries, oldRecords);
+        this.buildRunList(entries);
+        this.addRecordsToRuns(game);
+        this.addOldRecordToRuns(oldRecords);
         this.buildMostContestedSubcategories(game);
     }
 
@@ -93,11 +95,7 @@ export class GameStats {
         return count;
     }
 
-    private buildRunList(
-        game: Game,
-        times: Entry[],
-        oldRecords: OldRecordCategoryJSON[],
-    ): void {
+    private buildRunList(times: Entry[]): void {
         for (const time of times) {
             const existingRun = this.runs.find(
                 (run) =>
@@ -110,8 +108,6 @@ export class GameStats {
                 this.runs.push(new Run(time.category, time.subcategory));
             }
         }
-        this.addRecordsToRuns(game);
-        this.addOldRecordToRuns(oldRecords);
     }
 
     private addRecordsToRuns(game: Game): void {
