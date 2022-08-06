@@ -10,7 +10,7 @@ import { TableOptions, useTable } from '@/composables/useTable';
 const game = computed<Game>(() => useStore().state.game);
 
 const filterDropdowns = reactive({
-    categorySlug: '',
+    categorySlug: 'DEFAULT_CATEGORY',
 });
 
 const filters = reactive({
@@ -49,7 +49,9 @@ const table = useTable(rows, options, filters, filterDropdowns);
                         v-model="filterDropdowns.categorySlug"
                         @change="table.goToFirstPage()"
                     >
-                        <option selected value="">All Categories</option>
+                        <option selected value="DEFAULT_CATEGORY">
+                            All Categories
+                        </option>
                         <option
                             v-for="category in game.categories"
                             :key="category.slug"

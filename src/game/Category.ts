@@ -2,7 +2,7 @@ import { CategoryJSON } from 'FirebaseTypes';
 
 // The default category is just used for stricter type safety throughout
 export const DEFAULT_CATEGORY_JSON: CategoryJSON = {
-    slug: '',
+    slug: 'DEFAULT_CATEGORY',
     name: '',
     displayOrder: 0,
     subcategoryList: [],

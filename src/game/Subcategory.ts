@@ -2,7 +2,7 @@ import { SubcategoryJSON } from 'FirebaseTypes';
 
 // The default subcategory is just used for stricter type safety throughout
 export const DEFAULT_SUBCATEGORY_JSON: SubcategoryJSON = {
-    slug: '',
+    slug: 'DEFAULT_SUBCATEGORY',
     name: '',
     group: '',
 };
