@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Run } from './Run';
 import { Game } from './Game';
 import { Entry } from './Entry';
-import { Category } from './Category';
+import { Category, DEFAULT_CATEGORY_JSON } from './Category';
 import { Subcategory } from './Subcategory';
 import { createArrayFromSet } from '@/helpers';
 import { OldRecordCategoryJSON } from 'FirebaseTypes';
@@ -40,10 +40,22 @@ export class GameStats {
     }
 
     public getMostPlayedSubcategories(): MostPlayedSubcategory[] {
-        const mostPlayedSubcategories: MostPlayedSubcategory[] = [];
+        const mostPlayedSubcategories = this.buildMostPlayedSubcategories();
+        const mostPlayedSubcategoriesConsolidated =
+            this.buildMostPlayedSubcategoriesConsolidated();
 
+        const result = [
+            ...mostPlayedSubcategories,
+            ...mostPlayedSubcategoriesConsolidated,
+        ];
+
+        return _.orderBy(result, ['attempts'], ['desc']);
+    }
+
+    private buildMostPlayedSubcategories(): MostPlayedSubcategory[] {
+        const result: MostPlayedSubcategory[] = [];
         for (const run of this.runs) {
-            const mostPlayedEntry = mostPlayedSubcategories.find(
+            const mostPlayedEntry = result.find(
                 (mostPlayed) =>
                     mostPlayed.subcategory.slug === run.subcategory.slug &&
                     mostPlayed.category.slug === run.category.slug,
@@ -51,14 +63,35 @@ export class GameStats {
             if (mostPlayedEntry) {
                 mostPlayedEntry.attempts += run.attempts;
             } else {
-                mostPlayedSubcategories.push({
+                result.push({
                     category: run.category,
                     subcategory: run.subcategory,
                     attempts: run.attempts,
                 });
             }
         }
-        return _.orderBy(mostPlayedSubcategories, ['attempts'], ['desc']);
+        return result;
+    }
+
+    // Generates the data necessary for when 'All' is selected for the Category
+    private buildMostPlayedSubcategoriesConsolidated(): MostPlayedSubcategory[] {
+        const result: MostPlayedSubcategory[] = [];
+        for (const run of this.runs) {
+            const mostPlayedEntry = result.find(
+                (mostPlayed) =>
+                    mostPlayed.subcategory.slug === run.subcategory.slug,
+            );
+            if (mostPlayedEntry) {
+                mostPlayedEntry.attempts += run.attempts;
+            } else {
+                result.push({
+                    category: new Category(DEFAULT_CATEGORY_JSON),
+                    subcategory: run.subcategory,
+                    attempts: run.attempts,
+                });
+            }
+        }
+        return result;
     }
 
     private buildMostContestedSubcategories(game: Game): void {
