@@ -1,3 +1,40 @@
+<script setup lang="ts">
+import { useStore } from 'vuex';
+import { Game } from '@/game/Game';
+import { Category } from '@/game/Category';
+import TableNav from '@/components/TableNav.vue';
+import { MostPlayedSubcategory } from '@/game/GameStats';
+import { reactive, ref, computed } from '@vue/reactivity';
+import { TableOptions, useTable } from '@/composables/useTable';
+
+const game = computed<Game>(() => useStore().state.game);
+
+const filterDropdowns = reactive({
+    categorySlug: '',
+});
+
+const filters = reactive({
+    category: {
+        value: computed(() => filterDropdowns.categorySlug),
+        getFilterValue: (mostPlayed: MostPlayedSubcategory) =>
+            mostPlayed.category.slug,
+    },
+});
+
+const rows: MostPlayedSubcategory[] =
+    game.value.stats.getMostPlayedSubcategories();
+
+const options: TableOptions = {
+    rowsPerPage: ref('8'),
+};
+
+const selectedCategory = computed((): Category => {
+    return game.value.getCategory(filterDropdowns.categorySlug);
+});
+
+const table = useTable(rows, options, filters, filterDropdowns);
+</script>
+
 <template>
     <div v-if="selectedCategory" class="stats-table">
         <div class="row section-header">
@@ -12,6 +49,7 @@
                         v-model="filterDropdowns.categorySlug"
                         @change="table.goToFirstPage()"
                     >
+                        <option selected value="">All Categories</option>
                         <option
                             v-for="category in game.categories"
                             :key="category.slug"
@@ -58,43 +96,6 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-import { useStore } from 'vuex';
-import { Game } from '@/game/Game';
-import { Category } from '@/game/Category';
-import TableNav from '@/components/TableNav.vue';
-import { MostPlayedSubcategory } from '@/game/GameStats';
-import { reactive, ref, computed } from '@vue/reactivity';
-import { TableOptions, useTable } from '@/composables/useTable';
-
-const game = computed<Game>(() => useStore().state.game);
-
-const filterDropdowns = reactive({
-    categorySlug: game.value.categories[0].slug,
-});
-
-const filters = reactive({
-    category: {
-        value: computed(() => filterDropdowns.categorySlug),
-        getFilterValue: (mostPlayed: MostPlayedSubcategory) =>
-            mostPlayed.category.slug,
-    },
-});
-
-const rows: MostPlayedSubcategory[] =
-    game.value.stats.getMostPlayedSubcategories();
-
-const options: TableOptions = {
-    rowsPerPage: ref('8'),
-};
-
-const selectedCategory = computed((): Category => {
-    return game.value.getCategory(filterDropdowns.categorySlug);
-});
-
-const table = useTable(rows, options, filters, filterDropdowns);
-</script>
 
 <style scoped>
 .section-header {
