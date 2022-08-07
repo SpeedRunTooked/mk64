@@ -7,16 +7,11 @@ import { Subcategory } from './Subcategory';
 import { createArrayFromSet } from '@/helpers';
 import { OldRecordCategoryJSON } from 'FirebaseTypes';
 
-export interface MostPlayedSubcategory {
-    category: Category;
-    subcategory: Subcategory;
-    attempts: number;
-}
-
-export interface MostContestedSubcategory {
+export interface RunSummaryRow {
     category: Category;
     subcategory: Subcategory;
     timesContested: number;
+    attempts: number;
 }
 
 export class GameStats {
@@ -33,30 +28,32 @@ export class GameStats {
         this.assignMostContestedCountToRuns(game);
     }
 
-    public getMostPlayedSubcategories(): MostPlayedSubcategory[] {
+    public getRunSummary(): RunSummaryRow[] {
         const result = [
-            ...this.buildMostPlayedSubcategories(),
-            ...this.buildMostPlayedSubcategoriesConsolidated(),
+            ...this.buildRunSummary(),
+            ...this.buildRunSummaryConsolidated(),
         ];
 
         return _.orderBy(result, ['attempts'], ['desc']);
     }
 
-    private buildMostPlayedSubcategories(): MostPlayedSubcategory[] {
-        const result: MostPlayedSubcategory[] = [];
+    private buildRunSummary(): RunSummaryRow[] {
+        const result: RunSummaryRow[] = [];
         for (const run of this.runs) {
             result.push({
                 category: run.category,
                 subcategory: run.subcategory,
                 attempts: run.attempts,
+                timesContested: run.timesContested,
             });
         }
         return result;
     }
 
     // Consolidates subcategory data independent of category
-    private buildMostPlayedSubcategoriesConsolidated(): MostPlayedSubcategory[] {
-        const result: MostPlayedSubcategory[] = [];
+    // Necessary for 'All Categories' option
+    private buildRunSummaryConsolidated(): RunSummaryRow[] {
+        const result: RunSummaryRow[] = [];
         for (const run of this.runs) {
             const mostPlayedEntry = result.find(
                 (mostPlayed) =>
@@ -69,46 +66,6 @@ export class GameStats {
                     category: new Category(DEFAULT_CATEGORY_JSON),
                     subcategory: run.subcategory,
                     attempts: run.attempts,
-                });
-            }
-        }
-        return result;
-    }
-
-    public getMostContestedSubcategories(): MostContestedSubcategory[] {
-        const result: MostContestedSubcategory[] = [
-            ...this.buildMostContestedSubcategories(),
-            ...this.buildMostContestedSubcategoriesConsolidated(),
-        ];
-        return _.orderBy(result, ['timesContested'], ['desc']);
-    }
-
-    private buildMostContestedSubcategories(): MostContestedSubcategory[] {
-        const result: MostContestedSubcategory[] = [];
-        for (const run of this.runs) {
-            result.push({
-                category: run.category,
-                subcategory: run.subcategory,
-                timesContested: run.timesContested,
-            });
-        }
-        return result;
-    }
-
-    // Consolidates subcategory data independent of category
-    private buildMostContestedSubcategoriesConsolidated(): MostContestedSubcategory[] {
-        const result: MostContestedSubcategory[] = [];
-        for (const run of this.runs) {
-            const mostContestedEntry = result.find(
-                (mostContested) =>
-                    mostContested.subcategory.slug === run.subcategory.slug,
-            );
-            if (mostContestedEntry) {
-                mostContestedEntry.timesContested += run.timesContested;
-            } else {
-                result.push({
-                    category: new Category(DEFAULT_CATEGORY_JSON),
-                    subcategory: run.subcategory,
                     timesContested: run.timesContested,
                 });
             }

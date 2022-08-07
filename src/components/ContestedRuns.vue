@@ -1,3 +1,43 @@
+<script setup lang="ts">
+import _ from 'lodash';
+import { useStore } from 'vuex';
+import { Game } from '@/game/Game';
+import { Category } from '@/game/Category';
+import TableNav from '@/components/TableNav.vue';
+import { ref, computed, reactive } from '@vue/reactivity';
+import { TableOptions, useTable } from '@/composables/useTable';
+import { RunSummaryRow } from '@/game/GameStats';
+
+const game = computed<Game>(() => useStore().state.game);
+
+const filterDropdowns = reactive({
+    categorySlug: 'DEFAULT_CATEGORY',
+});
+
+const filters = reactive({
+    category: {
+        value: computed(() => filterDropdowns.categorySlug),
+        getFilterValue: (runSummary: RunSummaryRow) => runSummary.category.slug,
+    },
+});
+
+const rows: RunSummaryRow[] = _.orderBy(
+    game.value.stats.getRunSummary(),
+    ['timesContested'],
+    ['desc'],
+);
+
+const options: TableOptions = {
+    rowsPerPage: ref('8'),
+};
+
+const selectedCategory = computed((): Category => {
+    return game.value.getCategory(filterDropdowns.categorySlug);
+});
+
+const table = useTable(rows, options, filters, filterDropdowns);
+</script>
+
 <template>
     <div v-if="selectedCategory" class="stats-table">
         <div class="row section-header">
@@ -61,43 +101,6 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-import { useStore } from 'vuex';
-import { Run } from '@/game/Run';
-import { Game } from '@/game/Game';
-import { Category } from '@/game/Category';
-import TableNav from '@/components/TableNav.vue';
-import { ref, computed, reactive } from '@vue/reactivity';
-import { TableOptions, useTable } from '@/composables/useTable';
-import { MostContestedSubcategory } from '@/game/GameStats';
-
-const game = computed<Game>(() => useStore().state.game);
-
-const filterDropdowns = reactive({
-    categorySlug: 'DEFAULT_CATEGORY',
-});
-
-const filters = reactive({
-    category: {
-        value: computed(() => filterDropdowns.categorySlug),
-        getFilterValue: (run: Run) => run.category.slug,
-    },
-});
-
-const rows: MostContestedSubcategory[] =
-    game.value.stats.getMostContestedSubcategories();
-
-const options: TableOptions = {
-    rowsPerPage: ref('8'),
-};
-
-const selectedCategory = computed((): Category => {
-    return game.value.getCategory(filterDropdowns.categorySlug);
-});
-
-const table = useTable(rows, options, filters, filterDropdowns);
-</script>
 
 <style scoped>
 .section-header {

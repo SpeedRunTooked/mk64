@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import _ from 'lodash';
 import { useStore } from 'vuex';
 import { Game } from '@/game/Game';
 import { Category } from '@/game/Category';
 import TableNav from '@/components/TableNav.vue';
-import { MostPlayedSubcategory } from '@/game/GameStats';
+import { RunSummaryRow } from '@/game/GameStats';
 import { reactive, ref, computed } from '@vue/reactivity';
 import { TableOptions, useTable } from '@/composables/useTable';
 
@@ -16,13 +17,15 @@ const filterDropdowns = reactive({
 const filters = reactive({
     category: {
         value: computed(() => filterDropdowns.categorySlug),
-        getFilterValue: (mostPlayed: MostPlayedSubcategory) =>
-            mostPlayed.category.slug,
+        getFilterValue: (runSummary: RunSummaryRow) => runSummary.category.slug,
     },
 });
 
-const rows: MostPlayedSubcategory[] =
-    game.value.stats.getMostPlayedSubcategories();
+const rows: RunSummaryRow[] = _.orderBy(
+    game.value.stats.getRunSummary(),
+    ['attempts'],
+    ['desc'],
+);
 
 const options: TableOptions = {
     rowsPerPage: ref('8'),
