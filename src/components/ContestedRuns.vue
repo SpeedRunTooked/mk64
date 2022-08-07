@@ -12,6 +12,9 @@
                         v-model="filterDropdowns.categorySlug"
                         @change="table.goToFirstPage()"
                     >
+                        <option selected value="DEFAULT_CATEGORY">
+                            All Categories
+                        </option>
                         <option
                             v-for="category in game.categories"
                             :key="category.slug"
@@ -67,11 +70,12 @@ import { Category } from '@/game/Category';
 import TableNav from '@/components/TableNav.vue';
 import { ref, computed, reactive } from '@vue/reactivity';
 import { TableOptions, useTable } from '@/composables/useTable';
+import { MostContestedSubcategory } from '@/game/GameStats';
 
 const game = computed<Game>(() => useStore().state.game);
 
 const filterDropdowns = reactive({
-    categorySlug: game.value.categories[0].slug,
+    categorySlug: 'DEFAULT_CATEGORY',
 });
 
 const filters = reactive({
@@ -81,7 +85,8 @@ const filters = reactive({
     },
 });
 
-const rows: Run[] = game.value.stats.getMostContested();
+const rows: MostContestedSubcategory[] =
+    game.value.stats.getMostContestedSubcategories();
 
 const options: TableOptions = {
     rowsPerPage: ref('8'),
